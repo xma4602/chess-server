@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: chess-server
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    url: jdbc:postgresql://localhost:5432/chess_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
