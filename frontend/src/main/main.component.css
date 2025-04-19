@@ -1,0 +1,8 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 колонки */
+  grid-template-rows: repeat(4, 1fr); /* 4 строки */
+  gap: 16px; /* Промежуток между плитками */
+  width: 40%; /* Ширина сетки 40% */
+  margin: 0 auto; /* Центрирование сетки на странице */
+}
