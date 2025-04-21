@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 import {NgForOf} from "@angular/common";
 import {GameConditions} from '../game_conditions/game-conditions';
 import {TileComponent} from '../tile/tile.component';
-import {RouterModule} from '@angular/router'; // Импортируйте ваш класс
+import {RouterModule} from '@angular/router';
 
 @Component({
   selector: 'app-main',

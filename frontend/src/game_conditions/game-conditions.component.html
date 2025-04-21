@@ -1,0 +1,55 @@
+<div class="game-conditions">
+  <h1>Сыграть с другом</h1>
+
+  <label for="timeControl">Контроль времени:</label>
+  <select id="timeControl" [(ngModel)]="gameConditions.timeControl">
+    <option *ngFor="let control of timeControls" [value]="control">{{ control }}</option>
+  </select>
+
+  <!-- Условное отображение полей в зависимости от выбранного значения timeControl -->
+  <div *ngIf="gameConditions.timeControl !== TimeControl.NONE">
+    <label for="partyTime">Минут на партию: {{ gameConditions.partyTime }}</label>
+    <input type="range" id="partyTime" [(ngModel)]="gameConditions.partyTime" min="1" max="60"/>
+
+    <label for="moveTime">Добавление секунд на ход: {{ gameConditions.moveTime }}</label>
+    <input type="range" id="moveTime" [(ngModel)]="gameConditions.moveTime" min="1" max="60"/>
+  </div>
+
+  <div class="match-mode">
+    <h3>Режим матча:</h3>
+    <button
+      [ngClass]="{'button-active': gameConditions.matchMode === matchModes[0], 'button-inactive': gameConditions.matchMode !== matchModes[0]}"
+      (click)="gameConditions.matchMode = matchModes[0]">
+      {{ matchModes[0] }}
+    </button>
+    <button
+      [ngClass]="{'button-active': gameConditions.matchMode === matchModes[1], 'button-inactive': gameConditions.matchMode !== matchModes[1]}"
+      (click)="gameConditions.matchMode = matchModes[1]">
+      {{ matchModes[1] }}
+    </button>
+  </div>
+
+  <div class="figure-color">
+    <h3>Цвет фигур:</h3>
+    <button
+      class="button"
+      [ngClass]="{'button-active': gameConditions.figureColor === figureColors[0], 'button-inactive': gameConditions.figureColor !== figureColors[0]}"
+      (click)="gameConditions.figureColor = figureColors[0]">
+      <img src="assets/chess/w_king.png" alt="Белые фигуры" height="100" width="100"/>
+    </button>
+    <button
+      class="button"
+      [ngClass]="{'button-active': gameConditions.figureColor === figureColors[2], 'button-inactive': gameConditions.figureColor !== figureColors[2]}"
+      (click)="gameConditions.figureColor = figureColors[2]">
+      <img src="assets/question.png" alt="Случайный цвет" height="100" width="100"/>
+    </button>
+    <button
+      class="button"
+      [ngClass]="{'button-active': gameConditions.figureColor === figureColors[1], 'button-inactive': gameConditions.figureColor !== figureColors[1]}"
+      (click)="gameConditions.figureColor = figureColors[1]">
+      <img src="assets/chess/b_king.png" alt="Черные фигуры" height="100" width="100"/>
+    </button>
+  </div>
+
+  <button (click)="createGame()">Создать игру</button>
+</div>

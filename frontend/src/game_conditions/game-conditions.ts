@@ -8,13 +8,21 @@ export class GameConditions {
     public matchMode: MatchMode = MatchMode.FRIENDLY,
     public figureColor: FigureColor = FigureColor.RANDOM) {
   }
-
-
 }
 
-export enum TimeControl { WATCH, NONE }
+export enum TimeControl {
+  WATCH = 'По времени',
+  NONE = 'Отсутствует'
+}
 
-export enum MatchMode { FRIENDLY, RATING }
+export enum MatchMode {
+  FRIENDLY = 'Товарищеская',
+  RATING = 'Рейтинговая'
+}
 
-export enum FigureColor { WHITE, BLACK, RANDOM }
+export enum FigureColor {
+  WHITE = 'Белые',
+  BLACK = 'Черные',
+  RANDOM = 'Случайные'
+}
 

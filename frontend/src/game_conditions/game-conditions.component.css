@@ -1,0 +1,47 @@
+.game-conditions {
+  max-width: 40%;
+  margin: auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column; /* Устанавливает направление по вертикали */
+  gap: 10px; /* Добавляет отступ между элементами */
+}
+
+input[type="range"] {
+  width: 100%;
+}
+
+/* Стили для режима матча */
+.match-mode {
+  margin-bottom: 20px; /* Отступ снизу для разделения секций */
+}
+
+.match-mode button {
+  margin: 10px; /* Отступ между кнопками */
+  transition: transform 0.2s; /* Плавный переход */
+}
+
+.button-active {
+  transform: scale(1.2); /* Увеличение размера */
+  background-color: green; /* Цвет активной кнопки */
+  color: white; /* Цвет текста активной кнопки */
+}
+
+.button-inactive {
+  background-color: gray; /* Цвет неактивной кнопки */
+  color: white; /* Цвет текста неактивной кнопки */
+}
+
+/* Стили для цвета фигур */
+.figure-color {
+  margin-bottom: 20px; /* Отступ снизу для разделения секций */
+}
+
+.figure-color button {
+  margin: 10px; /* Отступ между кнопками */
+  transition: transform 0.2s; /* Плавный переход */
+}
+
+/* Можно добавить дополнительные стили для кнопок в секции цвета фигур, если нужно */
+
+
