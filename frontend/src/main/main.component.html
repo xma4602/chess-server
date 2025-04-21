@@ -1,8 +1,8 @@
 <div class="grid">
   <app-tile *ngFor="let game of gameConditionsList"
-            [title]="getTileTitle(game)"
-            [subtitle]="getTileSubtitle(game)"
+            [title]="game.getTileTitle()"
+            [subtitle]="game.getTileSubtitle()"
             [gameConditions]="game"
-            />
+  />
   <app-tile [title]="'Своя игра'"/>
 </div>

@@ -8,6 +8,21 @@ export class GameConditions {
     public matchMode: MatchMode = MatchMode.FRIENDLY,
     public figureColor: FigureColor = FigureColor.RANDOM) {
   }
+
+  getTileTitle(): string {
+    return `${this.partyTime}+${this.moveTime}`
+  }
+
+  getTileSubtitle(): string {
+    if (this.partyTime < 10) {
+      return 'Блитц'
+    } else if (this.partyTime < 30) {
+      return 'Рапид'
+    } else {
+      return 'Классика'
+    }
+  }
+
 }
 
 export enum TimeControl {

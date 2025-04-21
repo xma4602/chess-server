@@ -1,0 +1,37 @@
+<div class="game-room">
+  <h1>Вызвать на игру</h1>
+
+
+  <div class="game-conditions-panel">
+    <div class="columns">
+      <div class="column">
+        <p>{{ gameRoom.gameConditions.getTileTitle() }}</p>
+        <p>{{ gameRoom.gameConditions.getTileSubtitle() }}</p>
+      </div>
+      <div class="column">
+        <p>Режим матча: {{ gameRoom.gameConditions.matchMode }}</p>
+        <p>Цвет фигур: {{ gameRoom.gameConditions.figureColor }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Владелец игры</h2>
+    <p>{{ gameRoom.firstUser.username }}</p>
+  </div>
+
+  <div class="panel" *ngIf="gameRoom.secondUser">
+    <h2>Гость игры</h2>
+    <p>{{ gameRoom.secondUser.username }}</p>
+  </div>
+
+  <div class="invite-link">
+    <h3>Чтобы пригласить друга, отправьте ему эту ссылку:</h3>
+    <input type="text" [value]="gameRoom.getLink()" readonly />
+  </div>
+
+  <div class="buttons">
+    <button (click)="startGame()">Начать игру</button>
+    <button (click)="cancelGame()">Отменить игру</button>
+  </div>
+</div>

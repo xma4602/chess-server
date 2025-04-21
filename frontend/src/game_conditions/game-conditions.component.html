@@ -12,7 +12,7 @@
     <input type="range" id="partyTime" [(ngModel)]="gameConditions.partyTime" min="1" max="60"/>
 
     <label for="moveTime">Добавление секунд на ход: {{ gameConditions.moveTime }}</label>
-    <input type="range" id="moveTime" [(ngModel)]="gameConditions.moveTime" min="1" max="60"/>
+    <input type="range" id="moveTime" [(ngModel)]="gameConditions.moveTime" min="0" max="60"/>
   </div>
 
   <div class="match-mode">

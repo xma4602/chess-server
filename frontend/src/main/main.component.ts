@@ -28,18 +28,4 @@ export class MainComponent {
     this.gameConditionsList.push(new GameConditions(30, 20))
   }
 
-  getTileTitle(game: GameConditions): string {
-    return `${game.partyTime}+${game.moveTime}`
-  }
-
-  getTileSubtitle(game: GameConditions): string {
-    if (game.partyTime < 10) {
-      return 'Блитц'
-    } else if (game.partyTime < 30) {
-      return 'Рапид'
-    } else {
-      return 'Классика'
-    }
-  }
-
 }

@@ -4,6 +4,7 @@ import {Router} from '@angular/router';
 import {NgForOf, NgOptimizedImage, NgClass, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {GameConditionsService} from './game-conditions-service';
+import {GameRoomService} from '../game_room/game-room-service';
 
 @Component({
   selector: 'app-game-conditions',
@@ -19,7 +20,10 @@ export class GameConditionsComponent {
   matchModes: MatchMode[] = Object.values(MatchMode) as MatchMode[];
   figureColors: FigureColor[] = Object.values(FigureColor) as FigureColor[];
 
-  constructor(private router: Router, private gameConditionsService: GameConditionsService) {
+  constructor(private router: Router,
+              private gameConditionsService: GameConditionsService,
+              private gameRoomService: GameRoomService,
+  ) {
   }
 
   ngOnInit() {
@@ -30,7 +34,12 @@ export class GameConditionsComponent {
   }
 
   createGame() {
-
+    if (this.gameConditions) {
+      const roomId = this.gameRoomService.createGameRoomService(this.gameConditions) // Сохраняем состояние в сервисе
+      this.router.navigate([`/game-room/${roomId}`]);
+    } else {
+      console.error('gameConditions is null or undefined');
+    }
   }
 
   protected readonly TimeControl = TimeControl;
