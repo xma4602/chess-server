@@ -1,17 +1,18 @@
 import {FigureColor, GameConditions, MatchMode, TimeControl} from './game-conditions';
 import {Component, Input} from '@angular/core';
 import {Router} from '@angular/router';
-import {NgForOf, NgOptimizedImage, NgClass, NgIf} from '@angular/common';
+import {NgForOf, NgClass, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {GameConditionsService} from './game-conditions-service';
 import {GameRoomService} from '../game_room/game-room-service';
+import {HttpClientModule} from '@angular/common/http';
 
 @Component({
   selector: 'app-game-conditions',
   standalone: true,
   templateUrl: './game-conditions.component.html',
   styleUrls: ['./game-conditions.component.css'],
-  imports: [FormsModule, NgForOf, NgOptimizedImage, NgClass, NgIf],
+  imports: [FormsModule, NgForOf, NgClass, NgIf, HttpClientModule],
 })
 export class GameConditionsComponent {
   @Input()
@@ -27,16 +28,21 @@ export class GameConditionsComponent {
   }
 
   ngOnInit() {
-    let conditions = this.gameConditionsService.getGameConditions();
-    if (conditions !== null) {
-      this.gameConditions = conditions;
-    }
+    this.gameConditions = this.gameConditionsService.getGameConditions()!;
   }
 
-  createGame() {
+  createRoom() {
     if (this.gameConditions) {
-      const roomId = this.gameRoomService.createGameRoomService(this.gameConditions) // Сохраняем состояние в сервисе
-      this.router.navigate([`/game-room/${roomId}`]);
+      this.gameRoomService.createGameRoomService(this.gameConditions)
+        .subscribe(
+          (roomId) => {
+            console.log('ID созданной игровой комнаты:', roomId);
+            this.router.navigate([`/game-room/${roomId}`]);
+          },
+          (error) => {
+            console.error('Ошибка при создании игровой комнаты:', error);
+          }
+        );
     } else {
       console.error('gameConditions is null or undefined');
     }

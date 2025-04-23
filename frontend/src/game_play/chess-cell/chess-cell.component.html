@@ -1,0 +1,5 @@
+<div class="cell" [ngClass]="getCellClass()">
+  <ng-container *ngIf="figure">
+    <img [src]="figure.icon" width="50" alt="Chess Piece" />
+  </ng-container>
+</div>
