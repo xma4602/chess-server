@@ -1,0 +1,13 @@
+<div class="chess-board-container">
+  <div class="chess-board">
+    <div class="row" *ngFor="let rowIndex of getRowsIndexes()">
+      <app-chess-cell
+        #cell
+        (click)="onClick(cell)"
+        *ngFor="let colIndex of [0, 1, 2, 3, 4, 5, 6, 7]"
+        [id]="getCellId(rowIndex, colIndex)"
+        [isWhite]="(rowIndex + colIndex) % 2 === 0">
+      </app-chess-cell>
+    </div>
+  </div>
+</div>

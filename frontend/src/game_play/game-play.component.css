@@ -1,0 +1,41 @@
+.chess-board-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.column-labels {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 5px;
+}
+
+.column-labels span {
+  width: 50px; /* Ширина для соответствия ячейкам */
+  text-align: center;
+}
+
+.chess-board {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+}
+
+.row {
+  display: contents;
+}
+
+.row-label {
+  width: 50px; /* Ширина для соответствия ячейкам */
+  display: flex;
+  align-items: center; /* Центрирование по вертикали */
+}
+
+.row-label.left {
+  justify-content: flex-end; /* Прижать к правой стороне */
+  text-align: right; /* Прижать текст к правой стороне */
+}
+
+.row-label.right {
+  justify-content: flex-start; /* Прижать к левой стороне */
+  text-align: left; /* Прижать текст к левой стороне */
+}

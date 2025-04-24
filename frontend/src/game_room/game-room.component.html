@@ -17,17 +17,17 @@
 
   <div class="panel">
     <h2>Владелец игры</h2>
-    <p>{{ gameRoom.firstUser.username }}</p>
+    <p>{{ gameRoom.creatorLogin }}</p>
   </div>
 
-  <div class="panel" *ngIf="gameRoom.secondUser">
+  <div class="panel" *ngIf="gameRoom.opponentLogin">
     <h2>Гость игры</h2>
-    <p>{{ gameRoom.secondUser.username }}</p>
+    <p>{{ gameRoom.opponentLogin }}</p>
   </div>
 
   <div class="invite-link">
     <h3>Чтобы пригласить друга, отправьте ему эту ссылку:</h3>
-    <input type="text" [value]="gameRoom.getLink()" readonly />
+    <input type="text" [value]="gameRoom.getLink()" readonly/>
   </div>
 
   <div class="buttons">

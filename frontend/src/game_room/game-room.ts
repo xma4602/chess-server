@@ -1,19 +1,20 @@
 import {GameConditions} from '../game_conditions/game-conditions';
-import {User} from '../user/user';
-import {roomsBaseLink} from '../data.service';
+import {roomsUrl} from '../data.service';
 
 
 export class GameRoom {
   constructor(
     public id: string,
     public gameConditions: GameConditions,
-    public firstUser: User,
-    public secondUser?: User,
+    public creatorId: string,
+    public opponentId: string,
+    public creatorLogin: string,
+    public opponentLogin: string,
   ) {
   }
 
   getLink(): string {
-    return roomsBaseLink + this.id
+    return roomsUrl + this.id
   }
 
 }
