@@ -9,7 +9,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   datasource:
-    url: jdbc:postgresql://localhost:5432/chess_db
-    username: postgres
-    password: postgres
+    url: jdbc:postgresql://host.docker.internal:5432/chess_db
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
