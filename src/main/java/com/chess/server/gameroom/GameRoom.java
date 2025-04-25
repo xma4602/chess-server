@@ -1,9 +1,11 @@
 package com.chess.server.gameroom;
 
-import com.chess.server.gameconditions.FigureColor;
 import com.chess.server.gameconditions.GameConditions;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.UUID;
 
@@ -28,14 +30,6 @@ public class GameRoom {
         this.creatorId = creatorId;
         this.creatorLogin = creatorLogin;
         this.gameConditions = gameConditions;
-    }
-
-    public int getMoveTime() {
-        return gameConditions.getMoveTime();
-    }
-
-    public FigureColor getCreatorFigureColor() {
-        return gameConditions.getFigureColor();
     }
 
 }

@@ -27,8 +27,8 @@ public class StatisticService {
         statisticRepository.save(gameStatistic);
     }
 
-    private static long getDuration(String startDateTime) {
-        return Duration.between(LocalDateTime.parse(startDateTime), LocalDateTime.now()).toSeconds();
+    private static long getDuration(LocalDateTime startDateTime) {
+        return Duration.between(startDateTime, LocalDateTime.now()).toSeconds();
     }
 
     private GameResult getGameResultForCreator(UUID creatorId, UUID userId, GameResult gameState) {

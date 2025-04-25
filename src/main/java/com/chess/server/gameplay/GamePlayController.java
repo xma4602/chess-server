@@ -1,7 +1,8 @@
 package com.chess.server.gameplay;
 
-import com.chess.server.gameplay.dto.GameEnd;
-import com.chess.server.statistic.GameResult;
+import com.chess.engine.exceptions.ChessEngineIllegalArgumentException;
+import com.chess.engine.exceptions.ChessEngineIllegalStateException;
+import com.chess.server.gameplay.dto.GamePlayDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -9,8 +10,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 @Controller
@@ -19,8 +18,6 @@ import java.util.UUID;
 public class GamePlayController {
     private final GameplayService gameplayService;
     private final SimpMessagingTemplate messagingTemplate;
-    private final static String NOTHING = "ok";
-    private final static Map<UUID, Map.Entry<Object, Boolean>> waitMap = new HashMap<>();
 
     @PostMapping("/games")
     ResponseEntity<UUID> create(@RequestBody UUID roomId) {
@@ -35,65 +32,64 @@ public class GamePlayController {
     }
 
     @GetMapping("/games/{gameId}")
-    ResponseEntity<GamePlay> getGamePlay(@PathVariable UUID gameId) {
-        GamePlay gameplay = gameplayService.getGameplay(gameId);
+    ResponseEntity<GamePlayDto> getGamePlay(@PathVariable UUID gameId) {
+        GamePlayDto gameplay = gameplayService.getGamePlayDto(gameId);
         return ResponseEntity.ok(gameplay);
     }
 
-    @PostMapping("/games/action/{gameId}")
-    ResponseEntity<Boolean> action(@PathVariable UUID gameId,
+    @PostMapping("/games/{gameId}/action")
+    ResponseEntity<?> action(@PathVariable UUID gameId,
                                    @RequestParam UUID userId,
                                    @RequestBody String action) {
-        UUID notifiedUserId = gameplayService.makeAction(gameId, userId, action);
-        log.info("User ID(%s) in game ID(%s) made action %s".formatted(userId, gameId, action));
-        sendToUser(notifiedUserId, "/games/action", action);
-        return ResponseEntity.ok(true);
-    }
-
-    @PostMapping("/games/end/{gameId}")
-    ResponseEntity<String> endGame(@PathVariable UUID gameId,
-                                   @RequestParam UUID userId,
-                                   @RequestBody GameResult gameResult) {
-        GameEnd gameEnd = gameplayService.endGame(gameId, userId, gameResult);
-        log.info("Game ID(%s) ended by %s".formatted(gameId, gameResult));
-        sendToUser(gameEnd.getNotifiedUserId(), "/games/end", gameEnd.getGameResult());
-        return ResponseEntity.ok(NOTHING);
-    }
-
-    @GetMapping("/games/ask-draw/{gameId}")
-    ResponseEntity<Boolean> askDraw(@PathVariable UUID gameId, @RequestParam UUID userId)
-            throws InterruptedException {
-        UUID otherUserId = gameplayService.getOtherUserId(gameId, userId);
-        Object waiter = new Object();
-        waitMap.put(userId, Map.entry(waiter, false));
-        sendToUser(otherUserId, "/games/ask-draw", "ask-draw");
-        synchronized (waiter) {
-            waiter.wait();
+        try {
+            GamePlayDto gamePlayDto  = gameplayService.makeAction(gameId, userId, action);
+            log.info("User in made action: userId={}, gameId={}, action={}", userId, gameId, action);
+            String destination = String.format("/games/%s/action", gameId);
+            messagingTemplate.convertAndSend(destination, gamePlayDto);
+            return ResponseEntity.ok().build();
+        } catch (ChessEngineIllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (ChessEngineIllegalStateException e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
         }
-        boolean answer = waitMap.remove(userId).getValue();
-        return ResponseEntity.ok(answer);
+
     }
 
-    @PostMapping("/games/answer-draw/{gameId}")
-    ResponseEntity<String> answerDraw(@PathVariable UUID gameId,
-                                      @RequestParam UUID userId,
-                                      @RequestBody boolean answer) {
-        UUID otherUserId = gameplayService.getOtherUserId(gameId, userId);
-        Object waiter = waitMap.remove(otherUserId).getKey();
-        waitMap.put(otherUserId, Map.entry(waiter, answer));
-        synchronized (waiter) {
-            waiter.notifyAll();
-        }
-        return ResponseEntity.ok(NOTHING);
-    }
+//    @PostMapping("/games/end/{gameId}")
+//    ResponseEntity<String> endGame(@PathVariable UUID gameId,
+//                                   @RequestParam UUID userId,
+//                                   @RequestBody GameResult gameResult) {
+//        GameEnd gameEnd = gameplayService.endGame(gameId, userId, gameResult);
+//        log.info("Game ID(%s) ended by %s".formatted(gameId, gameResult));
+//        sendToUser(gameEnd.getNotifiedUserId(), "/games/end", gameEnd.getGameResult());
+//        return ResponseEntity.ok(NOTHING);
+//    }
 
+//    @GetMapping("/games/ask-draw/{gameId}")
+//    ResponseEntity<Boolean> askDraw(@PathVariable UUID gameId, @RequestParam UUID userId)
+//            throws InterruptedException {
+//        UUID otherUserId = gameplayService.getOtherUserId(gameId, userId);
+//        Object waiter = new Object();
+//        waitMap.put(userId, Map.entry(waiter, false));
+//        sendToUser(otherUserId, "/games/ask-draw", "ask-draw");
+//        synchronized (waiter) {
+//            waiter.wait();
+//        }
+//        boolean answer = waitMap.remove(userId).getValue();
+//        return ResponseEntity.ok(answer);
+//    }
 
-    private void sendToUser(UUID userId, String destination, Object payload) {
-        sendToUser(userId.toString(), destination, payload);
-    }
+//    @PostMapping("/games/answer-draw/{gameId}")
+//    ResponseEntity<String> answerDraw(@PathVariable UUID gameId,
+//                                      @RequestParam UUID userId,
+//                                      @RequestBody boolean answer) {
+//        UUID otherUserId = gameplayService.getOtherUserId(gameId, userId);
+//        Object waiter = waitMap.remove(otherUserId).getKey();
+//        waitMap.put(otherUserId, Map.entry(waiter, answer));
+//        synchronized (waiter) {
+//            waiter.notifyAll();
+//        }
+//        return ResponseEntity.ok(NOTHING);
+//    }
 
-    private void sendToUser(String user, String destination, Object payload) {
-        messagingTemplate.convertAndSendToUser(user, destination, payload);
-        log.info("Send to user(%s) at destination(%s) with payload(%s)".formatted(user, destination, payload));
-    }
 }

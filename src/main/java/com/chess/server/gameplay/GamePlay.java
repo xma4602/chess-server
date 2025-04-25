@@ -1,13 +1,10 @@
 package com.chess.server.gameplay;
 
 import com.chess.server.gameconditions.GameConditions;
-import com.chess.server.gameroom.GameRoom;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -15,9 +12,10 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GamePlay {
+public class GamePlay implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
@@ -26,20 +24,11 @@ public class GamePlay {
     private String creatorLogin;
     private String opponentLogin;
     private UUID activeUserId;
-    private String startDateTime;
-    private boolean ended;
-    @ManyToOne
+    @Builder.Default
+    private LocalDateTime startDateTime = LocalDateTime.now();
+    @Builder.Default
+    private boolean ended = false;
+    @OneToOne
     @JoinColumn(name = "game_conditions_id")
     private GameConditions gameConditions;
-
-    public GamePlay(GameRoom gameRoom) {
-        this.creatorId = gameRoom.getCreatorId();
-        this.opponentId = gameRoom.getOpponentId();
-        this.creatorLogin = gameRoom.getCreatorLogin();
-        this.opponentLogin = gameRoom.getOpponentLogin();
-        this.gameConditions = gameRoom.getGameConditions();
-        startDateTime = LocalDateTime.now().toString();
-        ended = false;
-    }
-
 }
