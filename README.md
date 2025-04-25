@@ -9,7 +9,7 @@
 ```bash
 cd frontend
 npm install
-ng build --configuration frontend
+npm run build --configuration frontend
 ```
 
 У тебя появится папка `dist/<название-проекта>/`, которую можно будет отдавать через Nginx.

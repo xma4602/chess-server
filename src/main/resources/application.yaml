@@ -11,5 +11,4 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/chess_db
     username: postgres
-    password: GfhjkmPostgre13
     driver-class-name: org.postgresql.Driver
