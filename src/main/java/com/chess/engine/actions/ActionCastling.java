@@ -1,5 +1,6 @@
 package com.chess.engine.actions;
 
+import com.chess.engine.FigureColor;
 import com.chess.engine.Position;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -34,25 +35,25 @@ public class ActionCastling extends Action {
                 rookStartPosition.offset(0, -2); //движется вправо
     }
 
-    public static Optional<ActionCastling> parse(String action, boolean isWhite) {
+    public static Optional<ActionCastling> parse(String action, FigureColor figureColor) {
         Matcher matcher = castlingPattern.matcher(action);
         return Optional.ofNullable(
                 !matcher.find() ?
                         null :
                         (matcher.group(1) == null ?
-                                ActionCastling.left(isWhite) :
-                                ActionCastling.right(isWhite))
+                                ActionCastling.left(figureColor) :
+                                ActionCastling.right(figureColor))
         );
     }
 
-    private static ActionCastling right(boolean isWhite) {
-        return isWhite ?
+    private static ActionCastling right(FigureColor figureColor) {
+        return figureColor.isWhite() ?
                 new ActionCastling(Position.of("e1"), Position.of("h1")) :
                 new ActionCastling(Position.of("e8"), Position.of("h8"));
     }
 
-    private static ActionCastling left(boolean isWhite) {
-        return isWhite ?
+    private static ActionCastling left(FigureColor figureColor) {
+        return figureColor.isWhite()  ?
                 new ActionCastling(Position.of("e1"), Position.of("a1")) :
                 new ActionCastling(Position.of("e8"), Position.of("a8"));
     }

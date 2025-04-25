@@ -9,16 +9,17 @@ import java.util.List;
 @RequiredArgsConstructor
 @Getter
 public enum FigureType {
-    NONE(0, 'X', '◼', '◻', "Пусто"),
-    PAWN(1, 'P', '♟', '♙', "Пешка"),
-    KNIGHT(2, 'N', '♞', '♘', "Конь"),
-    BISHOP(3, 'B', '♝', '♗', "Слон"),
-    ROOK(4, 'R', '♜', '♖', "Ладья"),
-    QUEEN(5, 'Q', '♛', '♕', "Ферзь"),
-    KING(6, 'K', '♚', '♔', "Король");
+    NONE("NONE", 0, 'X', '◼', '◻', "Пусто"),
+    PAWN("PAWN", 1, 'P', '♟', '♙', "Пешка"),
+    KNIGHT("KNIGHT", 2, 'N', '♞', '♘', "Конь"),
+    BISHOP("BISHOP", 3, 'B', '♝', '♗', "Слон"),
+    ROOK("ROOK", 4, 'R', '♜', '♖', "Ладья"),
+    QUEEN("QUEEN", 5, 'Q', '♛', '♕', "Ферзь"),
+    KING("KING", 6, 'K', '♚', '♔', "Король");
 
     private static final List<FigureType> swapTypes = List.of(KNIGHT, BISHOP, ROOK, QUEEN);
 
+    private final String id;
     private final int code;
     private final char notationChar;
     private final char imageWhiteChar;

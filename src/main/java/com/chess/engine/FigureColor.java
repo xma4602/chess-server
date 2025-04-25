@@ -1,16 +1,28 @@
 package com.chess.engine;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
 public enum FigureColor {
-    WHITE, BLACK;
+    WHITE("WHITE"),
+    BLACK("BLACK"),
+    RANDOM("RANDOM");
 
     public static final FigureColor DEFAULT = WHITE;
 
+    private final String id;
     public boolean isWhite() {
         return this == WHITE;
     }
 
     public FigureColor reverseColor(){
         return this == WHITE ? BLACK : WHITE;
+    }
+
+    public static FigureColor randomValue() {
+        return System.currentTimeMillis() % 2 == 0 ? WHITE : BLACK;
     }
 
 }

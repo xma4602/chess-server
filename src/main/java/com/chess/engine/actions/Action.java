@@ -43,7 +43,7 @@ public abstract class Action {
         return new ActionCastling(kingPosition, rookPosition);
     }
 
-    public static Optional<? extends Action> parse(String actionString, boolean playerColor) {
+    public static Optional<? extends Action> parse(String actionString, FigureColor playerColor) {
         Optional<? extends Action> action;
 
         action = ActionMove.parse(actionString);

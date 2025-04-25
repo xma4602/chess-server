@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class GameEngine {
     private final Board board;
     private final List<String> movedActions;
-    private boolean activePlayerColor;
+    private FigureColor activePlayerColor;
     private GameState gameState;
     private List<Action> whiteActions;
     private List<Action> blackActions;
@@ -30,16 +30,7 @@ public class GameEngine {
 
     public GameEngine() {
         board = Board.newBoard();
-        activePlayerColor = true;
-        movedActions = new ArrayList<>();
-        whiteActions = CheckmateResolver.calcActions(board, FigureColor.WHITE);
-        blackActions = CheckmateResolver.calcActions(board, FigureColor.BLACK);
-        updateGameState();
-    }
-
-    public GameEngine(Board board, boolean activePlayerColor) {
-        this.board = board;
-        this.activePlayerColor = activePlayerColor;
+        activePlayerColor = FigureColor.WHITE;
         movedActions = new ArrayList<>();
         whiteActions = CheckmateResolver.calcActions(board, FigureColor.WHITE);
         blackActions = CheckmateResolver.calcActions(board, FigureColor.BLACK);
@@ -60,7 +51,7 @@ public class GameEngine {
         return gameState == GameState.CONTINUES;
     }
 
-    public boolean getActivePlayerColor() {
+    public FigureColor getActivePlayerColor() {
         return activePlayerColor;
     }
 
@@ -85,8 +76,8 @@ public class GameEngine {
         return board.getCellColor(Position.of(cellPosition));
     }
 
-    public List<Action> getActionsByPlayerColor(boolean isWhite) {
-        return isWhite ? whiteActions : blackActions;
+    public List<Action> getActionsByPlayerColor(FigureColor figureColor) {
+        return figureColor.isWhite() ? whiteActions : blackActions;
     }
 
     public List<Action> getActionsByPosition(String cellPosition) throws ChessEngineIllegalArgumentException {
@@ -103,11 +94,11 @@ public class GameEngine {
 
     // Game Actions -------------------------------------------------------------------------------
 
-    public Action getActionBy(boolean playerColor, String startPosition, String endPosition) throws ChessEngineIllegalStateException, ChessEngineIllegalArgumentException {
+    public Action getActionBy(FigureColor playerColor, String startPosition, String endPosition) throws ChessEngineIllegalStateException, ChessEngineIllegalArgumentException {
         verifyGameEnd();
         verifyPlayerMoveOrder(playerColor);
 
-        List<Action> actions = activePlayerColor ? whiteActions : blackActions;
+        List<Action> actions = activePlayerColor == FigureColor.WHITE ? whiteActions : blackActions;
         Optional<Action> actionOpt = findActionBy(actions, startPosition, endPosition);
 
         return actionOpt.orElseThrow(
@@ -115,21 +106,17 @@ public class GameEngine {
         );
     }
 
-    public Optional<Action> parseActionString(boolean playerColor, String actionString) {
-        return Action.parse(actionString, playerColor).map(action -> (Action) action);
-    }
-
-    public void makeAction(boolean playerColor, Action action) throws ChessEngineIllegalArgumentException, ChessEngineIllegalStateException {
+    public void makeAction(FigureColor playerColor, Action action) throws ChessEngineIllegalArgumentException, ChessEngineIllegalStateException {
         verifyGameEnd();
         verifyPlayerMoveOrder(playerColor);
 
-        List<Action> actions = activePlayerColor ? whiteActions : blackActions;
+        List<Action> actions = activePlayerColor == FigureColor.WHITE ? whiteActions : blackActions;
 
         if (!actions.contains(action)) {
             throw new ChessEngineIllegalArgumentException("Игрок не может сделать такой ход");
         } else {
             board.executeAction(action);
-            activePlayerColor = !activePlayerColor;
+            activePlayerColor = activePlayerColor.reverseColor();
 
             whiteActions = CheckmateResolver.calcActions(board, FigureColor.WHITE);
             blackActions = CheckmateResolver.calcActions(board, FigureColor.BLACK);
@@ -160,16 +147,16 @@ public class GameEngine {
         }
     }
 
-    private void verifyPlayerMoveOrder(boolean playerColor) throws ChessEngineIllegalStateException {
+    private void verifyPlayerMoveOrder(FigureColor playerColor) throws ChessEngineIllegalStateException {
         if (activePlayerColor != playerColor) {
-            throw new ChessEngineIllegalStateException("Сейчас ходят " + (activePlayerColor ? "белые" : "черные"));
+            throw new ChessEngineIllegalStateException("Сейчас ходят " + (activePlayerColor.isWhite() ? "белые" : "черные"));
         }
     }
 
     private void updateGameState() {
-        if (activePlayerColor && whiteActions.isEmpty()) {
+        if (activePlayerColor == FigureColor.WHITE && whiteActions.isEmpty()) {
             gameState = GameState.BLACK_WIN;
-        } else if (!activePlayerColor && blackActions.isEmpty()) {
+        } else if (activePlayerColor == FigureColor.BLACK && blackActions.isEmpty()) {
             gameState = GameState.WHITE_WIN;
         } else gameState = GameState.CONTINUES;
     }
