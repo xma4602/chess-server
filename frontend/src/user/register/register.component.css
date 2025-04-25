@@ -1,0 +1,61 @@
+/* Общие стили для заголовка */
+h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Стили для формы */
+.registration-form {
+  max-width: 400px; /* Максимальная ширина формы */
+  margin: 0 auto; /* Центрирование формы */
+  padding: 20px; /* Внутренние отступы */
+  border: 1px solid #ccc; /* Рамка */
+  border-radius: 5px; /* Закругленные углы */
+  background-color: #f9f9f9; /* Цвет фона */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Тень */
+}
+
+/* Стили для полей ввода */
+.registration-form input[type="text"],
+.registration-form input[type="password"] {
+  width: 100%; /* Ширина 100% */
+  padding: 10px; /* Внутренние отступы */
+  margin: 10px 0; /* Отступы сверху и снизу */
+  border: 1px solid #ccc; /* Рамка */
+  border-radius: 4px; /* Закругленные углы */
+  box-sizing: border-box; /* Учет рамки и отступов в ширине */
+}
+
+/* Стили для кнопки */
+.registration-form button {
+  width: 100%; /* Ширина 100% */
+  padding: 10px; /* Внутренние отступы */
+  background-color: #4CAF50; /* Зеленый цвет */
+  color: white; /* Цвет текста */
+  border: none; /* Без рамки */
+  border-radius: 4px; /* Закругленные углы */
+  cursor: pointer; /* Указатель при наведении */
+  font-size: 16px; /* Размер шрифта */
+}
+
+/* Эффект при наведении на кнопку */
+.registration-form button:hover {
+  background-color: #45a049; /* Темнее зеленый при наведении */
+}
+
+/* Стили для параграфа */
+p {
+  text-align: center; /* Центрирование текста */
+  margin-top: 15px; /* Отступ сверху */
+}
+
+/* Стили для ссылок */
+a {
+  color: #4CAF50; /* Цвет ссылки */
+  text-decoration: none; /* Без подчеркивания */
+}
+
+a:hover {
+  text-decoration: underline; /* Подчеркивание при наведении */
+}

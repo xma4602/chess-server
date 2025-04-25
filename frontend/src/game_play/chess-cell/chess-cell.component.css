@@ -8,13 +8,25 @@
 }
 
 .white {
-  background-color: #eed4ac; /* Молочно-белый цвет */
+  background-color: #eed4ac;
 }
 
 .black {
-  background-color: #ac7d58; /* Темно-бежевый цвет */
+  background-color: #ac7d58;
 }
 
 .selected {
-  background-color: #4b4ef6; /* Темно-бежевый цвет */
+  background-color: #4b4ef6;
+}
+
+.eat {
+  background-color: #eb4545;
+}
+
+.move {
+  background-color: #4aae48;
+}
+
+.swap {
+  background-color: #9b71f4;
 }

@@ -3,13 +3,13 @@ import {NgForOf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
 import {ActivatedRoute, Router} from '@angular/router';
-import {GamePlayService} from './game-play-service';
-import {StompService} from '../stomp.service';
 import {GamePlay} from './game-play';
 import {IMessage} from '@stomp/stompjs';
 import {ChessCellComponent} from './chess-cell/chess-cell.component';
 import {Figure} from './figure';
-import {FigureColor} from '../game_conditions/game-conditions';
+import {FigureColor, GameConditions} from '../game_conditions/game-conditions';
+import {ActionType, GameAction} from './game-action';
+import {UserService} from '../user/user-service';
 
 @Component({
   selector: 'app-game-play',
@@ -20,29 +20,65 @@ import {FigureColor} from '../game_conditions/game-conditions';
 })
 export class GamePlayComponent {
   @ViewChildren(ChessCellComponent) cells!: QueryList<ChessCellComponent>;
-  private gamePlay?: GamePlay = new GamePlay(
+  private gamePlay: GamePlay = new GamePlay(
     'game123',
     'user1',
     'user2',
     'CreatorLogin',
     'OpponentLogin',
-    true,
-    FigureColor.WHITE,
-    30,
-    new Date().toISOString(),
-    false
+    new GameConditions(5, 3, FigureColor.WHITE),
+    [
+      new GameAction('e2-e4', ActionType.MOVE, 'e2', 'e4')
+    ],
+    [],
+    new Map([
+      ['a8', 'BLACK_ROOK'],
+      ['b8', 'BLACK_KNIGHT'],
+      ['c8', 'BLACK_BISHOP'],
+      ['d8', 'BLACK_QUEEN'],
+      ['e8', 'BLACK_KING'],
+      ['f8', 'BLACK_BISHOP'],
+      ['g8', 'BLACK_KNIGHT'],
+      ['h8', 'BLACK_ROOK'],
+      ['a7', 'BLACK_PAWN'],
+      ['b7', 'BLACK_PAWN'],
+      ['c7', 'BLACK_PAWN'],
+      ['d7', 'BLACK_PAWN'],
+      ['e7', 'BLACK_PAWN'],
+      ['f7', 'BLACK_PAWN'],
+      ['g7', 'BLACK_PAWN'],
+      ['h7', 'BLACK_PAWN'],
+      ['a1', 'WHITE_ROOK'],
+      ['b1', 'WHITE_KNIGHT'],
+      ['c1', 'WHITE_BISHOP'],
+      ['d1', 'WHITE_QUEEN'],
+      ['e1', 'WHITE_KING'],
+      ['f1', 'WHITE_BISHOP'],
+      ['g1', 'WHITE_KNIGHT'],
+      ['h1', 'WHITE_ROOK'],
+      ['a2', 'WHITE_PAWN'],
+      ['b2', 'WHITE_PAWN'],
+      ['c2', 'WHITE_PAWN'],
+      ['d2', 'WHITE_PAWN'],
+      ['e2', 'WHITE_PAWN'],
+      ['f2', 'WHITE_PAWN'],
+      ['g2', 'WHITE_PAWN'],
+      ['h2', 'WHITE_PAWN'],
+    ])
   );
-  private cell?: ChessCellComponent
-  private reverse: boolean = false;
+  private selectedCell: ChessCellComponent | null = null;
 
   constructor(private router: Router,
               private route: ActivatedRoute,
+              private userService: UserService,
               // private gamePlayService: GamePlayService,
               // private stompService: StompService
   ) {
   }
 
   ngOnInit() {
+    this.selectedCell = null
+
     // this.route.paramMap.subscribe(params => {
     //   const gameId = params.get('id')!;
     //   this.gamePlayService.getGamePlay(gameId).subscribe(
@@ -53,50 +89,27 @@ export class GamePlayComponent {
     //   this.stompService.stompClient.subscribe(`/games/${gameId}/action`, this.onAction)
     //
     // })
+
   }
 
   ngAfterViewInit() {
     setTimeout(() => {
-      this.initFigures();
+      for (let cell of this.gamePlay.figures) {
+        const figure = Figure.getAllFigures().find(f => f.code === cell[1])!;
+        this.setPieceInCell(cell[0], figure)
+      }
     });
   }
 
-  private initFigures() {
-    // Устанавливаем фигуры для черных
-    this.setPieceInCell('a8', Figure.B_ROOK);
-    this.setPieceInCell('b8', Figure.B_KNIGHT);
-    this.setPieceInCell('c8', Figure.B_BISHOP);
-    this.setPieceInCell('d8', Figure.B_QUEEN);
-    this.setPieceInCell('e8', Figure.B_KING);
-    this.setPieceInCell('f8', Figure.B_BISHOP);
-    this.setPieceInCell('g8', Figure.B_KNIGHT);
-    this.setPieceInCell('h8', Figure.B_ROOK);
-
-    // Устанавливаем пешки для черных
-    for (let i = 0; i < 8; i++) {
-      const cellId = String.fromCharCode(97 + i) + '7'; // 'a7', 'b7', ..., 'h7'
-      this.setPieceInCell(cellId, Figure.B_PAWN);
-    }
-
-    // Устанавливаем фигуры для белых
-    this.setPieceInCell('a1', Figure.W_ROOK);
-    this.setPieceInCell('b1', Figure.W_KNIGHT);
-    this.setPieceInCell('c1', Figure.W_BISHOP);
-    this.setPieceInCell('d1', Figure.W_QUEEN);
-    this.setPieceInCell('e1', Figure.W_KING);
-    this.setPieceInCell('f1', Figure.W_BISHOP);
-    this.setPieceInCell('g1', Figure.W_KNIGHT);
-    this.setPieceInCell('h1', Figure.W_ROOK);
-
-    // Устанавливаем пешки для белых
-    for (let i = 0; i < 8; i++) {
-      const cellId = String.fromCharCode(97 + i) + '2'; // 'a2', 'b2', ..., 'h2'
-      this.setPieceInCell(cellId, Figure.W_PAWN);
-    }
-  }
-
   getRowsIndexes() {
-    return this.reverse ? [0, 1, 2, 3, 4, 5, 6, 7] : [7, 6, 5, 4, 3, 2, 1, 0]
+    let reverse
+    if (this.userService.user!.id == this.gamePlay.creatorId) {
+      reverse = this.gamePlay.gameConditions.figureColor == FigureColor.BLACK
+    } else {
+      reverse = this.gamePlay.gameConditions.figureColor == FigureColor.WHITE
+    }
+
+    return reverse ? [0, 1, 2, 3, 4, 5, 6, 7] : [7, 6, 5, 4, 3, 2, 1, 0]
   }
 
   // Метод для установки фигуры в ячейку по id
@@ -106,7 +119,7 @@ export class GamePlayComponent {
   }
 
   private onAction(message: IMessage) {
-
+    this.gamePlay = JSON.parse(message.body)
   }
 
   getCellId(rowIndex: number, colIndex: number): string {
@@ -114,17 +127,113 @@ export class GamePlayComponent {
     return `${columnLetter}${rowIndex + 1}`; // Формат: a1, b1, ..., h8
   }
 
-  getColumnLabel(colIndex: number): string {
-    return String.fromCharCode(97 + colIndex); // 'a' + colIndex
+  onClick(newSelectedCell: ChessCellComponent) {
+    console.log(`selectedCell: ${this.selectedCell?.id ?? 'null'}, clicked cell: ${newSelectedCell.id}`);
+
+    if (this.selectedCell === null) {
+      if (newSelectedCell.figure !== null) {
+        this.selectedCell = newSelectedCell
+        this.selectedCell.isSelected = true
+        this.viewActions(this.selectedCell)
+        console.log('1')
+      } else {
+        this.selectedCell = newSelectedCell
+        this.selectedCell.isSelected = true
+        console.log('2')
+      }
+    } else {
+      const action = this.findAction(this.selectedCell, newSelectedCell);
+      if (action !== null) {
+        this.executeAction(action)
+        console.log('3')
+      } else {
+        this.selectedCell.isSelected = false
+        this.selectedCell = newSelectedCell
+        this.selectedCell.isSelected = true
+        this.viewActions(this.selectedCell)
+        console.log('4')
+      }
+    }
   }
 
-  onClick(selectedCell: ChessCellComponent) {
-    console.log('Clicked cell:', selectedCell.id);
-    selectedCell.select(true)
-    this.cells.forEach(cell => {
-      if (cell !== selectedCell) {
-        cell.select(false); // Снимаем выделение
+  private executeAction(action: GameAction) {
+
+  }
+
+  private findAction(selectedCell: ChessCellComponent, newSelectedCell: ChessCellComponent) {
+    for (let action of this.getActionForCurrentUser()) {
+      if (action.startPosition === selectedCell.id
+        && (action.endPosition == newSelectedCell.id || action.eatenPosition == newSelectedCell.id)) {
+        return action
       }
-    });
+    }
+    return null
+  }
+
+  getActionForCurrentUser() {
+    if (this.userService.user!.id == this.gamePlay.creatorId) {
+      return this.gamePlay.gameConditions.figureColor == FigureColor.WHITE ?
+        this.gamePlay.whiteActions : this.gamePlay.blackActions
+    } else {
+      return this.gamePlay.gameConditions.figureColor == FigureColor.WHITE ?
+        this.gamePlay.blackActions : this.gamePlay.whiteActions
+    }
+  }
+
+  private findActions(selectedCell: ChessCellComponent) {
+    const actions: GameAction[] = []
+    for (let action of this.getActionForCurrentUser()) {
+      if (action.startPosition === selectedCell.id) {
+        actions.push(action)
+      }
+    }
+    return actions
+  }
+
+  private viewActions(selectedCell: ChessCellComponent) {
+    this.clearViewActions(selectedCell)
+    const actions = this.findActions(selectedCell);
+    for (let action of actions) {
+      this.viewAction(action)
+    }
+  }
+
+  private viewAction(action: GameAction) {
+    switch (action.actionType) {
+      case ActionType.MOVE: {
+        const moveCell = this.cells.find(cell => cell.id === action.endPosition);
+        moveCell!.isMove = true;
+      }
+        break;
+      case ActionType.EAT: {
+        const eatenCell = this.cells.find(cell => cell.id === action.eatenPosition);
+        eatenCell!.isEat = true;
+      }
+        break;
+      case ActionType.TAKING: {
+        const eatenCell = this.cells.find(cell => cell.id === action.eatenPosition);
+        const moveCell = this.cells.find(cell => cell.id === action.endPosition);
+        moveCell!.isMove = true;
+        eatenCell!.isEat = true;
+      }
+        break;
+      case ActionType.CASTLING: {
+        const moveCell = this.cells.find(cell => cell.id === action.rookStartPosition);
+        moveCell!.isMove = true;
+      }
+        break;
+      case ActionType.SWAP: {
+        const moveCell = this.cells.find(cell => cell.id === action.endPosition);
+        moveCell!.isSwap = true;
+      }
+    }
+  }
+
+  private clearViewActions(selectedCell: ChessCellComponent) {
+    for (let cell of this.cells) {
+      if (cell.id !== selectedCell.id) {
+        cell.clear()
+      }
+    }
   }
 }

@@ -3,11 +3,11 @@ import {MainComponent} from '../main/main.component';
 import {GameConditionsComponent} from '../game_conditions/game-conditions.component';
 import {GameRoomComponent} from '../game_room/game-room.component';
 import {GamePlayComponent} from '../game_play/game-play.component';
+import {LoginComponent} from '../user/login/login.component';
 
 export const routes: Routes = [
-  // {path: "", component: MainComponent},
-  {path: "", component: GamePlayComponent},
-
+  {path: "", component: LoginComponent},
+  {path: "main", component: MainComponent},
   {path: 'game-conditions', component: GameConditionsComponent},
   { path: 'game-room/:id', component: GameRoomComponent },
   { path: 'game-play/:id', component: GamePlayComponent },
