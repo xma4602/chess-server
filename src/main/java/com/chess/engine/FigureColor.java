@@ -3,9 +3,11 @@ package com.chess.engine;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.io.Serializable;
+
 @Getter
 @RequiredArgsConstructor
-public enum FigureColor {
+public enum FigureColor implements Serializable {
     WHITE("WHITE"),
     BLACK("BLACK"),
     RANDOM("RANDOM");

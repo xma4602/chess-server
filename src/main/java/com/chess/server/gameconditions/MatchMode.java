@@ -1,6 +1,8 @@
 package com.chess.server.gameconditions;
 
-public enum MatchMode {
+import java.io.Serializable;
+
+public enum MatchMode implements Serializable {
     FRIENDLY,
     RATING
 }
