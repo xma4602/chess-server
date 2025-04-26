@@ -24,6 +24,16 @@ export class Figure {
   static readonly B_PAWN = new Figure('BLACK_PAWN', 'P', FigureColor.BLACK, 'assets/chess/b_pawn.png');
   static readonly W_PAWN = new Figure('WHITE_PAWN', 'P', FigureColor.WHITE, 'assets/chess/w_pawn.png');
 
+
+  static fromCode(code: string) {
+    for (let fig of this.getAllFigures()) {
+      if (fig.code === code) {
+        return fig
+      }
+    }
+    return null
+  }
+
   // Метод для получения всех фигур
   static getAllFigures() {
     return [
