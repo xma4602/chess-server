@@ -6,6 +6,7 @@ import {FormsModule} from '@angular/forms';
 import {GameConditionsService} from './game-conditions-service';
 import {GameRoomService} from '../game_room/game-room-service';
 import {HttpClientModule} from '@angular/common/http';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-game-conditions',
@@ -24,6 +25,7 @@ export class GameConditionsComponent {
   constructor(private router: Router,
               private gameConditionsService: GameConditionsService,
               private gameRoomService: GameRoomService,
+              private snackBar: MatSnackBar
   ) {
   }
 
@@ -41,6 +43,7 @@ export class GameConditionsComponent {
           },
           (error) => {
             console.error('Ошибка при создании игровой комнаты:', error);
+            this.openSnackBar('Login failed: ' + error, 'Close');
           }
         );
     } else {
@@ -49,4 +52,10 @@ export class GameConditionsComponent {
   }
 
   protected readonly TimeControl = TimeControl;
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000, // Время отображения в миллисекундах
+    });
+  }
 }

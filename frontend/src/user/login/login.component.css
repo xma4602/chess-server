@@ -1,0 +1,67 @@
+/* Общие стили для страницы */
+h2 {
+  text-align: center;
+  color: #333;
+}
+
+form {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background-color: #4CAF50; /* Зеленый цвет */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #45a049; /* Темнее зеленый при наведении */
+}
+
+p {
+  text-align: center;
+  margin-top: 15px;
+}
+
+a {
+  color: #4CAF50; /* Цвет ссылки */
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline; /* Подчеркивание при наведении */
+}
+
+/* Стили для прозрачного квадратика */
+.transparent-square {
+  display: inline-block; /* Позволяет задать размеры */
+  width: 30px; /* Ширина квадратика */
+  height: 30px; /* Высота квадратика */
+  background-color: rgba(0, 0, 0, 0.2); /* Полупрозрачный черный цвет */
+  cursor: pointer; /* Указатель при наведении */
+  border-radius: 4px; /* Закругленные углы (по желанию) */
+  position: absolute; /* Абсолютное позиционирование */
+  bottom: 10px; /* Отступ от нижней грани формы */
+  right: 10px; /* Отступ от правой грани формы */
+}

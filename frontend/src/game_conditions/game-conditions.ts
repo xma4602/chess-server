@@ -2,11 +2,12 @@ export class GameConditions {
   constructor(
     public partyTime: number,
     public moveTime: number,
+    public figureColor: FigureColor = FigureColor.RANDOM,
     public id: string = '',
     public subtitle = '',
     public timeControl: TimeControl = TimeControl.WATCH,
     public matchMode: MatchMode = MatchMode.FRIENDLY,
-    public figureColor: FigureColor = FigureColor.RANDOM) {
+  ) {
   }
 
   getTileTitle(): string {
@@ -35,9 +36,13 @@ export enum MatchMode {
   RATING = 'Рейтинговая'
 }
 
-export enum FigureColor {
-  WHITE = 'Белые',
-  BLACK = 'Черные',
-  RANDOM = 'Случайные'
+export class FigureColor {
+  private constructor(private code: string,
+                      private title: string) {
+  }
+
+  static readonly WHITE = new FigureColor('WHITE', 'Белые')
+  static readonly BLACK = new FigureColor('BLACK', 'Черные')
+  static readonly RANDOM = new FigureColor('RANDOM', 'Случайные')
 }
 
