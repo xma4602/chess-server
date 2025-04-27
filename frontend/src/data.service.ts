@@ -1,5 +1,5 @@
 const http = 'https://';
-const ws = 'ws://';
+const wss = 'ws://';
 const serverHost = 'chess-server-gvgy.onrender.com';
 const frontHost = 'chess-frontend-wpc3.onrender.com';
 const appPrefix = '/chess';
