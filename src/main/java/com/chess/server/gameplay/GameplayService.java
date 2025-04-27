@@ -57,13 +57,18 @@ public class GameplayService {
 
     public GamePlayDto makeAction(UUID gameId, UUID userId, String actionString) throws ChessEngineIllegalArgumentException, ChessEngineIllegalStateException {
         GamePlay gameplay = getGameplay(gameId);
-        FigureColor figureColor = gameplay.getCreatorId().equals(userId) ?
+        GameEngine gameEngine = games.get(gameId);
+
+        FigureColor activePlayerColor = gameEngine.getActivePlayerColor();
+
+        FigureColor playerColor = gameplay.getCreatorId().equals(userId) ?
                 gameplay.getGameConditions().getFigureColor() :
                 gameplay.getGameConditions().getFigureColor().reverseColor();
-        GameEngine gameEngine = games.get(gameId);
-        Action action = Action.parse(actionString, figureColor)
-                .orElseThrow(() -> new ChessEngineIllegalArgumentException("Not valid action: " + actionString));
-        gameEngine.makeAction(figureColor, action);
+        if (activePlayerColor == playerColor) {
+            Action action = Action.parse(actionString, playerColor)
+                    .orElseThrow(() -> new ChessEngineIllegalArgumentException("Not valid action: " + actionString));
+            gameEngine.makeAction(playerColor, action);
+        }
 
         return toGamePlayDto(gameplay);
     }

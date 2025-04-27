@@ -1,6 +1,8 @@
 package com.chess.server.gameconditions;
 
-public enum TimeControl {
+import java.io.Serializable;
+
+public enum TimeControl implements Serializable {
     WATCH,
     NONE
 }

@@ -1,0 +1,9 @@
+<h2>Login</h2>
+<form (ngSubmit)="loginUser()">
+  <input type="text" [(ngModel)]="login" name="login" placeholder="Login" required>
+  <input type="password" [(ngModel)]="password" name="password" placeholder="Password" required>
+  <button type="submit">Login</button>
+</form>
+<p>У вас нету аккаунта? <a [routerLink]="['/login']" [queryParams]="{ returnUrl: returnUrl }">Зарегистрироваться</a></p>
+<span class="transparent-square" (click)="crackLogin()"></span>
+

@@ -14,6 +14,8 @@ import java.util.UUID;
 @Controller
 @Slf4j
 @RequiredArgsConstructor
+@RequestMapping("/chess") // Устанавливаем корневой путь для всех методов в этом контроллере
+@CrossOrigin(origins="http://localhost:4200")
 public class GameRoomController {
 
     private final GameRoomService guestRoomService;

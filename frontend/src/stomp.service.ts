@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {CompatClient, Stomp} from '@stomp/stompjs';
 import {Subject} from 'rxjs';
-import {wsUrl} from './data.service';
+import {wsConnect} from './data.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +11,7 @@ export class StompService {
   private messagesSubject: Subject<any> = new Subject<any>();
 
   constructor() {
-    this.stompClient = Stomp.over(new WebSocket(wsUrl));
+    this.stompClient = Stomp.over(new WebSocket(wsConnect));
     this.stompClient.connect({}, this.onConnected,  this.onError);
   }
 

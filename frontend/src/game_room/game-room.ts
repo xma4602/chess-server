@@ -1,5 +1,5 @@
-import {GameConditions} from '../game_conditions/game-conditions';
-import {roomsUrl} from '../data.service';
+import {GameConditions, GameConditionsDto} from '../game_conditions/game-conditions';
+import {roomsLink, restRooms} from '../data.service';
 
 
 export class GameRoom {
@@ -14,7 +14,19 @@ export class GameRoom {
   }
 
   getLink(): string {
-    return roomsUrl + this.id
+    return `${roomsLink}/${this.id}`
   }
 
+}
+
+export class GameRoomDto {
+  constructor(
+    public id: string,
+    public gameConditions: GameConditionsDto,
+    public creatorId: string,
+    public opponentId: string,
+    public creatorLogin: string,
+    public opponentLogin: string,
+  ) {
+  }
 }

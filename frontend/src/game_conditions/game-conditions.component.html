@@ -3,7 +3,7 @@
 
   <label for="timeControl">Контроль времени:</label>
   <select id="timeControl" [(ngModel)]="gameConditions.timeControl">
-    <option *ngFor="let control of timeControls" [value]="control">{{ control }}</option>
+    <option *ngFor="let control of timeControls" [value]="control">{{ control.title }}</option>
   </select>
 
   <!-- Условное отображение полей в зависимости от выбранного значения timeControl -->
@@ -20,12 +20,12 @@
     <button
       [ngClass]="{'button-active': gameConditions.matchMode === matchModes[0], 'button-inactive': gameConditions.matchMode !== matchModes[0]}"
       (click)="gameConditions.matchMode = matchModes[0]">
-      {{ matchModes[0] }}
+      {{ matchModes[0].title }}
     </button>
     <button
       [ngClass]="{'button-active': gameConditions.matchMode === matchModes[1], 'button-inactive': gameConditions.matchMode !== matchModes[1]}"
       (click)="gameConditions.matchMode = matchModes[1]">
-      {{ matchModes[1] }}
+      {{ matchModes[1].title }}
     </button>
   </div>
 

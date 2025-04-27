@@ -15,7 +15,9 @@ export class ChessCellComponent {
   @Input() isWhite: boolean = false; // Определяет, белая ли ячейка
   figure: Figure | null = null
   isSelected: boolean = false; // Свойство для отслеживания состояния выбора
-
+  isMove: boolean = false;
+  isEat: boolean = false;
+  isSwap: boolean = false;
   constructor(private gamePlayService: GamePlayService) {
   }
 
@@ -24,11 +26,17 @@ export class ChessCellComponent {
     return {
       'cell': true, // всегда добавляем класс cell
       'selected': this.isSelected, // добавляем класс selected, если isSelected true
+      'move': this.isMove,
+      'eat': this.isEat,
+      'swap': this.isSwap,
       'white': this.isWhite, // пример для других классов
       'black': !this.isWhite // пример для других классов
     };
   }
-  select(isSelected: boolean) {
-    this.isSelected = isSelected;
+  clear(){
+    this.isSelected = false;
+    this.isMove = false;
+    this.isEat = false;
+    this.isSwap = false;
   }
 }

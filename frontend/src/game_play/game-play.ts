@@ -1,4 +1,5 @@
-import {FigureColor} from '../game_conditions/game-conditions'
+import {GameConditions} from '../game_conditions/game-conditions'
+import {GameAction} from './game-action';
 
 export class GamePlay {
   constructor(
@@ -7,11 +8,11 @@ export class GamePlay {
     public opponentId: string,
     public creatorLogin: string,
     public opponentLogin: string,
-    public creatorIsActive: boolean,
-    public creatorFigureColor: FigureColor,
-    public moveTime: number,
-    public startDateTime: string,
-    public ended: boolean) {
+    public gameConditions: GameConditions,
+    public whiteActions: GameAction[],
+    public blackActions: GameAction[],
+    public figures: Map<string, string>
+  ) {
   }
 }
 

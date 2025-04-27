@@ -24,7 +24,7 @@ public class GamePlayController {
         GamePlay gameplay = gameplayService.createGameplay(roomId);
         log.info("Create game, id={}", gameplay.getId());
 
-        String destination = String.format("/rooms/%s/join", roomId);
+        String destination = String.format("/games/%s/join", roomId);
         messagingTemplate.convertAndSend(destination, gameplay.getId());
         log.info("Send at destination={} with payload={}", destination, gameplay.getId());
 
@@ -40,7 +40,7 @@ public class GamePlayController {
     @PostMapping("/games/{gameId}/action")
     ResponseEntity<?> action(@PathVariable UUID gameId,
                                    @RequestParam UUID userId,
-                                   @RequestBody String action) {
+                                   @RequestParam String action) {
         try {
             GamePlayDto gamePlayDto  = gameplayService.makeAction(gameId, userId, action);
             log.info("User in made action: userId={}, gameId={}, action={}", userId, gameId, action);
