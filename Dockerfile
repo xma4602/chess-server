@@ -1,14 +1,20 @@
-FROM eclipse-temurin:17-jdk-jammy AS builder
+# Этап 1: Build jar with Maven
+FROM maven:3.9.3-eclipse-temurin-17 AS builder
 
-# Копируем исходный код и собираем проект
 WORKDIR /app
+
 COPY pom.xml .
 COPY src ./src
+
 RUN mvn clean package -Dmaven.test.skip=true
 
-# Финальный образ
+# Этап 2: Run app
 FROM eclipse-temurin:17-jdk-jammy
+
 WORKDIR /app
+
 COPY --from=builder /app/target/*.jar app.jar
+
 EXPOSE 8080
+
 ENTRYPOINT ["java", "-jar", "app.jar"]
