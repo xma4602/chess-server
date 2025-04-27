@@ -15,29 +15,30 @@ import java.util.UUID;
 @Controller
 @Slf4j
 @RequiredArgsConstructor
+@RequestMapping("/chess/games")
 public class GamePlayController {
     private final GameplayService gameplayService;
     private final SimpMessagingTemplate messagingTemplate;
 
-    @PostMapping("/games")
-    ResponseEntity<UUID> create(@RequestBody UUID roomId) {
+    @PostMapping("")
+    ResponseEntity<UUID> create(@RequestParam UUID roomId) {
         GamePlay gameplay = gameplayService.createGameplay(roomId);
         log.info("Create game, id={}", gameplay.getId());
 
-        String destination = String.format("/games/%s/join", roomId);
-        messagingTemplate.convertAndSend(destination, gameplay.getId());
+        String destination = String.format("/topic/rooms/%s/startGame", roomId);
+        messagingTemplate.convertAndSend(destination, gameplay.getId().toString());
         log.info("Send at destination={} with payload={}", destination, gameplay.getId());
 
         return ResponseEntity.ok(gameplay.getId());
     }
 
-    @GetMapping("/games/{gameId}")
+    @GetMapping("/{gameId}")
     ResponseEntity<GamePlayDto> getGamePlay(@PathVariable UUID gameId) {
         GamePlayDto gameplay = gameplayService.getGamePlayDto(gameId);
         return ResponseEntity.ok(gameplay);
     }
 
-    @PostMapping("/games/{gameId}/action")
+    @PostMapping("/{gameId}/action")
     ResponseEntity<?> action(@PathVariable UUID gameId,
                                    @RequestParam UUID userId,
                                    @RequestParam String action) {

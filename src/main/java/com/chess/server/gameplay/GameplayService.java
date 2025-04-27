@@ -34,11 +34,12 @@ public class GameplayService {
         GameConditions gameConditions = gameRoom.getGameConditions();
         if (gameConditions.getFigureColor() == FigureColor.RANDOM) {
             gameConditions.setFigureColor(FigureColor.randomValue());
-            gameRoom.setGameConditions(gameConditionsRepository.save(gameConditions));
         }
+        gameConditions = gameConditionsRepository.save(gameConditions);
+        gameRoom.setGameConditions(gameConditions);
 
         GamePlay gameplay = gameplayFromRoom(gameRoom);
-        gameRoomService.delete(gameRoom.getId());
+//        gameRoomService.delete(gameRoom.getId()); todo вернуть в проде
         GamePlay gamePlay = gameplayRepository.save(gameplay);
         games.put(gamePlay.getId(), new GameEngine());
 
@@ -98,6 +99,7 @@ public class GameplayService {
                 .creatorLogin(gamePlay.getCreatorLogin())
                 .opponentId(gamePlay.getOpponentId())
                 .opponentLogin(gamePlay.getOpponentLogin())
+                .gameConditions(gamePlay.getGameConditions())
                 .whiteActions(whiteActions)
                 .blackActions(blackActions)
                 .figures(figures)

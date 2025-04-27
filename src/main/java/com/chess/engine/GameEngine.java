@@ -199,9 +199,10 @@ public class GameEngine {
         }
 
         private static List<Action> getActionsByPosition(Board board, Position position) {
-            return board.isNone(position) ?
+            FigureType figureType = board.typeBy(position);
+            return figureType == FigureType.NONE ?
                     Collections.emptyList() :
-                    figures.get(board.typeBy(position)).getActions(board, position);
+                    figures.get(figureType).getActions(board, position);
         }
 
         private static boolean notContainsAttackOnKing(List<ActionEat> actions, Position kingPosition) {

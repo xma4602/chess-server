@@ -28,7 +28,8 @@ public class GamePlay implements Serializable {
     private LocalDateTime startDateTime = LocalDateTime.now();
     @Builder.Default
     private boolean ended = false;
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.MERGE})
     @JoinColumn(name = "game_conditions_id")
     private GameConditions gameConditions;
+
 }
