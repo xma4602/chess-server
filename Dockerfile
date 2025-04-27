@@ -1,14 +1,14 @@
-# Используем официальный образ Java
-FROM eclipse-temurin:17-jdk-jammy
+FROM eclipse-temurin:17-jdk-jammy AS builder
 
-# Устанавливаем рабочую директорию
+# Копируем исходный код и собираем проект
 WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -Dmaven.test.skip=true
 
-# Копируем .jar-файл
-COPY target/*.jar app.jar
-
-# Порт, на котором работает Spring Boot
+# Финальный образ
+FROM eclipse-temurin:17-jdk-jammy
+WORKDIR /app
+COPY --from=builder /app/target/*.jar app.jar
 EXPOSE 8080
-
-# Команда запуска
 ENTRYPOINT ["java", "-jar", "app.jar"]
