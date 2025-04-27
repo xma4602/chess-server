@@ -1,6 +1,9 @@
 <div class="chess-board-container">
   <div class="chess-board">
-    <div class="row" *ngFor="let rowIndex of getRowsIndexes()">
+    <div class="row" *ngFor="let rowIndex of [7, 6, 5, 4, 3, 2, 1, 0]">
+      <div class="row-label left">
+        <span class="row-number">{{ 8 - rowIndex }}</span> <!-- Подписи строк (8-1) -->
+      </div>
       <app-chess-cell
         #cell
         (click)="onClick(cell)"
@@ -9,5 +12,9 @@
         [isWhite]="(rowIndex + colIndex) % 2 === 0">
       </app-chess-cell>
     </div>
+  </div>
+  <div class="column-labels">
+    <span></span> <!-- Пустая ячейка для верхнего левого угла -->
+    <span *ngFor="let letter of ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']">{{ letter }}</span> <!-- Подписи столбцов (A-H) -->
   </div>
 </div>

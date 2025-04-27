@@ -14,7 +14,7 @@ export class GameAction {
   static fromObject(obj: any): GameAction {
     return new GameAction(
       obj.actionNotation,
-      obj.actionType,
+      ActionType.fromCode(obj.actionType)!,
       obj.startPosition,
       obj.endPosition,
       obj.eatenPosition,

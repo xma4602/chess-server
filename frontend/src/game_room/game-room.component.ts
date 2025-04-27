@@ -64,7 +64,7 @@ export class GameRoomComponent implements OnInit {
     if (!!this.gameRoom && this.gameRoom?.opponentLogin) {
       this.gamePlayService.startGameplay(this.gameRoom.id).subscribe(
         response => {
-          console.error('Игра создана:', response);
+          console.log('Игра создана:', response);
         },
         (error) => {
           console.error('Ошибка при создании игры:', error);

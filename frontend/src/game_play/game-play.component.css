@@ -17,7 +17,7 @@
 
 .chess-board {
   display: grid;
-  grid-template-columns: repeat(8, 1fr);
+  grid-template-columns: repeat(9, 1fr);
 }
 
 .row {
@@ -31,11 +31,11 @@
 }
 
 .row-label.left {
+  display: flex; /* Убедитесь, что flexbox включен */
   justify-content: flex-end; /* Прижать к правой стороне */
-  text-align: right; /* Прижать текст к правой стороне */
+  text-align: left; /* Прижать текст к правой стороне */
 }
 
-.row-label.right {
-  justify-content: flex-start; /* Прижать к левой стороне */
-  text-align: left; /* Прижать текст к левой стороне */
+.row-number {
+  margin-right: 10px; /* Добавить отступ справа только к цифрам */
 }

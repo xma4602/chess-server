@@ -1,7 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {NgClass, NgIf} from '@angular/common';
 import {Figure} from '../figure';
-import {GamePlayService} from '../game-play-service';
 
 @Component({
   selector: 'app-chess-cell',
@@ -11,15 +10,13 @@ import {GamePlayService} from '../game-play-service';
   imports: [NgIf, NgClass],
 })
 export class ChessCellComponent {
-  @Input() id?: string; // Определяет, белая ли ячейка
+  @Input() id!: string; // Определяет, белая ли ячейка
   @Input() isWhite: boolean = false; // Определяет, белая ли ячейка
   figure: Figure | null = null
   isSelected: boolean = false; // Свойство для отслеживания состояния выбора
   isMove: boolean = false;
   isEat: boolean = false;
   isSwap: boolean = false;
-  constructor(private gamePlayService: GamePlayService) {
-  }
 
   // Метод для получения класса ячейки
   getCellClass() {

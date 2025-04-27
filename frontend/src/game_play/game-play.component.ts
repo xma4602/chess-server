@@ -24,9 +24,8 @@ import {wsGamePlay} from '../data.service';
 export class GamePlayComponent implements OnInit, AfterViewInit {
   @ViewChildren(ChessCellComponent) cells!: QueryList<ChessCellComponent>;
 
-  private gamePlay: GamePlay = GamePlay.DEFAULT
+  private gamePlay: GamePlay | null = null
   private selectedCell: ChessCellComponent | null = null;
-  private isGamePlayLoaded: boolean = false; // Флаг для отслеживания загрузки gamePlay
 
   constructor(private router: Router,
               private route: ActivatedRoute,
@@ -42,13 +41,12 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
       this.gamePlayService.getGamePlay(gameId).subscribe(
         gamePlay => {
           this.gamePlay = gamePlay;
-          this.isGamePlayLoaded = true; // Устанавливаем флаг в true после загрузки
           this.updateBoard(); // Проверяем и обновляем доску
         },
         console.log
       )
 
-      this.stompService.stompClient.subscribe(`${wsGamePlay}/${gameId}/action`, this.onAction)
+      this.stompService.subscribe(`${wsGamePlay}/${gameId}/action`, this.onAction.bind(this))
 
     })
 
@@ -60,34 +58,21 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
 
 
   private updateBoard() {
-    if (this.isGamePlayLoaded && this.cells) { // Проверяем, что gamePlay загружен и cells инициализированы
-      for (let cell of this.gamePlay.figures) {
-        const figure = Figure.fromCode(cell[1]);
-        const cellId = cell[0];
-        this.setPieceInCell(cellId, figure);
+    if (this.gamePlay && this.cells) { // Проверяем, что gamePlay загружен и cells инициализированы
+      this.clearViewActions()
+      for (let cell of this.cells) {
+        const figureCode = this.gamePlay.figures.get(cell.id);
+        cell.figure = figureCode === undefined ? null : Figure.fromCode(figureCode);
       }
     }
   }
 
-  getRowsIndexes() {
-    let reverse
-    if (this.userService.user!.id == this.gamePlay.creatorId) {
-      reverse = this.gamePlay.gameConditions.figureColor == FigureColor.BLACK
-    } else {
-      reverse = this.gamePlay.gameConditions.figureColor == FigureColor.WHITE
-    }
-
-    return reverse ? [0, 1, 2, 3, 4, 5, 6, 7] : [7, 6, 5, 4, 3, 2, 1, 0]
-  }
-
-  // Метод для установки фигуры в ячейку по id
-  setPieceInCell(cellId: string, figure: Figure | null) {
-    const cell = this.cells.find(c => c.id === cellId)!;
-    cell.figure = figure;
-  }
 
   private onAction(message: IMessage) {
-    console.log(`new action ${message.body}`)
+    console.log(`new action`)
+    const obj = JSON.parse(message.body);
+    this.gamePlay = GamePlay.fromObject(obj)
+    this.updateBoard();
   }
 
   getCellId(rowIndex: number, colIndex: number): string {
@@ -101,8 +86,8 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
     if (this.selectedCell === null) {
       if (newSelectedCell.figure !== null) {
         this.selectedCell = newSelectedCell
-        this.selectedCell.isSelected = true
         this.viewActions(this.selectedCell)
+        this.selectedCell.isSelected = true
         console.log('1')
       } else {
         this.selectedCell = newSelectedCell
@@ -117,15 +102,21 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
       } else {
         this.selectedCell.isSelected = false
         this.selectedCell = newSelectedCell
-        this.selectedCell.isSelected = true
         this.viewActions(this.selectedCell)
+        this.selectedCell.isSelected = true
         console.log('4')
       }
     }
   }
 
+  // isActivePlayer(){
+  //   this.gamePlay.
+  // }
+
   private executeAction(action: GameAction) {
-    this.gamePlayService.makeAction(this.gamePlay.id, action.actionNotation)
+    this.gamePlayService.makeAction(this.gamePlay!.id, action.actionNotation).subscribe(
+      () => console.log(`made action: ${action}`)
+    )
   }
 
   private findAction(selectedCell: ChessCellComponent, newSelectedCell: ChessCellComponent) {
@@ -139,12 +130,12 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
   }
 
   getActionForCurrentUser() {
-    if (this.userService.user!.id == this.gamePlay.creatorId) {
-      return this.gamePlay.gameConditions.figureColor == FigureColor.WHITE ?
-        this.gamePlay.whiteActions : this.gamePlay.blackActions
+    if (this.userService.user!.id == this.gamePlay!.creatorId) {
+      return this.gamePlay!.gameConditions.figureColor == FigureColor.WHITE ?
+        this.gamePlay!.whiteActions : this.gamePlay!.blackActions
     } else {
-      return this.gamePlay.gameConditions.figureColor == FigureColor.WHITE ?
-        this.gamePlay.blackActions : this.gamePlay.whiteActions
+      return this.gamePlay!.gameConditions.figureColor == FigureColor.WHITE ?
+        this.gamePlay!.blackActions : this.gamePlay!.whiteActions
     }
   }
 
@@ -159,7 +150,7 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
   }
 
   private viewActions(selectedCell: ChessCellComponent) {
-    this.clearViewActions(selectedCell)
+    this.clearViewActions()
     const actions = this.findActions(selectedCell);
     for (let action of actions) {
       this.viewAction(action)
@@ -197,11 +188,9 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private clearViewActions(selectedCell: ChessCellComponent) {
+  private clearViewActions() {
     for (let cell of this.cells) {
-      if (cell.id !== selectedCell.id) {
-        cell.clear()
-      }
+      cell.clear()
     }
   }
 }
