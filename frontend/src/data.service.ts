@@ -1,7 +1,7 @@
 const http = 'https://';
 const ws = 'ws://';
 const serverHost = 'chess-server-gvgy.onrender.com:8080';
-const frontHost = 'localhost:4200';
+const frontHost = 'chess-frontend-wpc3.onrender.com:4200';
 const appPrefix = '/chess';
 
 export const restUrl = http + serverHost + appPrefix
