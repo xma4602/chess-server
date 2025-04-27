@@ -21,21 +21,23 @@ public class UserService {
     public UUID singIn(String login, String password) throws AuthException, AccountNotFoundException {
         Optional<User> userOpt = userRepository.findByLogin(login);
         User user = userOpt.orElseThrow(() -> new AccountNotFoundException("Не сущестувет пользователя с логином " + login));
-        if (!Password.equals(password, user.getPassword())) {
+//        if (!Password.equals(password, user.getPassword())) {
+//            throw new AuthException("Неверное имя и/или логин пользователя");
+//        }
+        if (!password.equals(user.getPassword())) {
             throw new AuthException("Неверное имя и/или логин пользователя");
         }
         return user.getId();
     }
 
     public UUID singUp(String login, String password) throws Password.IllegalPasswordException, Login.IllegalLoginException, RegisterException {
-
         Password.validate(password);
         Login.validate(login);
         if (userRepository.existsUserByLogin(login)) {
             throw RegisterException.duplicateUser(login);
         }
 
-        password = Password.hash(password);
+//        password = Password.hash(password);
         User user = new User(login, password);
         user = userRepository.save(user);
         return user.getId();
