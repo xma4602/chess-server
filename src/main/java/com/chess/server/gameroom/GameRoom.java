@@ -23,7 +23,7 @@ public class GameRoom {
     private UUID opponentId;
     private String creatorLogin;
     private String opponentLogin;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.PERSIST)
     private GameConditions gameConditions;
 
     public GameRoom(UUID creatorId, String creatorLogin, GameConditions gameConditions) {

@@ -300,7 +300,7 @@ public class Board implements Cloneable {
         }
 
         private Figure() {
-            this.figureType = null; // Или любое другое значение по умолчанию
+            this.figureType = FigureType.NONE; // Или любое другое значение по умолчанию
             this.figureColor = FigureColor.DEFAULT; // Или любое другое значение по умолчанию
             this.moved = false;
             this.actioned = false;
