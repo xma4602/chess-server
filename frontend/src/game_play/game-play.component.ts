@@ -1,4 +1,4 @@
-import {Component, QueryList, ViewChildren} from '@angular/core';
+import {Component, QueryList, OnInit, ViewChildren, AfterViewInit} from '@angular/core';
 import {NgForOf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
@@ -10,6 +10,9 @@ import {Figure} from './figure';
 import {FigureColor, GameConditions} from '../game_conditions/game-conditions';
 import {ActionType, GameAction} from './game-action';
 import {UserService} from '../user/user-service';
+import {StompService} from '../stomp.service';
+import {GamePlayService} from './game-play-service';
+import {wsGamePlay} from '../data.service';
 
 @Component({
   selector: 'app-game-play',
@@ -18,7 +21,7 @@ import {UserService} from '../user/user-service';
   styleUrls: ['./game-play.component.css'],
   imports: [FormsModule, NgForOf, HttpClientModule, ChessCellComponent],
 })
-export class GamePlayComponent {
+export class GamePlayComponent implements OnInit, AfterViewInit {
   @ViewChildren(ChessCellComponent) cells!: QueryList<ChessCellComponent>;
   private gamePlay: GamePlay = new GamePlay(
     'game123',
@@ -71,31 +74,29 @@ export class GamePlayComponent {
   constructor(private router: Router,
               private route: ActivatedRoute,
               private userService: UserService,
-              // private gamePlayService: GamePlayService,
-              // private stompService: StompService
+              private gamePlayService: GamePlayService,
+              private stompService: StompService
   ) {
   }
 
   ngOnInit() {
-    this.selectedCell = null
+    this.route.paramMap.subscribe(params => {
+      const gameId = params.get('id')!;
+      this.gamePlayService.getGamePlay(gameId).subscribe(
+        gamePlay => this.gamePlay = gamePlay,
+        console.log
+      )
 
-    // this.route.paramMap.subscribe(params => {
-    //   const gameId = params.get('id')!;
-    //   this.gamePlayService.getGamePlay(gameId).subscribe(
-    //     gamePlay => this.gamePlay = gamePlay,
-    //     console.log
-    //   )
-    //
-    //   this.stompService.stompClient.subscribe(`/games/${gameId}/action`, this.onAction)
-    //
-    // })
+      this.stompService.stompClient.subscribe(`${wsGamePlay}/${gameId}/action`, this.onAction)
+
+    })
 
   }
 
   ngAfterViewInit() {
     setTimeout(() => {
       for (let cell of this.gamePlay.figures) {
-        const figure = Figure.getAllFigures().find(f => f.code === cell[1])!;
+        const figure = Figure.fromCode(cell[1])!
         this.setPieceInCell(cell[0], figure)
       }
     });
@@ -157,7 +158,7 @@ export class GamePlayComponent {
   }
 
   private executeAction(action: GameAction) {
-
+    this.gamePlayService.makeAction(this.gamePlay.id, action.actionNotation)
   }
 
   private findAction(selectedCell: ChessCellComponent, newSelectedCell: ChessCellComponent) {
