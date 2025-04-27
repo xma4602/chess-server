@@ -1,10 +1,9 @@
-const http = 'http://';
+const http = 'https://';
 const ws = 'ws://';
-const serverHost = 'localhost:8080';
-const frontHost = 'localhost:4200';
+const serverHost = 'chess-server-gvgy.onrender.com:8080';
+const frontHost = 'chess-frontend-wpc3.onrender.com';
 const appPrefix = '/chess';
 export const restUrl = http + serverHost + appPrefix
-
 export const wsConnect = ws + serverHost + appPrefix + '/connect'
 
 export const restRooms = restUrl + '/rooms'
