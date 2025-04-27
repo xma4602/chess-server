@@ -38,15 +38,18 @@ export class GameRoomComponent implements OnInit {
           console.log('Успешно подключились к комнате:', room); // Логируем информацию о комнате
           this.gameRoom = room; // Сохраняем комнату в переменной
 
-          this.stompService.stompClient.subscribe(`${wsRooms}/${roomId}/join`, message => {
-            this.gameRoom = this.gameRoomService.parseRoom(JSON.parse(message.body));
-          })
+          this.stompService.subscribe(`${wsRooms}/${roomId}/join`, message => {
+            const obj = JSON.parse(message.body);
+            this.gameRoom = GameRoom.fromObject(obj);
+          }).then(() => {
+              this.stompService.subscribe(`${wsRooms}/${roomId}/startGame`, message => {
+                const gameId = message.body
+                console.log('ID созданной игровой комнаты:', gameId);
+                this.router.navigate([`/game-play/${gameId}`]);
+              })
+            }
+          )
 
-          this.stompService.stompClient.subscribe(`${wsRooms}/${roomId}/startGame`, message => {
-            const gameId = message.body
-            console.log('ID созданной игровой комнаты:', gameId);
-            this.router.navigate([`/game-play/${gameId}`]);
-          })
 
         },
         (error) => {
@@ -60,12 +63,12 @@ export class GameRoomComponent implements OnInit {
   startGame() {
     if (!!this.gameRoom && this.gameRoom?.opponentLogin) {
       this.gamePlayService.startGameplay(this.gameRoom.id).subscribe(
-        gameId => {
-          this.router.navigate([`/game-play/${gameId}`]);
+        response => {
+          console.error('Игра создана:', response);
         },
         (error) => {
           console.error('Ошибка при создании игры:', error);
-          this.openSnackBar('Ошибка при создании игры: ' + error.error, 'Close');
+          this.openSnackBar('Ошибка при создании игры: ' + error.error.message, 'Close');
         }
       );
     } else {

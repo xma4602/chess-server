@@ -27,7 +27,7 @@
 
   <div class="invite-link">
     <h3>Чтобы пригласить друга, отправьте ему эту ссылку:</h3>
-    <input type="text" [value]="gameRoom.getLink()" readonly/>
+    <a [href]="gameRoom.getLink()" target="_blank">{{ gameRoom.getLink() }}</a>
   </div>
 
   <div class="buttons">

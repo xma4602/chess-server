@@ -7,7 +7,7 @@ import {GamePlay} from './game-play';
 import {IMessage} from '@stomp/stompjs';
 import {ChessCellComponent} from './chess-cell/chess-cell.component';
 import {Figure} from './figure';
-import {FigureColor, GameConditions} from '../game_conditions/game-conditions';
+import {FigureColor} from '../game_conditions/game-conditions';
 import {ActionType, GameAction} from './game-action';
 import {UserService} from '../user/user-service';
 import {StompService} from '../stomp.service';
@@ -23,53 +23,10 @@ import {wsGamePlay} from '../data.service';
 })
 export class GamePlayComponent implements OnInit, AfterViewInit {
   @ViewChildren(ChessCellComponent) cells!: QueryList<ChessCellComponent>;
-  private gamePlay: GamePlay = new GamePlay(
-    'game123',
-    'user1',
-    'user2',
-    'CreatorLogin',
-    'OpponentLogin',
-    new GameConditions(5, 3, FigureColor.WHITE),
-    [
-      new GameAction('e2-e4', ActionType.MOVE, 'e2', 'e4')
-    ],
-    [],
-    new Map([
-      ['a8', 'BLACK_ROOK'],
-      ['b8', 'BLACK_KNIGHT'],
-      ['c8', 'BLACK_BISHOP'],
-      ['d8', 'BLACK_QUEEN'],
-      ['e8', 'BLACK_KING'],
-      ['f8', 'BLACK_BISHOP'],
-      ['g8', 'BLACK_KNIGHT'],
-      ['h8', 'BLACK_ROOK'],
-      ['a7', 'BLACK_PAWN'],
-      ['b7', 'BLACK_PAWN'],
-      ['c7', 'BLACK_PAWN'],
-      ['d7', 'BLACK_PAWN'],
-      ['e7', 'BLACK_PAWN'],
-      ['f7', 'BLACK_PAWN'],
-      ['g7', 'BLACK_PAWN'],
-      ['h7', 'BLACK_PAWN'],
-      ['a1', 'WHITE_ROOK'],
-      ['b1', 'WHITE_KNIGHT'],
-      ['c1', 'WHITE_BISHOP'],
-      ['d1', 'WHITE_QUEEN'],
-      ['e1', 'WHITE_KING'],
-      ['f1', 'WHITE_BISHOP'],
-      ['g1', 'WHITE_KNIGHT'],
-      ['h1', 'WHITE_ROOK'],
-      ['a2', 'WHITE_PAWN'],
-      ['b2', 'WHITE_PAWN'],
-      ['c2', 'WHITE_PAWN'],
-      ['d2', 'WHITE_PAWN'],
-      ['e2', 'WHITE_PAWN'],
-      ['f2', 'WHITE_PAWN'],
-      ['g2', 'WHITE_PAWN'],
-      ['h2', 'WHITE_PAWN'],
-    ])
-  );
+
+  private gamePlay: GamePlay = GamePlay.DEFAULT
   private selectedCell: ChessCellComponent | null = null;
+  private isGamePlayLoaded: boolean = false; // Флаг для отслеживания загрузки gamePlay
 
   constructor(private router: Router,
               private route: ActivatedRoute,
@@ -83,7 +40,11 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
     this.route.paramMap.subscribe(params => {
       const gameId = params.get('id')!;
       this.gamePlayService.getGamePlay(gameId).subscribe(
-        gamePlay => this.gamePlay = gamePlay,
+        gamePlay => {
+          this.gamePlay = gamePlay;
+          this.isGamePlayLoaded = true; // Устанавливаем флаг в true после загрузки
+          this.updateBoard(); // Проверяем и обновляем доску
+        },
         console.log
       )
 
@@ -94,12 +55,18 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    setTimeout(() => {
+    this.updateBoard(); // Проверяем и обновляем доску после инициализации представления
+  }
+
+
+  private updateBoard() {
+    if (this.isGamePlayLoaded && this.cells) { // Проверяем, что gamePlay загружен и cells инициализированы
       for (let cell of this.gamePlay.figures) {
-        const figure = Figure.fromCode(cell[1])!
-        this.setPieceInCell(cell[0], figure)
+        const figure = Figure.fromCode(cell[1]);
+        const cellId = cell[0];
+        this.setPieceInCell(cellId, figure);
       }
-    });
+    }
   }
 
   getRowsIndexes() {
@@ -114,13 +81,13 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
   }
 
   // Метод для установки фигуры в ячейку по id
-  setPieceInCell(cellId: string, figure: Figure) {
+  setPieceInCell(cellId: string, figure: Figure | null) {
     const cell = this.cells.find(c => c.id === cellId)!;
     cell.figure = figure;
   }
 
   private onAction(message: IMessage) {
-    this.gamePlay = JSON.parse(message.body)
+    console.log(`new action ${message.body}`)
   }
 
   getCellId(rowIndex: number, colIndex: number): string {

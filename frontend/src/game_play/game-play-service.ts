@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
-import {Observable} from 'rxjs';
+import {map, Observable} from 'rxjs';
 import {restGamePlay} from '../data.service';
 import {GamePlay} from './game-play';
 import {UserService} from '../user/user-service';
@@ -20,6 +20,7 @@ export class GamePlayService {
 
   getGamePlay(gameId: string) {
     return this.http.get<GamePlay>(`${restGamePlay}/${gameId}`)
+      .pipe(map(dto => GamePlay.fromObject(dto)))
   }
 
   makeAction(gameId: string, action: string) {

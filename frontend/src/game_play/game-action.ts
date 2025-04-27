@@ -10,12 +10,39 @@ export class GameAction {
                      public kingEndPosition: string | null = null,
                      public rookEndPosition: string | null = null) {
   }
+
+  static fromObject(obj: any): GameAction {
+    return new GameAction(
+      obj.actionNotation,
+      obj.actionType,
+      obj.startPosition,
+      obj.endPosition,
+      obj.eatenPosition,
+      obj.figureCode,
+      obj.kingStartPosition,
+      obj.rookStartPosition,
+      obj.kingEndPosition,
+      obj.rookEndPosition
+    );
+  }
 }
 
-export enum ActionType {
-  MOVE = 'MOVE',
-  EAT = 'EAT',
-  SWAP = 'SWAP',
-  CASTLING = 'CASTLING',
-  TAKING = 'TAKING',
+export class ActionType {
+  private constructor(public readonly code: string,
+                      public readonly title: string) {
+  }
+
+  static fromCode(code: string) {
+    for (const x of [this.MOVE, this.EAT, this.SWAP, this.CASTLING, this.TAKING]) {
+      if (x.code === code) return x
+    }
+    return null
+  }
+
+  static readonly MOVE = new ActionType('MOVE', 'Ход')
+  static readonly EAT = new ActionType('EAT', 'Взятие')
+  static readonly SWAP = new ActionType('SWAP', 'Обмен')
+  static readonly CASTLING = new ActionType('CASTLING', 'Рокировка')
+  static readonly TAKING = new ActionType('TAKING', 'Взятие на проходе')
 }
+

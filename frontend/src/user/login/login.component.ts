@@ -47,8 +47,13 @@ export class LoginComponent {
     });
   }
 
-  crackLogin() {
+  crackLogin1() {
     this.userService.user = new User('436ec41b-de96-452d-bfa6-957fda083a20', 'player1')
+    this.router.navigateByUrl(this.returnUrl); // Перенаправление на нужную страницу
+  }
+
+  crackLogin2() {
+    this.userService.user = new User('34c32d84-75ae-434b-92aa-8d7218c1606d', 'player2')
     this.router.navigateByUrl(this.returnUrl); // Перенаправление на нужную страницу
   }
 }
