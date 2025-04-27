@@ -5,28 +5,19 @@ import com.chess.engine.actions.ActionEat;
 import com.chess.engine.exceptions.ChessEngineIllegalArgumentException;
 import com.chess.engine.exceptions.ChessEngineIllegalStateException;
 import com.chess.engine.exceptions.ChessEngineRuntimeException;
-import com.chess.engine.figures.*;
+import com.chess.engine.figures.Figure;
 
+import java.io.Serializable;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
-public class GameEngine {
+public class GameEngine implements Serializable {
     private final Board board;
     private final List<String> movedActions;
     private FigureColor activePlayerColor;
     private GameState gameState;
     private List<Action> whiteActions;
     private List<Action> blackActions;
-
-    private static final Map<FigureType, AbstractFigure> figures = Map.of(
-            FigureType.PAWN, new Pawn(),
-            FigureType.KNIGHT, new Knight(),
-            FigureType.BISHOP, new Bishop(),
-            FigureType.ROOK, new Rook(),
-            FigureType.QUEEN, new Queen(),
-            FigureType.KING, new King()
-    );
 
     public GameEngine() {
         board = Board.newBoard();
@@ -64,12 +55,8 @@ public class GameEngine {
         }
     }
 
-    public Map<String, Map.Entry<FigureType, FigureColor>> getBoardState() {
-        Map<String, Map.Entry<FigureType, FigureColor>> states = new HashMap<>(64);
-        for (var position : Position.values()) {
-            states.put(position.toString(), Map.entry(board.typeBy(position), board.getFigureColor(position)));
-        }
-        return states;
+    public Map<Position, Figure> getBoardState() {
+        return board.getCells();
     }
 
     public boolean getCellColor(String cellPosition) {
@@ -181,28 +168,32 @@ public class GameEngine {
         }
 
         private static List<Action> getActionsFor(Board board, FigureColor figureColor) {
-            return board.getFigurePositionsByColor(figureColor).stream()
-                    .map(position -> getActionsByPosition(board, position))
-                    .flatMap(Collection::stream)
-                    .collect(Collectors.toList());
+            List<Action> actions = new ArrayList<>();
+            List<Position> figurePositionsByColor = board.getFigurePositionsByColor(figureColor);
+            for (Position position : figurePositionsByColor) {
+                List<Action> actionsByPosition = getActionsByPosition(board, position);
+                actions.addAll(actionsByPosition);
+            }
+            return actions;
         }
 
         private static List<ActionEat> getEatActionsFor(Board board, FigureColor figureColor) {
-            return board
-                    .getFigurePositionsByColor(figureColor)
-                    .stream()
-                    .map(position -> getActionsByPosition(board, position))
-                    .flatMap(Collection::stream)
-                    .filter(action -> action.getActionType() == Action.ActionType.EAT)
-                    .map(action -> (ActionEat) action)
-                    .collect(Collectors.toList());
+            List<ActionEat> actionEats = new ArrayList<>();
+            List<Position> figurePositionsByColor = board.getFigurePositionsByColor(figureColor);
+            for (Position position : figurePositionsByColor) {
+                List<Action> actionsByPosition = getActionsByPosition(board, position);
+                for (Action action : actionsByPosition) {
+                    if (action.getActionType() == Action.ActionType.EAT) {
+                        ActionEat actionEat = (ActionEat) action;
+                        actionEats.add(actionEat);
+                    }
+                }
+            }
+            return actionEats;
         }
 
         private static List<Action> getActionsByPosition(Board board, Position position) {
-            FigureType figureType = board.typeBy(position);
-            return figureType == FigureType.NONE ?
-                    Collections.emptyList() :
-                    figures.get(figureType).getActions(board, position);
+            return board.getFigureByPosition(position).getActions(board, position);
         }
 
         private static boolean notContainsAttackOnKing(List<ActionEat> actions, Position kingPosition) {
@@ -215,7 +206,12 @@ public class GameEngine {
         }
     }
 
-    public enum GameState {
+    @Override
+    public String toString() {
+        return board.toString();
+    }
+
+    public enum GameState implements Serializable {
         BLACK_WIN,
         WHITE_WIN,
         DRAW,

@@ -4,11 +4,12 @@ import com.chess.engine.exceptions.ChessEngineRuntimeException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.io.Serializable;
 import java.util.Optional;
 
 @Getter
 @RequiredArgsConstructor
-public enum Position {
+public enum Position implements Serializable {
 
     A1("a1", 0, 0, 0, false),
     B1("b1", 0, 1, 1, true),

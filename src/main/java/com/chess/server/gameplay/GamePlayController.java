@@ -45,7 +45,7 @@ public class GamePlayController {
         try {
             GamePlayDto gamePlayDto  = gameplayService.makeAction(gameId, userId, action);
             log.info("User in made action: userId={}, gameId={}, action={}", userId, gameId, action);
-            String destination = String.format("/games/%s/action", gameId);
+            String destination = String.format("/topic/games/%s/action", gameId);
             messagingTemplate.convertAndSend(destination, gamePlayDto);
             return ResponseEntity.ok().build();
         } catch (ChessEngineIllegalArgumentException e) {

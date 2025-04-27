@@ -2,15 +2,39 @@ package com.chess.engine.figures;
 
 import com.chess.engine.Board;
 import com.chess.engine.FigureColor;
+import com.chess.engine.FigureType;
 import com.chess.engine.Position;
 import com.chess.engine.actions.Action;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-public abstract class AbstractFigure {
+@Getter
+public abstract class Figure implements Serializable {
+
+    protected FigureType figureType;
+    protected FigureColor figureColor;
+    @Setter
+    protected boolean moved;
+    @Setter
+    protected boolean actioned;
+
+
+    protected Figure(FigureType figureType, FigureColor figureColor) {
+        this(figureType, figureColor, false, false);
+    }
+
+    protected Figure(FigureType figureType, FigureColor figureColor, boolean moved, boolean actioned) {
+        this.figureType = figureType;
+        this.figureColor = figureColor;
+        this.moved = moved;
+        this.actioned = actioned;
+    }
 
     /**
      * Анализирует возможные ходы для заданной фигуры
@@ -20,6 +44,23 @@ public abstract class AbstractFigure {
      * @return возможные ходы для заданной фигуры
      */
     public abstract List<Action> getActions(Board board, Position position);
+
+    public abstract Figure clone();
+
+    public String getId() {
+        return figureColor.getId() + "_" + figureType.getId();
+    }
+    public static Figure fromFigureType(FigureType figureType, FigureColor figureColor) {
+        return switch (figureType) {
+            case NONE -> None.NONE;
+            case PAWN -> new Pawn(figureColor);
+            case KNIGHT -> new Knight(figureColor);
+            case BISHOP -> new Bishop(figureColor);
+            case ROOK -> new Rook(figureColor);
+            case QUEEN -> new Queen(figureColor);
+            case KING -> new King(figureColor);
+        };
+    }
 
     protected void add(List<Action> actions, Action action) {
         if (action != null) actions.add(action);
@@ -42,17 +83,17 @@ public abstract class AbstractFigure {
     }
 
     protected List<Action> moveOrEatInDirection(Board board,
-                                                      FigureColor figureColor,
-                                                      Position startPosition,
-                                                      Function<Position, Optional<Position>> direction) {
+                                                FigureColor figureColor,
+                                                Position startPosition,
+                                                Function<Position, Optional<Position>> direction) {
         return moveOrEatInDirection(board, figureColor, startPosition, direction, direction.apply(startPosition));
     }
 
     protected List<Action> moveOrEatInDirection(Board board,
-                                                      FigureColor figureColor,
-                                                      Position startPosition,
-                                                      Function<Position, Optional<Position>> direction,
-                                                      Optional<Position> nextPosition) {
+                                                FigureColor figureColor,
+                                                Position startPosition,
+                                                Function<Position, Optional<Position>> direction,
+                                                Optional<Position> nextPosition) {
         List<Action> actions = new ArrayList<>();
 
         if (nextPosition.isPresent()) { //следующая позиция существует?

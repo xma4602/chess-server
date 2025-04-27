@@ -26,8 +26,6 @@ public class GameplayService {
     private final GameplayRepository gameplayRepository;
     private final GameRoomService gameRoomService;
 
-    private static final Map<UUID, GameEngine> games = new HashMap<>();
-
     public GamePlay createGameplay(UUID guestRoomId) {
         GameRoom gameRoom = gameRoomService.getGameRoom(guestRoomId);
 
@@ -39,11 +37,9 @@ public class GameplayService {
         gameRoom.setGameConditions(gameConditions);
 
         GamePlay gameplay = gameplayFromRoom(gameRoom);
+        gameplay.setGameEngine(new GameEngine());
 //        gameRoomService.delete(gameRoom.getId()); todo вернуть в проде
-        GamePlay gamePlay = gameplayRepository.save(gameplay);
-        games.put(gamePlay.getId(), new GameEngine());
-
-        return gamePlay;
+        return gameplayRepository.save(gameplay);
     }
 
     private GamePlay gameplayFromRoom(GameRoom gameRoom) {
@@ -58,9 +54,8 @@ public class GameplayService {
 
     public GamePlayDto makeAction(UUID gameId, UUID userId, String actionString) throws ChessEngineIllegalArgumentException, ChessEngineIllegalStateException {
         GamePlay gameplay = getGameplay(gameId);
-        GameEngine gameEngine = games.get(gameId);
 
-        FigureColor activePlayerColor = gameEngine.getActivePlayerColor();
+        FigureColor activePlayerColor = gameplay.getGameEngine().getActivePlayerColor();
 
         FigureColor playerColor = gameplay.getCreatorId().equals(userId) ?
                 gameplay.getGameConditions().getFigureColor() :
@@ -68,7 +63,8 @@ public class GameplayService {
         if (activePlayerColor == playerColor) {
             Action action = Action.parse(actionString, playerColor)
                     .orElseThrow(() -> new ChessEngineIllegalArgumentException("Not valid action: " + actionString));
-            gameEngine.makeAction(playerColor, action);
+            gameplay.getGameEngine().makeAction(playerColor, action);
+            gameplay = gameplayRepository.save(gameplay);
         }
 
         return toGamePlayDto(gameplay);
@@ -85,13 +81,25 @@ public class GameplayService {
     }
 
     private GamePlayDto toGamePlayDto(GamePlay gamePlay) {
-        GameEngine gameEngine = games.get(gamePlay.getId());
-        List<GameActionDto> whiteActions = gameEngine.getActionsByPlayerColor(FigureColor.WHITE)
-                .stream().map(this::toGameActionDto).toList();
-        List<GameActionDto> blackActions = gameEngine.getActionsByPlayerColor(FigureColor.BLACK)
-                .stream().map(this::toGameActionDto).toList();
-        Map<String, String> figures = gameEngine.getBoardState()
-                .entrySet().stream().map(this::toFigure).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        GameEngine gameEngine = gamePlay.getGameEngine();
+
+        List<GameActionDto> whiteActions = new ArrayList<>();
+        if (gameEngine.getActivePlayerColor() == FigureColor.WHITE) {
+            whiteActions = gameEngine.getActionsByPlayerColor(FigureColor.WHITE)
+                    .stream().map(this::toGameActionDto).toList();
+        }
+
+        List<GameActionDto> blackActions = new ArrayList<>();
+        if (gameEngine.getActivePlayerColor() == FigureColor.BLACK) {
+            blackActions = gameEngine.getActionsByPlayerColor(FigureColor.BLACK)
+                    .stream().map(this::toGameActionDto).toList();
+        }
+
+        Map<String, String> figures = gameEngine.getBoardState().entrySet().stream()
+                .filter(entry -> entry.getValue().getFigureType() != FigureType.NONE)
+                .collect(Collectors.toMap(
+                        entry -> entry.getKey().toString(),
+                        entry -> entry.getValue().getId()));
 
         return GamePlayDto.builder()
                 .id(gamePlay.getId())
@@ -104,15 +112,6 @@ public class GameplayService {
                 .blackActions(blackActions)
                 .figures(figures)
                 .build();
-    }
-
-    private Map.Entry<String, String> toFigure(Map.Entry<String, Map.Entry<FigureType, FigureColor>> stringEntryEntry) {
-        FigureType figureType = stringEntryEntry.getValue().getKey();
-        FigureColor figureColor = stringEntryEntry.getValue().getValue();
-        return Map.entry(
-                stringEntryEntry.getKey(),
-                figureColor.getId() + "_" + figureType.getId()
-        );
     }
 
     private GameActionDto toGameActionDto(Action action) {
