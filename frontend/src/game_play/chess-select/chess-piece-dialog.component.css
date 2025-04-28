@@ -1,0 +1,15 @@
+.figure-container {
+  display: flex;
+  flex-wrap: wrap; /* Позволяет переносить элементы на новую строку, если не помещаются */
+  justify-content: center; /* Центрирует элементы по горизонтали */
+}
+
+.figure-item {
+  margin: 10px; /* Отступ между изображениями */
+  cursor: pointer; /* Указывает, что элемент кликабельный */
+  transition: transform 0.2s; /* Плавный эффект при наведении */
+}
+
+.figure-item:hover {
+  transform: scale(1.1); /* Увеличение изображения при наведении */
+}

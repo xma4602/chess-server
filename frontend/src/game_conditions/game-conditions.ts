@@ -4,7 +4,7 @@ export class GameConditions {
   constructor(
     public partyTime: number,
     public moveTime: number,
-    public figureColor: FigureColor = FigureColor.RANDOM,
+    public creatorFigureColor: FigureColor = FigureColor.RANDOM,
     public timeControl: TimeControl = TimeControl.WATCH,
     public matchMode: MatchMode = MatchMode.FRIENDLY,
     public id: string = '',
@@ -78,6 +78,9 @@ export class FigureColor {
                       public readonly title: string) {
   }
 
+  reverseValue(){
+    return this.code === FigureColor.WHITE.code ? FigureColor.BLACK : FigureColor.WHITE;
+  }
   static fromCode(code: string) {
     for (const x of [this.WHITE, this.BLACK, this.RANDOM]) {
       if (x.code === code) return x

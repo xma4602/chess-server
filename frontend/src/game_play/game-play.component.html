@@ -28,22 +28,29 @@
   </div>
 
   <!-- Таблица с ходами -->
-  <div class="moves-table" *ngIf="gamePlay && gamePlay.madeActions">
-    <table>
-      <thead>
-      <tr>
-        <th>Номер</th>
-        <th>Ход белых</th>
-        <th>Ход черных</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr *ngFor="let index of [].constructor(Math.ceil(gamePlay.madeActions.length / 2)); let i = index">
-        <td>{{ i + 1 }}</td>
-        <td>{{ gamePlay.madeActions[i * 2] }}</td>
-        <td>{{ gamePlay.madeActions[i * 2 + 1] || '-' }}</td> <!-- Если нет хода черных, отображаем '-' -->
-      </tr>
-      </tbody>
-    </table>
+  <div class="moves-table-container">
+    <div class="moves-table">
+      <div class="timer-container">
+        <app-timer #creatorTimer></app-timer>
+        <app-timer #opponentTimer></app-timer>
+      </div>
+      <table>
+        <thead>
+        <tr>
+          <th>Номер</th>
+          <th>Ход белых</th>
+          <th>Ход черных</th>
+        </tr>
+        </thead>
+        <tbody  *ngIf="gamePlay && gamePlay.madeActions">
+        <tr *ngFor="let index of [].constructor(Math.ceil(gamePlay.madeActions.length / 2)); let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ gamePlay.madeActions[i * 2] }}</td>
+          <td>{{ gamePlay.madeActions[i * 2 + 1] || '-' }}</td> <!-- Если нет хода черных, отображаем '-' -->
+        </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
+
 </div>

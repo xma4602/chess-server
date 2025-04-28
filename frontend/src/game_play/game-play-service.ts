@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
-import {map, Observable} from 'rxjs';
+import {map} from 'rxjs';
 import {restGamePlay} from '../data.service';
 import {GamePlay} from './game-play';
 import {UserService} from '../user/user-service';
@@ -13,9 +13,9 @@ export class GamePlayService {
               private userService: UserService) {
   }
 
-  startGameplay(roomId: string): Observable<string> {
+  startGameplay(roomId: string) {
     const params = new HttpParams().set('roomId', roomId);
-    return this.http.post<string>(`${restGamePlay}`, {}, {params})
+    return this.http.post<void>(`${restGamePlay}`, {}, {params})
   }
 
   getGamePlay(gameId: string) {
@@ -28,6 +28,12 @@ export class GamePlayService {
     const params = new HttpParams()
       .set('userId', userId)
       .set('action', action);
-    return this.http.post<string>(`${restGamePlay}/${gameId}/action`, {}, {params})
+    return this.http.post<void>(`${restGamePlay}/${gameId}/action`, {}, {params})
+  }
+
+  timeout(gameId: string, userId: string) {
+    const params = new HttpParams()
+      .set('userId', userId);
+    return this.http.put<void>(`${restGamePlay}/${gameId}/timeout`, {}, {params})
   }
 }

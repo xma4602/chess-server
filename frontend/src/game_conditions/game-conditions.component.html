@@ -33,21 +33,21 @@
     <h3>Цвет фигур:</h3>
     <button
       class="button"
-      [ngClass]="{'button-active': gameConditions.figureColor === figureColors[0], 'button-inactive': gameConditions.figureColor !== figureColors[0]}"
-      (click)="gameConditions.figureColor = figureColors[0]">
-      <img src="assets/chess/w_king.png" alt="Белые фигуры" height="100" width="100"/>
+      [ngClass]="{'button-active': gameConditions.creatorFigureColor === figureColors[0], 'button-inactive': gameConditions.creatorFigureColor !== figureColors[0]}"
+      (click)="gameConditions.creatorFigureColor = figureColors[0]">
+      <img src="assets/chess/w_king.png" alt="Белые фигуры" height="80" width="80"/>
     </button>
     <button
       class="button"
-      [ngClass]="{'button-active': gameConditions.figureColor === figureColors[2], 'button-inactive': gameConditions.figureColor !== figureColors[2]}"
-      (click)="gameConditions.figureColor = figureColors[2]">
-      <img src="assets/question.png" alt="Случайный цвет" height="100" width="100"/>
+      [ngClass]="{'button-active': gameConditions.creatorFigureColor === figureColors[2], 'button-inactive': gameConditions.creatorFigureColor !== figureColors[2]}"
+      (click)="gameConditions.creatorFigureColor = figureColors[2]">
+      <img src="assets/question.png" alt="Случайный цвет" height="80" width="80"/>
     </button>
     <button
       class="button"
-      [ngClass]="{'button-active': gameConditions.figureColor === figureColors[1], 'button-inactive': gameConditions.figureColor !== figureColors[1]}"
-      (click)="gameConditions.figureColor = figureColors[1]">
-      <img src="assets/chess/b_king.png" alt="Черные фигуры" height="100" width="100"/>
+      [ngClass]="{'button-active': gameConditions.creatorFigureColor === figureColors[1], 'button-inactive': gameConditions.creatorFigureColor !== figureColors[1]}"
+      (click)="gameConditions.creatorFigureColor = figureColors[1]">
+      <img src="assets/chess/b_king.png" alt="Черные фигуры" height="80" width="80"/>
     </button>
   </div>
 
