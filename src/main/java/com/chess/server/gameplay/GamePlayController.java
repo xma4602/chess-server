@@ -10,6 +10,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Controller
@@ -40,10 +41,10 @@ public class GamePlayController {
 
     @PostMapping("/{gameId}/action")
     ResponseEntity<?> action(@PathVariable UUID gameId,
-                                   @RequestParam UUID userId,
-                                   @RequestParam String action) {
+                             @RequestParam UUID userId,
+                             @RequestParam String action) {
         try {
-            GamePlayDto gamePlayDto  = gameplayService.makeAction(gameId, userId, action);
+            GamePlayDto gamePlayDto = gameplayService.makeAction(gameId, userId, action);
             log.info("User in made action: userId={}, gameId={}, action={}", userId, gameId, action);
             String destination = String.format("/topic/games/%s/action", gameId);
             messagingTemplate.convertAndSend(destination, gamePlayDto);
@@ -53,7 +54,18 @@ public class GamePlayController {
         } catch (ChessEngineIllegalStateException e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
+    }
 
+    @PutMapping("/{gameId}/timeout")
+    ResponseEntity<?> timeout(@PathVariable UUID gameId, @RequestParam UUID userId) {
+        Optional<GamePlayDto> dtoOptional = gameplayService.timeout(gameId, userId);
+        dtoOptional.ifPresent(gamePlayDto -> {
+            log.info("Game over by timeout: userId={}, gameId={}", userId, gameId);
+            String destination = String.format("/topic/games/%s/action", gameId);
+            messagingTemplate.convertAndSend(destination, dtoOptional);
+        });
+   
+        return ResponseEntity.ok().build();
     }
 
 //    @PostMapping("/games/end/{gameId}")

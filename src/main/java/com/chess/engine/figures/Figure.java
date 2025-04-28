@@ -62,6 +62,10 @@ public abstract class Figure implements Serializable {
         };
     }
 
+    public boolean isNotMoved(){
+        return !moved;
+    }
+
     protected void add(List<Action> actions, Action action) {
         if (action != null) actions.add(action);
     }

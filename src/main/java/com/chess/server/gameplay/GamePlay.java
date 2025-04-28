@@ -27,6 +27,8 @@ public class GamePlay implements Serializable {
 
     private UUID opponentId;
 
+    private UUID activeUserId;
+
     private String creatorLogin;
 
     private String opponentLogin;

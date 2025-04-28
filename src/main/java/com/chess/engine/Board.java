@@ -109,22 +109,9 @@ public class Board implements Serializable, Cloneable {
         return cells.get(position).getFigureType() == FigureType.PAWN;
     }
 
-    public boolean isRook(Position position) {
-        return cells.get(position).getFigureType() == FigureType.ROOK;
-    }
-
-    public FigureType typeBy(Position position) {
-        return cells.get(position).getFigureType();
-    }
-
     public boolean hasOpponent(Position position, FigureColor actualColor) {
         Figure figure = cells.get(position);
         return figure.getFigureType() != FigureType.NONE && figure.getFigureColor() != actualColor;
-    }
-
-    public boolean hasMe(Position position, FigureColor actualColor) {
-        Figure figure = cells.get(position);
-        return figure.getFigureType() != FigureType.NONE && figure.getFigureColor() == actualColor;
     }
 
     public Position findKing(FigureColor figureColor) {
@@ -155,15 +142,16 @@ public class Board implements Serializable, Cloneable {
         switch (action.getActionType()) {
             case MOVE -> {
                 ActionMove actionMove = (ActionMove) action;
+                Figure figure = getFigureByPosition(actionMove.getStartPosition());
                 move(actionMove.getStartPosition(), actionMove.getEndPosition());
 
                 Position endPosition = actionMove.getEndPosition();
                 if (isPawn(endPosition)) {
-                    if (actionMove.isDoubleMove() && !wasSpecialMove(endPosition)) {
-                        switchSpecialAction(endPosition);
+                    if (actionMove.isDoubleMove() && !figure.isActioned()) {
+                        figure.setActioned(true);
                     }
-                    if (!actionMove.isDoubleMove() && wasSpecialMove(endPosition)) {
-                        switchSpecialAction(endPosition);
+                    if (!actionMove.isDoubleMove() && figure.isActioned()) {
+                        figure.setActioned(false);
                     }
                 }
             }
@@ -190,6 +178,7 @@ public class Board implements Serializable, Cloneable {
 
     private void move(Position startPosition, Position endPosition) {
         Figure figure = cells.put(startPosition, None.NONE);
+        figure.setMoved(true);
         cells.put(endPosition, figure);
     }
 
@@ -204,10 +193,6 @@ public class Board implements Serializable, Cloneable {
     private void swap(Position startPosition, Position endPosition, FigureType figureType, FigureColor figureColor) {
         cells.put(startPosition, None.NONE);
         cells.put(endPosition, Figure.fromFigureType(figureType, figureColor));
-    }
-
-    private void switchSpecialAction(Position position) {
-        cells.get(position).setActioned(true);
     }
 
 
@@ -234,8 +219,13 @@ public class Board implements Serializable, Cloneable {
             for (int col = 0; col <= 7; col++) {
                 Position position = Position.of(row, col);
                 Figure figure = getFigureByPosition(position);
-                builder.append(figure.getFigureType().getImageChar(figure.getFigureColor()));
-                if (figure.getFigureType() == FigureType.NONE && col % 4 == 1) builder.append(' ');
+                if (figure.getFigureType() == FigureType.NONE) {
+                    builder.append(' ');
+                    if (col % 4 == 1) builder.append(' ');
+                } else {
+                    builder.append(figure.getFigureType().getImageChar(figure.getFigureColor()));
+                }
+
                 builder.append('|');
             }
             builder.replace(builder.length() - 1, builder.length(), " ");

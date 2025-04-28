@@ -30,6 +30,10 @@ public class GameEngine implements Serializable {
 
     // Game State -------------------------------------------------------------------------------
 
+    public void setGameState(GameState gameState) {
+        this.gameState = gameState;
+    }
+
     public GameState getGameState() {
         return gameState;
     }
@@ -49,7 +53,8 @@ public class GameEngine implements Serializable {
     public Map.Entry<FigureType, FigureColor> getCellState(String cell) throws ChessEngineIllegalArgumentException {
         try {
             Position position = Position.of(cell);
-            return Map.entry(board.typeBy(position), board.getFigureColor(position));
+            Figure figure = board.getFigureByPosition(position);
+            return Map.entry(figure.getFigureType(), figure.getFigureColor());
         } catch (ChessEngineRuntimeException e) {
             throw new ChessEngineIllegalArgumentException(e);
         }
@@ -96,21 +101,25 @@ public class GameEngine implements Serializable {
     public void makeAction(FigureColor playerColor, Action action) throws ChessEngineIllegalArgumentException, ChessEngineIllegalStateException {
         verifyGameEnd();
         verifyPlayerMoveOrder(playerColor);
+        verifyAction(action);
 
+        board.executeAction(action);
+        madeActions.add(action);
+        activePlayerColor = activePlayerColor.reverseColor();
+
+        whiteActions = CheckmateResolver.calcActions(board, FigureColor.WHITE);
+        blackActions = CheckmateResolver.calcActions(board, FigureColor.BLACK);
+
+        updateGameState();
+
+    }
+
+    private void verifyAction(Action verifingAction) throws ChessEngineIllegalArgumentException {
         List<Action> actions = activePlayerColor == FigureColor.WHITE ? whiteActions : blackActions;
-
-        if (!actions.contains(action)) {
-            throw new ChessEngineIllegalArgumentException("Игрок не может сделать такой ход");
-        } else {
-            board.executeAction(action);
-            madeActions.add(action);
-            activePlayerColor = activePlayerColor.reverseColor();
-
-            whiteActions = CheckmateResolver.calcActions(board, FigureColor.WHITE);
-            blackActions = CheckmateResolver.calcActions(board, FigureColor.BLACK);
-
-            updateGameState();
+        for (Action action : actions) {
+            if (action.equals(verifingAction)) return;
         }
+        throw new ChessEngineIllegalArgumentException("Игрок не может сделать такой ход");
     }
 
     public void makeDefeat(boolean playerColor) {

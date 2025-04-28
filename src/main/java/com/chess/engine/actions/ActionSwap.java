@@ -50,13 +50,20 @@ public class ActionSwap extends Action {
         );
     }
 
-    public boolean isSwapTypeSet() {
-        return swapType == FigureType.NONE;
-    }
-
     @Override
     public String toString() {
         return startPosition + "-" + swapType.getNotationChar() + endPosition;
+    }
+
+    @Override
+    public boolean equals(Action action) {
+        if (action.getActionType() != actionType) return false;
+        ActionSwap actionSwap = (ActionSwap) action;
+        if (actionSwap.startPosition != startPosition) return false;
+        if (actionSwap.figureColor != figureColor) return false;
+        if (actionSwap.endPosition != endPosition) return false;
+
+        return actionSwap.swapType != FigureType.NONE;
     }
 
     @Override

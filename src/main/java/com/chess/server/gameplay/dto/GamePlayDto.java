@@ -18,6 +18,7 @@ public class GamePlayDto {
     private UUID chatId;
     private UUID creatorId;
     private UUID opponentId;
+    private UUID activeUserId;
     private String creatorLogin;
     private String opponentLogin;
     private GameConditions gameConditions;

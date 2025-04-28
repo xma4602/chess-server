@@ -20,7 +20,7 @@ public class GameConditions implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    private FigureColor figureColor;
+    private FigureColor creatorFigureColor;
     private MatchMode matchMode;
     private TimeControl timeControl;
     private int moveTime;

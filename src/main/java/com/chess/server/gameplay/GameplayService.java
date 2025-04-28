@@ -32,13 +32,20 @@ public class GameplayService {
         GameRoom gameRoom = gameRoomService.getGameRoom(guestRoomId);
 
         GameConditions gameConditions = gameRoom.getGameConditions();
-        if (gameConditions.getFigureColor() == FigureColor.RANDOM) {
-            gameConditions.setFigureColor(FigureColor.randomValue());
+        if (gameConditions.getCreatorFigureColor() == FigureColor.RANDOM) {
+            gameConditions.setCreatorFigureColor(FigureColor.randomValue());
         }
         gameConditions = gameConditionsRepository.save(gameConditions);
         gameRoom.setGameConditions(gameConditions);
 
         GamePlay gameplay = gameplayFromRoom(gameRoom);
+
+        if (gameplay.getGameConditions().getCreatorFigureColor() == FigureColor.WHITE) {
+            gameplay.setActiveUserId(gameplay.getCreatorId());
+        } else {
+            gameplay.setActiveUserId(gameplay.getOpponentId());
+        }
+
         gameplay.setGameEngine(new GameEngine());
 //        gameRoomService.delete(gameRoom.getId()); todo вернуть в проде
         gameplay = gameplayRepository.save(gameplay);
@@ -64,22 +71,24 @@ public class GameplayService {
         FigureColor activePlayerColor = gameplay.getGameEngine().getActivePlayerColor();
 
         FigureColor playerColor = gameplay.getCreatorId().equals(userId) ?
-                gameplay.getGameConditions().getFigureColor() :
-                gameplay.getGameConditions().getFigureColor().reverseColor();
+                gameplay.getGameConditions().getCreatorFigureColor() :
+                gameplay.getGameConditions().getCreatorFigureColor().reverseColor();
         if (activePlayerColor == playerColor) {
             Action action = Action.parse(actionString, playerColor)
                     .orElseThrow(() -> new ChessEngineIllegalArgumentException("Not valid action: " + actionString));
             gameplay.getGameEngine().makeAction(playerColor, action);
+
+            if (gameplay.getActiveUserId().equals(gameplay.getCreatorId())) {
+                gameplay.setActiveUserId(gameplay.getOpponentId());
+            } else {
+                gameplay.setActiveUserId(gameplay.getCreatorId());
+            }
+
             gameplay = gameplayRepository.save(gameplay);
         }
 
         return toGamePlayDto(gameplay);
     }
-
-//    private GamePlay closeGame(GamePlay gameplay) {
-//        gameplay.setEnded(true);
-//        return gameplayRepository.save(gameplay);
-//    }
 
     public GamePlayDto getGamePlayDto(UUID gameId) {
         GamePlay gameplay = getGameplay(gameId);
@@ -116,6 +125,7 @@ public class GameplayService {
                 .chatId(gamePlay.getGameChat().getId())
                 .creatorId(gamePlay.getCreatorId())
                 .creatorLogin(gamePlay.getCreatorLogin())
+                .activeUserId(gamePlay.getActiveUserId())
                 .opponentId(gamePlay.getOpponentId())
                 .opponentLogin(gamePlay.getOpponentLogin())
                 .gameState(gameEngine.getGameState())
@@ -172,4 +182,20 @@ public class GameplayService {
         );
     }
 
+    public synchronized Optional<GamePlayDto> timeout(UUID gameId, UUID userId) {
+        GamePlay gameplay = getGameplay(gameId);
+        FigureColor playerColor = gameplay.getCreatorId().equals(userId) ?
+                gameplay.getGameConditions().getCreatorFigureColor() :
+                gameplay.getGameConditions().getCreatorFigureColor().reverseColor();
+
+        if (gameplay.getGameEngine().getGameState() == GameEngine.GameState.CONTINUES) {
+            gameplay.getGameEngine().setGameState(playerColor == FigureColor.WHITE ?
+                    GameEngine.GameState.BLACK_WIN : GameEngine.GameState.WHITE_WIN);
+
+            gameplay = gameplayRepository.save(gameplay);
+            return Optional.of(toGamePlayDto(gameplay));
+        } else {
+            return Optional.empty();
+        }
+    }
 }
