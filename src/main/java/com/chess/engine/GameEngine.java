@@ -13,7 +13,7 @@ import java.util.*;
 @SuppressWarnings("unused")
 public class GameEngine implements Serializable {
     private final Board board;
-    private final List<String> movedActions;
+    private final List<Action> madeActions;
     private FigureColor activePlayerColor;
     private GameState gameState;
     private List<Action> whiteActions;
@@ -22,7 +22,7 @@ public class GameEngine implements Serializable {
     public GameEngine() {
         board = Board.newBoard();
         activePlayerColor = FigureColor.WHITE;
-        movedActions = new ArrayList<>();
+        madeActions = new ArrayList<>();
         whiteActions = CheckmateResolver.calcActions(board, FigureColor.WHITE);
         blackActions = CheckmateResolver.calcActions(board, FigureColor.BLACK);
         updateGameState();
@@ -75,8 +75,8 @@ public class GameEngine implements Serializable {
         }
     }
 
-    public List<String> getMadeActions() {
-        return List.copyOf(movedActions);
+    public List<Action> getMadeActions() {
+        return List.copyOf(madeActions);
     }
 
     // Game Actions -------------------------------------------------------------------------------
@@ -103,6 +103,7 @@ public class GameEngine implements Serializable {
             throw new ChessEngineIllegalArgumentException("Игрок не может сделать такой ход");
         } else {
             board.executeAction(action);
+            madeActions.add(action);
             activePlayerColor = activePlayerColor.reverseColor();
 
             whiteActions = CheckmateResolver.calcActions(board, FigureColor.WHITE);

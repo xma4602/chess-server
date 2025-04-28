@@ -6,6 +6,7 @@ import com.chess.engine.GameEngine;
 import com.chess.engine.actions.*;
 import com.chess.engine.exceptions.ChessEngineIllegalArgumentException;
 import com.chess.engine.exceptions.ChessEngineIllegalStateException;
+import com.chess.server.chat.GameChatService;
 import com.chess.server.gameconditions.GameConditions;
 import com.chess.server.gameconditions.GameConditionsRepository;
 import com.chess.server.gameplay.dto.GameActionDto;
@@ -25,6 +26,7 @@ public class GameplayService {
     private final GameConditionsRepository gameConditionsRepository;
     private final GameplayRepository gameplayRepository;
     private final GameRoomService gameRoomService;
+    private final GameChatService gameChatService;
 
     public GamePlay createGameplay(UUID guestRoomId) {
         GameRoom gameRoom = gameRoomService.getGameRoom(guestRoomId);
@@ -39,7 +41,11 @@ public class GameplayService {
         GamePlay gameplay = gameplayFromRoom(gameRoom);
         gameplay.setGameEngine(new GameEngine());
 //        gameRoomService.delete(gameRoom.getId()); todo вернуть в проде
-        return gameplayRepository.save(gameplay);
+        gameplay = gameplayRepository.save(gameplay);
+
+        gameChatService.createChat(gameplay);
+
+        return gameplay;
     }
 
     private GamePlay gameplayFromRoom(GameRoom gameRoom) {
@@ -70,10 +76,10 @@ public class GameplayService {
         return toGamePlayDto(gameplay);
     }
 
-    private GamePlay closeGame(GamePlay gameplay) {
-        gameplay.setEnded(true);
-        return gameplayRepository.save(gameplay);
-    }
+//    private GamePlay closeGame(GamePlay gameplay) {
+//        gameplay.setEnded(true);
+//        return gameplayRepository.save(gameplay);
+//    }
 
     public GamePlayDto getGamePlayDto(UUID gameId) {
         GamePlay gameplay = getGameplay(gameId);
@@ -101,13 +107,20 @@ public class GameplayService {
                         entry -> entry.getKey().toString(),
                         entry -> entry.getValue().getId()));
 
+        List<String> madeActions = gameEngine.getMadeActions().stream()
+                .map(Action::toString)
+                .toList();
+
         return GamePlayDto.builder()
                 .id(gamePlay.getId())
+                .chatId(gamePlay.getGameChat().getId())
                 .creatorId(gamePlay.getCreatorId())
                 .creatorLogin(gamePlay.getCreatorLogin())
                 .opponentId(gamePlay.getOpponentId())
                 .opponentLogin(gamePlay.getOpponentLogin())
+                .gameState(gameEngine.getGameState())
                 .gameConditions(gamePlay.getGameConditions())
+                .madeActions(madeActions)
                 .whiteActions(whiteActions)
                 .blackActions(blackActions)
                 .figures(figures)
