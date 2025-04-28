@@ -71,6 +71,7 @@ public class Board implements Serializable, Cloneable {
     public Map<Position, Figure> getCells() {
         return new HashMap<>(cells);
     }
+
     public boolean isNone(Position position) {
         return cells.get(position).getFigureType() == FigureType.NONE;
     }
@@ -195,7 +196,9 @@ public class Board implements Serializable, Cloneable {
     private void eat(Position startPosition, Position endPosition, Position eatenPosition) {
         Figure figure = cells.put(startPosition, None.NONE);
         cells.put(endPosition, figure);
-        cells.put(eatenPosition, None.NONE);
+        if (endPosition != eatenPosition) {
+            cells.put(eatenPosition, None.NONE);
+        }
     }
 
     private void swap(Position startPosition, Position endPosition, FigureType figureType, FigureColor figureColor) {
@@ -220,59 +223,55 @@ public class Board implements Serializable, Cloneable {
         return toString(false);
     }
 
-    public String toString(boolean reverse) {
-        StringBuilder b = new StringBuilder("A  B  C D  E F  G  H");
-        if (reverse) b.reverse();
+    public String toString(boolean isReverse) {
 
         StringBuilder builder = new StringBuilder("  ");
-        builder.append(b);
+        builder.append(isReverse ? "H  G  F E  D C  B  A" : "A  B  C D  E F  G  H");
         builder.append("\n ╔═════════════════════╗\n");
         for (int row = 7; row >= 0; row--) {
-            if (reverse) builder.append(9 - row);
-            else builder.append(row + 1);
+            builder.append(isReverse ? 8 - row : row + 1);
             builder.append("║");
             for (int col = 0; col <= 7; col++) {
                 Position position = Position.of(row, col);
-                FigureType type = typeBy(position);
-                FigureColor figureColor = getFigureColor(position);
-                builder.append(type.getImageChar(figureColor));
-                if (type == FigureType.NONE && col % 4 == 1) builder.append(' ');
+                Figure figure = getFigureByPosition(position);
+                builder.append(figure.getFigureType().getImageChar(figure.getFigureColor()));
+                if (figure.getFigureType() == FigureType.NONE && col % 4 == 1) builder.append(' ');
                 builder.append('|');
             }
             builder.replace(builder.length() - 1, builder.length(), " ");
             builder.append("║");
-            if (reverse) builder.append(9 - row);
-            else builder.append(row + 1);
+            builder.append(isReverse ? 8 - row : row + 1);
             builder.append('\n');
         }
-        builder.append(" ╚═════════════════════╝\n  ");
-        builder.append(b);
+        builder.append(" ╚═════════════════════╝\n");
+        builder.append("  ");
+        builder.append(isReverse ? "H  G  F E  D C  B  A" : "A  B  C D  E F  G  H");
 
         return builder.toString();
     }
 
 
-    private Board flipBoard() {
-        Board flippedBoard = new Board();
-
-        for (int row = 0; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
-                Position originalPosition = Position.of(row, col);
-                Position flippedPosition = Position.of(7 - row, col); // Переворот по вертикали
-
-                Figure originalFigure = cells.get(originalPosition);
-                if (originalFigure != null) {
-                    // Копируем фигуру в перевернутую доску
-                    flippedBoard.cells.put(flippedPosition, Figure.fromFigureType(originalFigure.getFigureType(), originalFigure.getFigureColor()));
-                } else {
-                    // Если ячейка пустая, просто добавляем пустую ячейку
-                    flippedBoard.cells.put(flippedPosition, None.NONE);
-                }
-            }
-        }
-
-        return flippedBoard;
-    }
+//    private Board flipBoard() {
+//        Board flippedBoard = new Board();
+//
+//        for (int row = 0; row < 8; row++) {
+//            for (int col = 0; col < 8; col++) {
+//                Position originalPosition = Position.of(row, col);
+//                Position flippedPosition = Position.of(7 - row, col); // Переворот по вертикали
+//
+//                Figure originalFigure = cells.get(originalPosition);
+//                if (originalFigure != null) {
+//                    // Копируем фигуру в перевернутую доску
+//                    flippedBoard.cells.put(flippedPosition, Figure.fromFigureType(originalFigure.getFigureType(), originalFigure.getFigureColor()));
+//                } else {
+//                    // Если ячейка пустая, просто добавляем пустую ячейку
+//                    flippedBoard.cells.put(flippedPosition, None.NONE);
+//                }
+//            }
+//        }
+//
+//        return flippedBoard;
+//    }
 
     public Figure getFigureByPosition(Position position) {
         return cells.get(position);
