@@ -1,0 +1,16 @@
+<div class="chat-container">
+  <div class="messages">
+    <div *ngFor="let message of messages" class="message">
+      <span class="timestamp">{{ message.timestamp }}</span>
+      <strong>{{ message.userLogin }}:</strong> {{ message.message }}
+    </div>
+  </div>
+  <div class="input-container">
+    <textarea
+      [(ngModel)]="newMessage"
+      placeholder="Введите сообщение..."
+      rows="3"
+      (keydown.enter)="sendMessage(); $event.preventDefault();"></textarea>
+    <button (click)="sendMessage()">Отправить</button>
+  </div>
+</div>

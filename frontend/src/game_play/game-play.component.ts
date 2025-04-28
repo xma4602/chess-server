@@ -1,5 +1,5 @@
 import {Component, QueryList, OnInit, ViewChildren, AfterViewInit} from '@angular/core';
-import {NgForOf} from '@angular/common';
+import {NgForOf, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -13,18 +13,19 @@ import {UserService} from '../user/user-service';
 import {StompService} from '../stomp.service';
 import {GamePlayService} from './game-play-service';
 import {wsGamePlay} from '../data.service';
+import {ChatComponent} from './chat/chat.component';
 
 @Component({
   selector: 'app-game-play',
   standalone: true,
   templateUrl: './game-play.component.html',
   styleUrls: ['./game-play.component.css'],
-  imports: [FormsModule, NgForOf, HttpClientModule, ChessCellComponent],
+  imports: [FormsModule, NgForOf, HttpClientModule, ChessCellComponent, NgIf, ChatComponent],
 })
 export class GamePlayComponent implements OnInit, AfterViewInit {
   @ViewChildren(ChessCellComponent) cells!: QueryList<ChessCellComponent>;
 
-  private gamePlay: GamePlay | null = null
+  public gamePlay: GamePlay | null = null
   private selectedCell: ChessCellComponent | null = null;
 
   constructor(private router: Router,
@@ -193,4 +194,6 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
       cell.clear()
     }
   }
+
+  protected readonly Math = Math;
 }
