@@ -1,5 +1,6 @@
 package com.chess.server.gameplay;
 
+import com.chess.engine.GameEngine;
 import com.chess.server.gameconditions.GameConditions;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,7 +24,6 @@ public class GamePlay implements Serializable {
     private UUID opponentId;
     private String creatorLogin;
     private String opponentLogin;
-    private UUID activeUserId;
     @Builder.Default
     private LocalDateTime startDateTime = LocalDateTime.now();
     @Builder.Default
@@ -31,5 +31,6 @@ public class GamePlay implements Serializable {
     @OneToOne(cascade = {CascadeType.MERGE})
     @JoinColumn(name = "game_conditions_id")
     private GameConditions gameConditions;
-
+    @Convert(converter = GameEngineConverter.class)
+    private GameEngine gameEngine;
 }

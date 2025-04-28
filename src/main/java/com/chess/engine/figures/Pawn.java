@@ -2,6 +2,7 @@ package com.chess.engine.figures;
 
 import com.chess.engine.Board;
 import com.chess.engine.FigureColor;
+import com.chess.engine.FigureType;
 import com.chess.engine.Position;
 import com.chess.engine.actions.Action;
 
@@ -9,12 +10,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class Pawn extends AbstractFigure {
+public class Pawn extends Figure {
+
+    public Pawn(FigureColor figureColor) {
+        super(FigureType.PAWN, figureColor);
+    }
+
+    public Pawn(FigureType figureType, FigureColor figureColor, boolean moved, boolean actioned) {
+        super(figureType, figureColor, moved, actioned);
+    }
 
     @Override
     public List<Action> getActions(Board board, Position position) {
         List<Action> actions = new ArrayList<>();
-        FigureColor figureColor = board.getFigureColor(position);
 
         add(actions, moveForward(board, figureColor, position, position.top(figureColor)));
         add(actions, moveDoubleForward(board, position, position.topTop(figureColor)));
@@ -24,6 +32,11 @@ public class Pawn extends AbstractFigure {
         add(actions, take(board, figureColor, position, position.right(figureColor)));
 
         return actions;
+    }
+
+    @Override
+    public Figure clone() {
+        return new Pawn(figureType, figureColor, moved, actioned);
     }
 
 

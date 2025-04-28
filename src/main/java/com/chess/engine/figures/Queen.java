@@ -2,13 +2,23 @@ package com.chess.engine.figures;
 
 import com.chess.engine.Board;
 import com.chess.engine.FigureColor;
+import com.chess.engine.FigureType;
 import com.chess.engine.Position;
 import com.chess.engine.actions.Action;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Queen extends AbstractFigure {
+public class Queen extends Figure {
+
+    public Queen(FigureColor figureColor) {
+        super(FigureType.QUEEN, figureColor);
+    }
+
+    public Queen(FigureType figureType, FigureColor figureColor, boolean moved, boolean actioned) {
+        super(figureType, figureColor, moved, actioned);
+    }
+
 
     @Override
     public List<Action> getActions(Board board, Position position) {
@@ -25,5 +35,10 @@ public class Queen extends AbstractFigure {
         add(actions, moveOrEatInDirection(board, figureColor, position, x -> x.leftTop(figureColor)));
 
         return actions;
+    }
+
+    @Override
+    public Figure clone() {
+        return new Queen(figureType, figureColor, moved, actioned);
     }
 }
