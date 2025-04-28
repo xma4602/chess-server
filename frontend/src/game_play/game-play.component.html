@@ -1,20 +1,49 @@
-<div class="chess-board-container">
-  <div class="chess-board">
-    <div class="row" *ngFor="let rowIndex of [7, 6, 5, 4, 3, 2, 1, 0]">
-      <div class="row-label left">
-        <span class="row-number">{{ 8 - rowIndex }}</span> <!-- Подписи строк (8-1) -->
+<div class="container">
+
+  <!-- Чат -->
+  <div class="left-block" *ngIf="gamePlay && gamePlay.chatId">
+    <app-chat [chatId]="gamePlay.chatId"></app-chat>
+  </div>
+
+  <div class="chess-board-container">
+    <div class="chess-board">
+      <div class="row" *ngFor="let rowIndex of [7, 6, 5, 4, 3, 2, 1, 0]">
+        <div class="row-label left">
+          <span class="row-number">{{ rowIndex + 1 }}</span> <!-- Подписи строк (8-1) -->
+        </div>
+        <app-chess-cell
+          #cell
+          (click)="onClick(cell)"
+          *ngFor="let colIndex of [0, 1, 2, 3, 4, 5, 6, 7]"
+          [id]="getCellId(rowIndex, colIndex)"
+          [isWhite]="(rowIndex + colIndex) % 2 === 1">
+        </app-chess-cell>
       </div>
-      <app-chess-cell
-        #cell
-        (click)="onClick(cell)"
-        *ngFor="let colIndex of [0, 1, 2, 3, 4, 5, 6, 7]"
-        [id]="getCellId(rowIndex, colIndex)"
-        [isWhite]="(rowIndex + colIndex) % 2 === 0">
-      </app-chess-cell>
+    </div>
+    <div class="column-labels">
+      <span></span> <!-- Пустая ячейка для верхнего левого угла -->
+      <span *ngFor="let letter of ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']">{{ letter }}</span>
+      <!-- Подписи столбцов (A-H) -->
     </div>
   </div>
-  <div class="column-labels">
-    <span></span> <!-- Пустая ячейка для верхнего левого угла -->
-    <span *ngFor="let letter of ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']">{{ letter }}</span> <!-- Подписи столбцов (A-H) -->
+
+  <!-- Таблица с ходами -->
+  <div class="moves-table" *ngIf="gamePlay && gamePlay.madeActions">
+    <table>
+      <thead>
+      <tr>
+        <th>Номер</th>
+        <th>Ход белых</th>
+        <th>Ход черных</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let index of [].constructor(Math.ceil(gamePlay.madeActions.length / 2)); let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ gamePlay.madeActions[i * 2] }}</td>
+        <td>{{ gamePlay.madeActions[i * 2 + 1] || '-' }}</td> <!-- Если нет хода черных, отображаем '-' -->
+      </tr>
+      </tbody>
+    </table>
   </div>
 </div>
