@@ -1,0 +1,8 @@
+<h2 mat-dialog-title>Выберите шахматную фигуру</h2>
+<mat-dialog-content>
+  <div class="figure-container">
+    <div *ngFor="let figure of getFigures()" (click)="onSelect(figure)" class="figure-item">
+      <img [src]="figure.icon" width="50" alt="Chess Piece"/>
+    </div>
+  </div>
+</mat-dialog-content>

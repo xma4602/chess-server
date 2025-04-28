@@ -21,7 +21,7 @@ export class GameRoomService {
     const gameConditionsDto = {
       partyTime: gameConditions.partyTime,
       moveTime: gameConditions.moveTime,
-      figureColor: gameConditions.figureColor.code,
+      figureColor: gameConditions.creatorFigureColor.code,
       timeControl: gameConditions.timeControl.code,
       matchMode: gameConditions.matchMode.code
     }

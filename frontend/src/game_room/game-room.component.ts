@@ -49,14 +49,12 @@ export class GameRoomComponent implements OnInit {
               })
             }
           )
-
-
         },
         (error) => {
           console.error('Ошибка при подключении к комнате:', error); // Логируем ошибку
         }
       );
-    });
+    }, console.error);
   }
 
 

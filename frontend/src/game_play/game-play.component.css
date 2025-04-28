@@ -6,9 +6,9 @@ html, body {
 .container {
   display: flex;
   flex-direction: row; /* Расположение блоков в строку */
-  align-items: center; /* Центрирование по вертикали */
+  align-items: flex-start; /* Выравнивание по верхнему краю */
   justify-content: center; /* Центрирование по горизонтали */
-  height: 100vh; /* Высота контейнера равна высоте окна */
+  /* height: 100vh; Убедитесь, что высота контейнера равна высоте окна, если это необходимо */
 }
 
 .left-block {
@@ -65,20 +65,41 @@ html, body {
   margin-left: 20px; /* Отступ между шахматной доской и таблицей */
 }
 
-table {
-  border-collapse: collapse;
-  width: 100%;
+.moves-table-container {
+  width: 20.5em;
+  max-height: 410px; /* Установите максимальную высоту для контейнера */
+  overflow-y: auto; /* Включите вертикальный скроллинг */
+  margin-left: 20px; /* Отступ между шахматной доской и таблицей */
+  overflow-x: hidden; /* Скрыть горизонтальный скролл */
 }
 
+table {
+  border-collapse: collapse;
+  width: 100%; /* Установите ширину таблицы в 100% */
+  table-layout: auto; /* Установите фиксированное расположение столбцов */
+}
 th, td {
-  border: 1px solid #000;
-  padding: 8px;
-  text-align: left;
+  border: 1px solid #000; /* Граница для ячеек */
+  padding: 8px; /* Отступ внутри ячеек */
+  text-align: left; /* Выравнивание текста в ячейках */
+  overflow: hidden; /* Скрыть переполнение в ячейках */
+  white-space: nowrap; /* Запретить перенос текста на новую строку */
 }
 
 th {
-  background-color: #f2f2f2;
+  background-color: #f2f2f2; /* Цвет фона для заголовка */
+  position: sticky; /* Закрепить заголовок */
+  top: 0; /* Позиция, на которой заголовок будет оставаться видимым */
+  z-index: 1; /* Убедитесь, что заголовок находится выше других элементов */
 }
+
+.timer-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+  gap: 20px; /* Установите нужное значение для расстояния между таймерами */
+}
+
 
 /* Медиа-запрос для адаптивного дизайна */
 @media (max-width: 800px) {

@@ -1,1 +1,11 @@
-/* You can add global styles to this file, and also import other style files */
+@font-face {
+  font-family: 'VAG Rounded Regular'; /* Замените на имя вашего шрифта */
+  src: url('assets/fonts/VAG Rounded Regular.ttf') format('truetype'); /* Укажите путь к вашему шрифту */
+  font-weight: normal; /* Укажите вес шрифта, если необходимо */
+  font-style: normal; /* Укажите стиль шрифта, если необходимо */
+}
+
+/* Примените шрифт ко всему проекту */
+body {
+  font-family: 'VAG Rounded Regular', sans-serif; /* Замените на имя вашего шрифта */
+}
