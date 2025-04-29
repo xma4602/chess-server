@@ -59,6 +59,11 @@
 <!--			<artifactId>spring-security-test</artifactId>-->
 <!--			<scope>test</scope>-->
 <!--		</dependency>-->
+		<dependency>
+			<groupId>org.telegram</groupId>
+			<artifactId>telegrambots</artifactId>
+			<version>6.0.1</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -84,7 +89,7 @@
 						<exclude>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
-							<version>${lombok.version}</version>
+<!--							<version>${lombok.version}</version>-->
 						</exclude>
 					</excludes>
 				</configuration>

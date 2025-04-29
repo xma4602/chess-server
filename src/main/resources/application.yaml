@@ -9,12 +9,11 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   datasource:
-    url: jdbc:postgresql://localhost:5432/chess_db
-    username: postgres
-    password: GfhjkmPostgre13
+    url: jdbc:postgresql://dpg-d05ucvhr0fns73enui60-a.frankfurt-postgres.render.com:5432/chess_db_8a8z
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 logging:
   level:
     org.springframework.web: DEBUG
     org.springframework.web.filter: DEBUG
-
