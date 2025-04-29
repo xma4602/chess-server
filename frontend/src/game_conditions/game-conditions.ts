@@ -1,12 +1,28 @@
 export class GameConditions {
+
+
   constructor(
     public partyTime: number,
     public moveTime: number,
-    public figureColor: FigureColor = FigureColor.RANDOM,
+    public creatorFigureColor: FigureColor = FigureColor.RANDOM,
     public timeControl: TimeControl = TimeControl.WATCH,
     public matchMode: MatchMode = MatchMode.FRIENDLY,
     public id: string = '',
   ) {
+  }
+  static fromObject(obj: any): GameConditions {
+    const figureColor = FigureColor.fromCode(obj.figureColor) || FigureColor.RANDOM;
+    const timeControl = TimeControl.fromCode(obj.timeControl) || TimeControl.WATCH;
+    const matchMode = MatchMode.fromCode(obj.matchMode) || MatchMode.FRIENDLY;
+
+    return new GameConditions(
+      obj.partyTime,
+      obj.moveTime,
+      figureColor,
+      timeControl,
+      matchMode,
+      obj.id
+    );
   }
 
   getTileTitle(): string {
@@ -23,18 +39,6 @@ export class GameConditions {
     }
   }
 
-}
-
-export class GameConditionsDto {
-  constructor(
-    public partyTime: number,
-    public moveTime: number,
-    public figureColor: string,
-    public timeControl: string,
-    public matchMode: string,
-    public id: string = '',
-  ) {
-  }
 }
 
 export class TimeControl {
@@ -57,13 +61,13 @@ export class MatchMode {
   private constructor(public readonly code: string,
                       public readonly title: string) {
   }
+
   static fromCode(code: string) {
     for (const x of [this.FRIENDLY, this.RATING]) {
       if (x.code === code) return x
     }
     return null
   }
-
 
   static readonly FRIENDLY = new MatchMode('FRIENDLY', 'Товарищеская')
   static readonly RATING = new MatchMode('RATING', 'Рейтинговая')
@@ -72,6 +76,10 @@ export class MatchMode {
 export class FigureColor {
   private constructor(public readonly code: string,
                       public readonly title: string) {
+  }
+
+  reverseValue(){
+    return this.code === FigureColor.WHITE.code ? FigureColor.BLACK : FigureColor.WHITE;
   }
   static fromCode(code: string) {
     for (const x of [this.WHITE, this.BLACK, this.RANDOM]) {

@@ -1,12 +1,6 @@
 import {Injectable} from '@angular/core';
-import {GameRoom, GameRoomDto} from './game-room';
-import {
-  FigureColor,
-  GameConditions,
-  GameConditionsDto,
-  MatchMode,
-  TimeControl
-} from '../game_conditions/game-conditions';
+import {GameRoom} from './game-room';
+import {GameConditions} from '../game_conditions/game-conditions';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {map, Observable} from 'rxjs';
 import {restRooms} from '../data.service';
@@ -24,13 +18,13 @@ export class GameRoomService {
   createGameRoomService(gameConditions: GameConditions): Observable<string> {
     const userId = this.userService.user?.id!
     const params = new HttpParams().set('creatorId', userId);
-    const gameConditionsDto = new GameConditionsDto(
-      gameConditions.partyTime,
-      gameConditions.moveTime,
-      gameConditions.figureColor.code,
-      gameConditions.timeControl.code,
-      gameConditions.matchMode.code
-    )
+    const gameConditionsDto = {
+      partyTime: gameConditions.partyTime,
+      moveTime: gameConditions.moveTime,
+      figureColor: gameConditions.creatorFigureColor.code,
+      timeControl: gameConditions.timeControl.code,
+      matchMode: gameConditions.matchMode.code
+    }
     return this.http.post<string>(`${restRooms}`, gameConditionsDto, {params});
   }
 
@@ -38,22 +32,8 @@ export class GameRoomService {
     const userId = this.userService.user?.id!
     const params = new HttpParams().set('userId', userId);
 
-    return this.http.put<GameRoomDto>(`${restRooms}/${roomId}/join`, {}, {params})
-      .pipe(map(dto => this.parseRoom(dto)))
+    return this.http.put<GameRoom>(`${restRooms}/${roomId}/join`, {}, {params})
+      .pipe(map(dto => GameRoom.fromObject(dto)))
   }
 
-  parseRoom(dto: GameRoomDto) {
-    const gameConditions = new GameConditions(
-      dto.gameConditions.partyTime,
-      dto.gameConditions.moveTime,
-      FigureColor.fromCode(dto.gameConditions.figureColor)!,
-      TimeControl.fromCode(dto.gameConditions.timeControl)!,
-      MatchMode.fromCode(dto.gameConditions.matchMode)!
-    )
-    return new GameRoom(
-      dto.id, gameConditions,
-      dto.creatorId, dto.opponentId,
-      dto.creatorLogin, dto.opponentLogin
-    )
-  }
 }

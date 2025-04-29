@@ -10,24 +10,22 @@
       </div>
       <div class="column">
         <p>Режим матча: {{ gameRoom.gameConditions.matchMode.title }}</p>
-        <p>Цвет фигур: {{ gameRoom.gameConditions.figureColor.title }}</p>
+        <p>Цвет фигур: {{ gameRoom.gameConditions.creatorFigureColor.title }}</p>
       </div>
     </div>
   </div>
 
   <div class="panel">
-    <h2>Владелец игры</h2>
-    <p>{{ gameRoom.creatorLogin }}</p>
+    <h2>Владелец игры: {{ gameRoom.creatorLogin }}</h2>
   </div>
 
   <div class="panel" *ngIf="gameRoom.opponentLogin">
-    <h2>Гость игры</h2>
-    <p>{{ gameRoom.opponentLogin }}</p>
+    <h2>Гость игры: {{ gameRoom.opponentLogin }}</h2>
   </div>
 
   <div class="invite-link">
     <h3>Чтобы пригласить друга, отправьте ему эту ссылку:</h3>
-    <input type="text" [value]="gameRoom.getLink()" readonly/>
+    <a [href]="gameRoom.getLink()" target="_blank">{{ gameRoom.getLink() }}</a>
   </div>
 
   <div class="buttons">

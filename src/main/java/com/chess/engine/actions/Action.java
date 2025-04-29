@@ -2,16 +2,15 @@ package com.chess.engine.actions;
 
 import com.chess.engine.FigureColor;
 import com.chess.engine.Position;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+import java.io.Serializable;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 @Getter
-@EqualsAndHashCode
-public abstract class Action {
+public abstract class Action implements Serializable {
     protected final ActionType actionType;
     private static final Predicate<String> actionPredicate = Pattern.compile("(0-0(-0)?)|([a-h][1-8]-[KQRBNP]?[a-h][1-8])|([a-h][1-8][x:][a-h][1-8])").asPredicate();
 
@@ -20,6 +19,8 @@ public abstract class Action {
     }
 
     public abstract String toString();
+
+    public abstract boolean equals(Action action);
 
     public abstract boolean equalsPositions(String startPosition, String endPosition);
 
@@ -61,10 +62,6 @@ public abstract class Action {
         action = ActionCastling.parse(actionString, playerColor);
         return action;
 
-    }
-
-    public static boolean validate(String action) {
-        return actionPredicate.test(action);
     }
 
     public enum ActionType {

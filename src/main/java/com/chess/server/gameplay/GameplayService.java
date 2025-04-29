@@ -6,6 +6,7 @@ import com.chess.engine.GameEngine;
 import com.chess.engine.actions.*;
 import com.chess.engine.exceptions.ChessEngineIllegalArgumentException;
 import com.chess.engine.exceptions.ChessEngineIllegalStateException;
+import com.chess.server.chat.GameChatService;
 import com.chess.server.gameconditions.GameConditions;
 import com.chess.server.gameconditions.GameConditionsRepository;
 import com.chess.server.gameplay.dto.GameActionDto;
@@ -25,24 +26,33 @@ public class GameplayService {
     private final GameConditionsRepository gameConditionsRepository;
     private final GameplayRepository gameplayRepository;
     private final GameRoomService gameRoomService;
-
-    private static final Map<UUID, GameEngine> games = new HashMap<>();
+    private final GameChatService gameChatService;
 
     public GamePlay createGameplay(UUID guestRoomId) {
         GameRoom gameRoom = gameRoomService.getGameRoom(guestRoomId);
 
         GameConditions gameConditions = gameRoom.getGameConditions();
-        if (gameConditions.getFigureColor() == FigureColor.RANDOM) {
-            gameConditions.setFigureColor(FigureColor.randomValue());
-            gameRoom.setGameConditions(gameConditionsRepository.save(gameConditions));
+        if (gameConditions.getCreatorFigureColor() == FigureColor.RANDOM) {
+            gameConditions.setCreatorFigureColor(FigureColor.randomValue());
         }
+        gameConditions = gameConditionsRepository.save(gameConditions);
+        gameRoom.setGameConditions(gameConditions);
 
         GamePlay gameplay = gameplayFromRoom(gameRoom);
-        gameRoomService.delete(gameRoom.getId());
-        GamePlay gamePlay = gameplayRepository.save(gameplay);
-        games.put(gamePlay.getId(), new GameEngine());
 
-        return gamePlay;
+        if (gameplay.getGameConditions().getCreatorFigureColor() == FigureColor.WHITE) {
+            gameplay.setActiveUserId(gameplay.getCreatorId());
+        } else {
+            gameplay.setActiveUserId(gameplay.getOpponentId());
+        }
+
+        gameplay.setGameEngine(new GameEngine());
+//        gameRoomService.delete(gameRoom.getId()); todo вернуть в проде
+        gameplay = gameplayRepository.save(gameplay);
+
+        gameChatService.createChat(gameplay);
+
+        return gameplay;
     }
 
     private GamePlay gameplayFromRoom(GameRoom gameRoom) {
@@ -57,25 +67,27 @@ public class GameplayService {
 
     public GamePlayDto makeAction(UUID gameId, UUID userId, String actionString) throws ChessEngineIllegalArgumentException, ChessEngineIllegalStateException {
         GamePlay gameplay = getGameplay(gameId);
-        GameEngine gameEngine = games.get(gameId);
 
-        FigureColor activePlayerColor = gameEngine.getActivePlayerColor();
+        FigureColor activePlayerColor = gameplay.getGameEngine().getActivePlayerColor();
 
         FigureColor playerColor = gameplay.getCreatorId().equals(userId) ?
-                gameplay.getGameConditions().getFigureColor() :
-                gameplay.getGameConditions().getFigureColor().reverseColor();
+                gameplay.getGameConditions().getCreatorFigureColor() :
+                gameplay.getGameConditions().getCreatorFigureColor().reverseColor();
         if (activePlayerColor == playerColor) {
             Action action = Action.parse(actionString, playerColor)
                     .orElseThrow(() -> new ChessEngineIllegalArgumentException("Not valid action: " + actionString));
-            gameEngine.makeAction(playerColor, action);
+            gameplay.getGameEngine().makeAction(playerColor, action);
+
+            if (gameplay.getActiveUserId().equals(gameplay.getCreatorId())) {
+                gameplay.setActiveUserId(gameplay.getOpponentId());
+            } else {
+                gameplay.setActiveUserId(gameplay.getCreatorId());
+            }
+
+            gameplay = gameplayRepository.save(gameplay);
         }
 
         return toGamePlayDto(gameplay);
-    }
-
-    private GamePlay closeGame(GamePlay gameplay) {
-        gameplay.setEnded(true);
-        return gameplayRepository.save(gameplay);
     }
 
     public GamePlayDto getGamePlayDto(UUID gameId) {
@@ -84,33 +96,45 @@ public class GameplayService {
     }
 
     private GamePlayDto toGamePlayDto(GamePlay gamePlay) {
-        GameEngine gameEngine = games.get(gamePlay.getId());
-        List<GameActionDto> whiteActions = gameEngine.getActionsByPlayerColor(FigureColor.WHITE)
-                .stream().map(this::toGameActionDto).toList();
-        List<GameActionDto> blackActions = gameEngine.getActionsByPlayerColor(FigureColor.BLACK)
-                .stream().map(this::toGameActionDto).toList();
-        Map<String, String> figures = gameEngine.getBoardState()
-                .entrySet().stream().map(this::toFigure).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        GameEngine gameEngine = gamePlay.getGameEngine();
+
+        List<GameActionDto> whiteActions = new ArrayList<>();
+        if (gameEngine.getActivePlayerColor() == FigureColor.WHITE) {
+            whiteActions = gameEngine.getActionsByPlayerColor(FigureColor.WHITE)
+                    .stream().map(this::toGameActionDto).toList();
+        }
+
+        List<GameActionDto> blackActions = new ArrayList<>();
+        if (gameEngine.getActivePlayerColor() == FigureColor.BLACK) {
+            blackActions = gameEngine.getActionsByPlayerColor(FigureColor.BLACK)
+                    .stream().map(this::toGameActionDto).toList();
+        }
+
+        Map<String, String> figures = gameEngine.getBoardState().entrySet().stream()
+                .filter(entry -> entry.getValue().getFigureType() != FigureType.NONE)
+                .collect(Collectors.toMap(
+                        entry -> entry.getKey().toString(),
+                        entry -> entry.getValue().getId()));
+
+        List<String> madeActions = gameEngine.getMadeActions().stream()
+                .map(Action::toString)
+                .toList();
 
         return GamePlayDto.builder()
                 .id(gamePlay.getId())
+                .chatId(gamePlay.getGameChat().getId())
                 .creatorId(gamePlay.getCreatorId())
                 .creatorLogin(gamePlay.getCreatorLogin())
+                .activeUserId(gamePlay.getActiveUserId())
                 .opponentId(gamePlay.getOpponentId())
                 .opponentLogin(gamePlay.getOpponentLogin())
+                .gameState(gameEngine.getGameState())
+                .gameConditions(gamePlay.getGameConditions())
+                .madeActions(madeActions)
                 .whiteActions(whiteActions)
                 .blackActions(blackActions)
                 .figures(figures)
                 .build();
-    }
-
-    private Map.Entry<String, String> toFigure(Map.Entry<String, Map.Entry<FigureType, FigureColor>> stringEntryEntry) {
-        FigureType figureType = stringEntryEntry.getValue().getKey();
-        FigureColor figureColor = stringEntryEntry.getValue().getValue();
-        return Map.entry(
-                stringEntryEntry.getKey(),
-                figureColor.getId() + "_" + figureType.getId()
-        );
     }
 
     private GameActionDto toGameActionDto(Action action) {
@@ -158,4 +182,20 @@ public class GameplayService {
         );
     }
 
+    public synchronized Optional<GamePlayDto> timeout(UUID gameId, UUID userId) {
+        GamePlay gameplay = getGameplay(gameId);
+        FigureColor playerColor = gameplay.getCreatorId().equals(userId) ?
+                gameplay.getGameConditions().getCreatorFigureColor() :
+                gameplay.getGameConditions().getCreatorFigureColor().reverseColor();
+
+        if (gameplay.getGameEngine().getGameState() == GameEngine.GameState.CONTINUES) {
+            gameplay.getGameEngine().setGameState(playerColor == FigureColor.WHITE ?
+                    GameEngine.GameState.BLACK_WIN : GameEngine.GameState.WHITE_WIN);
+
+            gameplay = gameplayRepository.save(gameplay);
+            return Optional.of(toGamePlayDto(gameplay));
+        } else {
+            return Optional.empty();
+        }
+    }
 }

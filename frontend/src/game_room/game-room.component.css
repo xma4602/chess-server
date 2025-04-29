@@ -46,8 +46,8 @@ button:hover {
 .game-conditions-panel {
   border: 1px solid #ccc;
   border-radius: 5px;
-  padding: 15px;
-  margin: 10px 0;
+  padding: 10px;
+  margin: 15px 0;
   background-color: #f9f9f9;
 }
 
@@ -63,4 +63,16 @@ button:hover {
 
 .column:last-child {
   margin-right: 0; /* Убираем отступ у последней колонки */
+}
+
+h1 {
+  font-size: 1.5em; /* Уменьшите размер шрифта заголовка */
+}
+
+h2 {
+  font-size: 1.2em; /* Уменьшите размер шрифта для подзаголовков */
+}
+
+h3 {
+  font-size: 1em; /* Уменьшите размер шрифта для заголовков третьего уровня */
 }

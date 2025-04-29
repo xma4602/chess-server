@@ -1,0 +1,49 @@
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  max-width: 400px; /* Максимальная ширина чата */
+  height: 400px; /* Установите фиксированную высоту для контейнера чата */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  background-color: #f9f9f9;
+}
+
+.messages {
+  flex-grow: 1; /* Позволяет сообщениям занимать доступное пространство */
+  overflow-y: auto; /* Прокрутка при переполнении */
+  margin-bottom: 10px; /* Отступ снизу */
+}
+
+.timestamp {
+  font-size: 0.8em; /* Уменьшенный размер шрифта для временной метки */
+  color: #888; /* Цвет для временной метки */
+  margin-right: 10px; /* Отступ справа для отделения от логина */
+  float: left; /* Выравнивание по левому краю */
+}
+
+.input-container {
+  display: flex;
+}
+
+textarea {
+  width: 100%; /* Занимает всю ширину контейнера */
+  padding: 5px; /* Отступы внутри текстового поля */
+  border: 1px solid #ccc; /* Граница текстового поля */
+  border-radius: 3px; /* Закругленные углы */
+  resize: none; /* Запретить изменение размера текстового поля */
+}
+
+button {
+  margin-left: 5px; /* Отступ между полем ввода и кнопкой */
+  padding: 5px 10px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3; /* Цвет кнопки при наведении */
+}

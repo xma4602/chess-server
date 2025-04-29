@@ -1,7 +1,6 @@
 package com.chess.engine.actions;
 
 import com.chess.engine.Position;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.util.Optional;
@@ -9,7 +8,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Getter
-@EqualsAndHashCode(callSuper = true)
 public class ActionEat extends Action {
     public static final Pattern eatPattern = Pattern.compile("([a-h][1-8])x([a-h][1-8])");
     private final Position startPosition;
@@ -33,6 +31,14 @@ public class ActionEat extends Action {
     @Override
     public String toString() {
         return startPosition + "x" + eatenPosition;
+    }
+
+    @Override
+    public boolean equals(Action action) {
+        if (action.getActionType() != actionType) return false;
+        ActionEat actionEat = (ActionEat) action;
+        if (actionEat.startPosition != startPosition) return false;
+        return actionEat.eatenPosition == eatenPosition;
     }
 
     @Override

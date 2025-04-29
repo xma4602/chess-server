@@ -1,5 +1,25 @@
-.chess-board-container {
+html, body {
+  height: 100%; /* Убедитесь, что высота тела и html равна 100% */
+  margin: 0; /* Убираем отступы по умолчанию */
+}
+
+.container {
   display: flex;
+  flex-direction: row; /* Расположение блоков в строку */
+  align-items: flex-start; /* Выравнивание по верхнему краю */
+  justify-content: center; /* Центрирование по горизонтали */
+  /* height: 100vh; Убедитесь, что высота контейнера равна высоте окна, если это необходимо */
+}
+
+.left-block {
+  display: flex;
+  flex-direction: column; /* Убедитесь, что дочерние элементы располагаются в столбик */
+  flex: 0 0 300px; /* Установите фиксированную ширину или используйте flex-grow */
+  margin-right: 20px; /* Отступ между левым блоком и шахматной доской */
+}
+
+
+.chess-board-container {
   flex-direction: column;
   align-items: center;
 }
@@ -17,7 +37,7 @@
 
 .chess-board {
   display: grid;
-  grid-template-columns: repeat(8, 1fr);
+  grid-template-columns: repeat(9, 1fr);
 }
 
 .row {
@@ -31,11 +51,70 @@
 }
 
 .row-label.left {
+  display: flex; /* Убедитесь, что flexbox включен */
   justify-content: flex-end; /* Прижать к правой стороне */
-  text-align: right; /* Прижать текст к правой стороне */
+  text-align: left; /* Прижать текст к правой стороне */
 }
 
-.row-label.right {
-  justify-content: flex-start; /* Прижать к левой стороне */
-  text-align: left; /* Прижать текст к левой стороне */
+.row-number {
+  margin-right: 10px; /* Добавить отступ справа только к цифрам */
+}
+
+.moves-table {
+  max-width: 200px; /* Ширина таблицы */
+  margin-left: 20px; /* Отступ между шахматной доской и таблицей */
+}
+
+.moves-table-container {
+  width: 20.5em;
+  max-height: 410px; /* Установите максимальную высоту для контейнера */
+  overflow-y: auto; /* Включите вертикальный скроллинг */
+  margin-left: 20px; /* Отступ между шахматной доской и таблицей */
+  overflow-x: hidden; /* Скрыть горизонтальный скролл */
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%; /* Установите ширину таблицы в 100% */
+  table-layout: auto; /* Установите фиксированное расположение столбцов */
+}
+th, td {
+  border: 1px solid #000; /* Граница для ячеек */
+  padding: 8px; /* Отступ внутри ячеек */
+  text-align: left; /* Выравнивание текста в ячейках */
+  overflow: hidden; /* Скрыть переполнение в ячейках */
+  white-space: nowrap; /* Запретить перенос текста на новую строку */
+}
+
+th {
+  background-color: #f2f2f2; /* Цвет фона для заголовка */
+  position: sticky; /* Закрепить заголовок */
+  top: 0; /* Позиция, на которой заголовок будет оставаться видимым */
+  z-index: 1; /* Убедитесь, что заголовок находится выше других элементов */
+}
+
+.timer-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+  gap: 20px; /* Установите нужное значение для расстояния между таймерами */
+}
+
+
+/* Медиа-запрос для адаптивного дизайна */
+@media (max-width: 800px) {
+  .container {
+    flex-direction: column; /* Расположение блоков в столбик при узком экране */
+    align-items: center; /* Центрирование блоков */
+  }
+
+  .left-block {
+    width: 40%; /* Увеличьте ширину левого блока */
+    margin-right: 0; /* Убираем отступ справа */
+    margin-bottom: 20px; /* Добавляем отступ снизу */
+  }
+
+  .moves-table {
+    margin-left: 0; /* Убираем отступ слева */
+  }
 }
