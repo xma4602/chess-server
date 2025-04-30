@@ -27,8 +27,13 @@ export class RegisterComponent {
   }
 
   register() {
-    this.userService.register(this.login!, this.password!).subscribe(response => {
-      this.userService.user = new User(response, this.login!)
+    this.userService.register(this.login!, this.password!).subscribe((response: {
+      id: string,
+      login: string,
+      rating: number,
+      roles: string[]
+    }) => {
+      this.userService.user = new User(response.id, response.login, response.rating, response.roles)
       console.log('User registered successfully', response);
       this.router.navigateByUrl(this.returnUrl); // Перенаправление на нужную страницу
     }, error => {

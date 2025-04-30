@@ -3,11 +3,11 @@
 
   <label for="timeControl">Контроль времени:</label>
   <select id="timeControl" [(ngModel)]="gameConditions.timeControl">
-    <option *ngFor="let control of timeControls" [value]="control">{{ control.title }}</option>
+    <option *ngFor="let control of timeControls" [ngValue]="control">{{ control.title }}</option>
   </select>
 
   <!-- Условное отображение полей в зависимости от выбранного значения timeControl -->
-  <div *ngIf="gameConditions.timeControl !== TimeControl.NONE">
+  <div *ngIf="gameConditions.timeControl === TimeControl.WATCH">
     <label for="partyTime">Минут на партию: {{ gameConditions.partyTime }}</label>
     <input type="range" id="partyTime" [(ngModel)]="gameConditions.partyTime" min="1" max="60"/>
 

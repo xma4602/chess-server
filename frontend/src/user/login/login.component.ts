@@ -31,14 +31,24 @@ export class LoginComponent {
   }
 
   loginUser() {
-    this.userService.login(this.login!, this.password!).subscribe(response => {
-      console.log('User logged in successfully', response);
-      this.userService.user = new User(response, this.login!)
-      this.router.navigateByUrl(this.returnUrl); // Перенаправление на нужную страницу
-    }, error => {
-      console.error('Login failed', error);
-      this.openSnackBar('Login failed: ' + error.error, 'Close');
-    });
+    this.makeLogin(this.login!, this.password!);
+  }
+
+  private makeLogin(login: string, password: string) {
+    this.userService.login(login, password).subscribe(
+      (response: {
+        id: string,
+        login: string,
+        rating: number,
+        roles: string[]
+      }) => {
+        console.log('User logged in successfully', response);
+        this.userService.user = new User(response.id, response.login, response.rating, response.roles)
+        this.router.navigateByUrl(this.returnUrl); // Перенаправление на нужную страницу
+      }, error => {
+        console.error('Login failed', error);
+        this.openSnackBar('Login failed: ' + error.error, 'Close');
+      });
   }
 
   openSnackBar(message: string, action: string) {
@@ -48,12 +58,10 @@ export class LoginComponent {
   }
 
   crackLogin1() {
-    this.userService.user = new User('436ec41b-de96-452d-bfa6-957fda083a20', 'player1')
-    this.router.navigateByUrl(this.returnUrl); // Перенаправление на нужную страницу
+    this.makeLogin('player1', 'password1')
   }
 
   crackLogin2() {
-    this.userService.user = new User('34c32d84-75ae-434b-92aa-8d7218c1606d', 'player2')
-    this.router.navigateByUrl(this.returnUrl); // Перенаправление на нужную страницу
+    this.makeLogin('player2', 'password2')
   }
 }

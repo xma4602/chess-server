@@ -21,7 +21,7 @@ export class GameRoomService {
     const gameConditionsDto = {
       partyTime: gameConditions.partyTime,
       moveTime: gameConditions.moveTime,
-      figureColor: gameConditions.creatorFigureColor.code,
+      creatorFigureColor: gameConditions.creatorFigureColor.code,
       timeControl: gameConditions.timeControl.code,
       matchMode: gameConditions.matchMode.code
     }
@@ -36,4 +36,7 @@ export class GameRoomService {
       .pipe(map(dto => GameRoom.fromObject(dto)))
   }
 
+  closeRoom(roomId: string) {
+    return this.http.delete<void>(`${restRooms}/${roomId}/close`)
+  }
 }
