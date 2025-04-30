@@ -30,7 +30,7 @@
   <!-- Таблица с ходами -->
   <div class="moves-table-container">
     <div class="moves-table">
-      <div class="timer-container">
+      <div class="timer-container" *ngIf="gamePlay!.gameConditions!.timeControl.code === TimeControl.WATCH.code">
         <app-timer #creatorTimer></app-timer>
         <app-timer #opponentTimer></app-timer>
       </div>
@@ -42,7 +42,7 @@
           <th>Ход черных</th>
         </tr>
         </thead>
-        <tbody  *ngIf="gamePlay && gamePlay.madeActions">
+        <tbody *ngIf="gamePlay && gamePlay!.madeActions">
         <tr *ngFor="let index of [].constructor(Math.ceil(gamePlay.madeActions.length / 2)); let i = index">
           <td>{{ i + 1 }}</td>
           <td>{{ gamePlay.madeActions[i * 2] }}</td>

@@ -9,7 +9,7 @@ import {Component, Input, OnDestroy} from '@angular/core';
 export class CountdownTimerComponent implements OnDestroy {
   @Input() userLogin: string | null = null
   userId: string | null = null
-  countdown: number | null = null; // Время в секундах
+  countdown: number = 0; // Время в секундах
   interval: any;
   minus: number = 1
 

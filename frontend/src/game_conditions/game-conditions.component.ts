@@ -18,9 +18,9 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 export class GameConditionsComponent implements OnInit {
   @Input()
   gameConditions: GameConditions = new GameConditions(5, 3); // Пример значений по умолчанию
-  timeControls: TimeControl[] = Object.values(TimeControl) as TimeControl[];
-  matchModes: MatchMode[] = Object.values(MatchMode) as MatchMode[];
-  figureColors: FigureColor[] = Object.values(FigureColor) as FigureColor[];
+  timeControls: TimeControl[] = [TimeControl.WATCH, TimeControl.NONE];
+  matchModes: MatchMode[] = [MatchMode.FRIENDLY, MatchMode.RATING];
+  figureColors: FigureColor[] =[FigureColor.WHITE, FigureColor.RANDOM, FigureColor.BLACK];
 
   constructor(private router: Router,
               private gameConditionsService: GameConditionsService,

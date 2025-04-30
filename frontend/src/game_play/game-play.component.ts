@@ -7,7 +7,7 @@ import {GamePlay, GameState} from './game-play';
 import {IMessage} from '@stomp/stompjs';
 import {ChessCellComponent} from './chess-cell/chess-cell.component';
 import {Figure} from './figure';
-import {FigureColor} from '../game_conditions/game-conditions';
+import {FigureColor, TimeControl} from '../game_conditions/game-conditions';
 import {ActionType, GameAction} from './game-action';
 import {UserService} from '../user/user-service';
 import {StompService} from '../stomp.service';
@@ -69,14 +69,21 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
   private startTimers() {
     // Убедитесь, что таймеры инициализированы
     if (this.creatorTimer && this.opponentTimer && this.gamePlay) {
-      const partyTime = this.gamePlay.gameConditions.partyTime * 60;
-      this.creatorTimer.startTimer(this.gamePlay.creatorLogin, this.gamePlay.creatorId, partyTime,
-        () => this.timeout(this.gamePlay!.creatorId));
-      this.opponentTimer.startTimer(this.gamePlay.opponentLogin, this.gamePlay.opponentId, partyTime,
-        () => this.timeout(this.gamePlay!.creatorId));
+      if (this.gamePlay.gameConditions.timeControl.code === TimeControl.WATCH.code) {
+        const partyTime = this.gamePlay.gameConditions.partyTime * 60;
+        this.creatorTimer.startTimer(this.gamePlay.creatorLogin, this.gamePlay.creatorId, partyTime,
+          () => this.timeout(this.gamePlay!.creatorId));
+        this.opponentTimer.startTimer(this.gamePlay.opponentLogin, this.gamePlay.opponentId, partyTime,
+          () => this.timeout(this.gamePlay!.creatorId));
 
-      this.updateTimers();
-
+        if (this.creatorTimer.userId === this.gamePlay!.activeUserId) {
+          this.creatorTimer.resumeTimer()
+          this.opponentTimer.stopTimer()
+        } else {
+          this.opponentTimer.resumeTimer()
+          this.creatorTimer.stopTimer()
+        }
+      }
     } else {
       console.error('Таймеры или gamePlay не инициализированы');
     }
@@ -104,12 +111,16 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
   }
 
   private updateTimers() {
-    if (this.creatorTimer.userId == this.gamePlay!.activeUserId) {
-      this.creatorTimer.resumeTimer()
-      this.opponentTimer.stopTimer()
-    } else {
-      this.opponentTimer.resumeTimer()
-      this.creatorTimer.stopTimer()
+    if (this.gamePlay!.gameConditions.timeControl.code === TimeControl.WATCH.code) {
+      if (this.creatorTimer.userId == this.gamePlay!.activeUserId) {
+        this.creatorTimer.resumeTimer()
+        this.opponentTimer.countdown! += this.gamePlay!.gameConditions.moveTime
+        this.opponentTimer.stopTimer()
+      } else {
+        this.opponentTimer.resumeTimer()
+        this.creatorTimer.countdown! += this.gamePlay!.gameConditions.moveTime
+        this.creatorTimer.stopTimer()
+      }
     }
   }
 
@@ -133,7 +144,7 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
         console.log('2')
       }
     } else {
-      const action = this.findAction(this.selectedCell, newSelectedCell);
+      const action = this.findActionByCells(this.selectedCell, newSelectedCell);
       if (action !== null) {
         this.executeAction(action)
         console.log('3')
@@ -174,8 +185,8 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
   }
 
 
-  private findAction(selectedCell: ChessCellComponent, newSelectedCell: ChessCellComponent) {
-    for (let action of this.getActionForCurrentUser()) {
+  private findActionByCells(selectedCell: ChessCellComponent, newSelectedCell: ChessCellComponent) {
+    for (let action of this.getActionsForCurrentUser()) {
       const isMoveAction = action.startPosition === selectedCell.id &&
         (action.endPosition == newSelectedCell.id || action.eatenPosition == newSelectedCell.id);
 
@@ -185,22 +196,27 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
       const isRookCastling = action.rookStartPosition === selectedCell.id
         && action.rookEndPosition === newSelectedCell.id
 
-      if (isMoveAction || isKingCastling || isRookCastling)
+      if (isMoveAction || isKingCastling || isRookCastling){
         return action
+      }
     }
 
     return null
   }
 
-  getActionForCurrentUser() {
-    const figureColor = this.getFigureColorForCurrentUser();
-    return figureColor.code === FigureColor.WHITE.code ?
-          this.gamePlay!.whiteActions : this.gamePlay!.blackActions
+  getActionsForCurrentUser() {
+    if (this.gamePlay!.activeUserId !== this.userService.user?.id) {
+      return []
+    } else {
+      const figureColor = this.getFigureColorForActiveUser();
+      return figureColor.code === FigureColor.WHITE.code ?
+        this.gamePlay!.whiteActions : this.gamePlay!.blackActions
+    }
   }
 
-  private findActions(selectedCell: ChessCellComponent) {
+  private findActionsForCurrentUser(selectedCell: ChessCellComponent) {
     const actions: GameAction[] = []
-    for (let action of this.getActionForCurrentUser()) {
+    for (let action of this.getActionsForCurrentUser()) {
       if (action.startPosition === selectedCell.id
         || action.kingStartPosition === selectedCell.id
         || action.rookStartPosition === selectedCell.id) {
@@ -212,7 +228,7 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
 
   private viewActions(selectedCell: ChessCellComponent) {
     this.clearViewActions()
-    const actions = this.findActions(selectedCell);
+    const actions = this.findActionsForCurrentUser(selectedCell);
     for (let action of actions) {
       this.viewAction(selectedCell, action)
     }
@@ -294,8 +310,14 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
     }
   }
 
+  private getFigureColorForActiveUser() {
+    return this.gamePlay!.creatorId === this.gamePlay!.activeUserId ?
+      this.gamePlay!.gameConditions.creatorFigureColor :
+      this.gamePlay!.gameConditions.creatorFigureColor.reverseValue();
+  }
+
   private getFigureColorForCurrentUser() {
-    return this.gamePlay!.creatorId === this.gamePlay?.activeUserId ?
+    return this.gamePlay!.creatorId === this.userService.user!.id ?
       this.gamePlay!.gameConditions.creatorFigureColor :
       this.gamePlay!.gameConditions.creatorFigureColor.reverseValue();
   }
@@ -304,4 +326,6 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
     this.gamePlayService.timeout(this.gamePlay!.id, userId)
       .subscribe(console.log, console.error)
   }
+
+  protected readonly TimeControl = TimeControl;
 }

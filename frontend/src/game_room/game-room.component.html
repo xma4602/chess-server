@@ -1,6 +1,5 @@
-<div class="game-room">
+<div class="game-room" *ngIf="gameRoom">
   <h1>Вызвать на игру</h1>
-
 
   <div class="game-conditions-panel">
     <div class="columns">
@@ -28,8 +27,8 @@
     <a [href]="gameRoom.getLink()" target="_blank">{{ gameRoom.getLink() }}</a>
   </div>
 
-  <div class="buttons">
-    <button (click)="startGame()">Начать игру</button>
+  <div class="buttons" *ngIf="gameRoom!.creatorId === userService.user!.id">
+    <button *ngIf="gameRoom.opponentLogin" (click)="startGame()">Начать игру</button>
     <button (click)="cancelGame()">Отменить игру</button>
   </div>
 </div>

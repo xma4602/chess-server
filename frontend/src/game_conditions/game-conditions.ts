@@ -4,23 +4,20 @@ export class GameConditions {
   constructor(
     public partyTime: number,
     public moveTime: number,
-    public creatorFigureColor: FigureColor = FigureColor.RANDOM,
+    public creatorFigureColor: FigureColor = FigureColor.WHITE,
     public timeControl: TimeControl = TimeControl.WATCH,
     public matchMode: MatchMode = MatchMode.FRIENDLY,
     public id: string = '',
   ) {
   }
-  static fromObject(obj: any): GameConditions {
-    const figureColor = FigureColor.fromCode(obj.figureColor) || FigureColor.RANDOM;
-    const timeControl = TimeControl.fromCode(obj.timeControl) || TimeControl.WATCH;
-    const matchMode = MatchMode.fromCode(obj.matchMode) || MatchMode.FRIENDLY;
 
+  static fromObject(obj: any): GameConditions {
     return new GameConditions(
       obj.partyTime,
       obj.moveTime,
-      figureColor,
-      timeControl,
-      matchMode,
+      FigureColor.fromCode(obj.creatorFigureColor)!,
+      TimeControl.fromCode(obj.timeControl)!,
+      MatchMode.fromCode(obj.matchMode)!,
       obj.id
     );
   }
@@ -78,9 +75,10 @@ export class FigureColor {
                       public readonly title: string) {
   }
 
-  reverseValue(){
+  reverseValue() {
     return this.code === FigureColor.WHITE.code ? FigureColor.BLACK : FigureColor.WHITE;
   }
+
   static fromCode(code: string) {
     for (const x of [this.WHITE, this.BLACK, this.RANDOM]) {
       if (x.code === code) return x
