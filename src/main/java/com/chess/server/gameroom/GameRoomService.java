@@ -43,7 +43,8 @@ public class GameRoomService {
         );
     }
 
-    public void delete(UUID roomId) {
-        guestRoomRepository.deleteById(roomId);
+    public void closeRoom(UUID roomId) {
+        GameRoom gameRoom = getGameRoom(roomId);
+        guestRoomRepository.deleteById(gameRoom.getId());
     }
 }
