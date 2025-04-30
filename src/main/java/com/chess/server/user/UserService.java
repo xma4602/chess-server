@@ -18,7 +18,7 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public UUID singIn(String login, String password) throws AuthException, AccountNotFoundException {
+    public User singIn(String login, String password) throws AuthException, AccountNotFoundException {
         Optional<User> userOpt = userRepository.findByLogin(login);
         User user = userOpt.orElseThrow(() -> new AccountNotFoundException("Не сущестувет пользователя с логином " + login));
 //        if (!Password.equals(password, user.getPassword())) {
@@ -27,10 +27,10 @@ public class UserService {
         if (!password.equals(user.getPassword())) {
             throw new AuthException("Неверное имя и/или логин пользователя");
         }
-        return user.getId();
+        return user;
     }
 
-    public UUID singUp(String login, String password) throws Password.IllegalPasswordException, Login.IllegalLoginException, RegisterException {
+    public User singUp(String login, String password) throws Password.IllegalPasswordException, Login.IllegalLoginException, RegisterException {
         Password.validate(password);
         Login.validate(login);
         if (userRepository.existsUserByLogin(login)) {
@@ -40,7 +40,7 @@ public class UserService {
 //        password = Password.hash(password);
         User user = new User(login, password);
         user = userRepository.save(user);
-        return user.getId();
+        return user;
     }
 
     public String getUserLogin(UUID userId) {
