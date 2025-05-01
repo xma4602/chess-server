@@ -1,6 +1,7 @@
 package com.chess.server.gameroom;
 
 import com.chess.server.gameconditions.GameConditions;
+import com.chess.server.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,16 +20,20 @@ public class GameRoom {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    private UUID creatorId;
-    private UUID opponentId;
-    private String creatorLogin;
-    private String opponentLogin;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "creator_id", nullable = false)
+    private User creator;
+
+    @ManyToOne
+    @JoinColumn(name = "opponent_id")
+    private User opponent;
+
     @OneToOne(cascade = CascadeType.PERSIST)
     private GameConditions gameConditions;
 
-    public GameRoom(UUID creatorId, String creatorLogin, GameConditions gameConditions) {
-        this.creatorId = creatorId;
-        this.creatorLogin = creatorLogin;
+    public GameRoom(User creator, GameConditions gameConditions) {
+        this.creator = creator;
         this.gameConditions = gameConditions;
     }
 

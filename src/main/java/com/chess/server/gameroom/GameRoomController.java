@@ -28,14 +28,14 @@ public class GameRoomController {
     }
 
     @PutMapping("/{roomId}/join")
-    ResponseEntity<GameRoom> joinToRoom(@PathVariable UUID roomId, @RequestParam UUID userId) {
-        GameRoom gameRoom = gameRoomService.connectToRoom(roomId, userId);
+    ResponseEntity<GameRoomDto> joinToRoom(@PathVariable UUID roomId, @RequestParam UUID userId) {
+        GameRoomDto gameRoomDto = gameRoomService.connectToRoom(roomId, userId);
         log.info("User join to room: userId={}, roomId={}\n", userId, roomId);
 
         String destination = String.format("/topic/rooms/%s/join", roomId);
-        messagingTemplate.convertAndSend(destination, gameRoom);
+        messagingTemplate.convertAndSend(destination, gameRoomDto);
 
-        return ResponseEntity.ok(gameRoom);
+        return ResponseEntity.ok(gameRoomDto);
     }
 
     @DeleteMapping("/{roomId}/close")

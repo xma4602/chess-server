@@ -1,5 +1,6 @@
 package com.chess.server.user;
 
+import com.chess.server.gameplay.GamePlay;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,6 +32,12 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "roles_id"))
     private List<Role> roles = new ArrayList<>();
+
+    @OneToMany(mappedBy = "creator", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<GamePlay> createdGames;
+
+    @OneToMany(mappedBy = "opponent", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<GamePlay> opponentGames;
 
     public User(String login, String password) {
         this.login = login;

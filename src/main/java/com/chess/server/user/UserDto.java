@@ -13,6 +13,7 @@ import java.util.UUID;
 public class UserDto {
     private UUID id;
     private String login;
+    private String password;
     private Integer rating;
     private List<String> roles;
 }

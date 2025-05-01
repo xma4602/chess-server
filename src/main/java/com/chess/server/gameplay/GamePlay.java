@@ -3,6 +3,7 @@ package com.chess.server.gameplay;
 import com.chess.engine.GameEngine;
 import com.chess.server.chat.GameChat;
 import com.chess.server.gameconditions.GameConditions;
+import com.chess.server.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,22 +24,20 @@ public class GamePlay implements Serializable {
     @Column(nullable = false)
     private UUID id;
 
-    private UUID creatorId;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "creator_id", nullable = false)
+    private User creator;
 
-    private UUID opponentId;
+    @ManyToOne
+    @JoinColumn(name = "opponent_id")
+    private User opponent;
 
-    private UUID activeUserId;
-
-    private String creatorLogin;
-
-    private String opponentLogin;
+    @ManyToOne
+    @JoinColumn(name = "active_user_id")
+    private User activeUser;
 
     @Builder.Default
     private LocalDateTime startDateTime = LocalDateTime.now();
-
-    @Column(nullable = false)
-    @Builder.Default
-    private boolean ended = false;
 
     @OneToOne(cascade = {CascadeType.MERGE})
     @JoinColumn(name = "game_conditions_id")
@@ -47,7 +46,7 @@ public class GamePlay implements Serializable {
     @Convert(converter = GameEngineConverter.class)
     private GameEngine gameEngine;
 
-    @OneToOne(mappedBy = "gamePlay", optional = false, orphanRemoval = true)
+    @OneToOne(mappedBy = "gamePlay", cascade = CascadeType.ALL)
     private GameChat gameChat;
 
 }

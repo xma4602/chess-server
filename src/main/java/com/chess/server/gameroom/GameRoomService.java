@@ -1,7 +1,8 @@
 package com.chess.server.gameroom;
 
 import com.chess.server.gameconditions.GameConditions;
-import com.chess.server.user.UserService;
+import com.chess.server.user.User;
+import com.chess.server.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,26 +15,41 @@ import java.util.UUID;
 public class GameRoomService {
 
     private final GameRoomRepository guestRoomRepository;
-    private final UserService userService;
+    private final UserRepository userRepository;
 
     public GameRoom createGameRoom(UUID creatorId, GameConditions gameConditions) {
-        String userLogin = userService.getUserLogin(creatorId);
-        GameRoom gameRoom = new GameRoom(creatorId, userLogin, gameConditions);
+        User user = userRepository.findById(creatorId)
+                .orElseThrow(() -> new NoSuchElementException("No such User with id=" + creatorId));
+        GameRoom gameRoom = new GameRoom(user, gameConditions);
         return guestRoomRepository.save(gameRoom);
     }
 
-    public GameRoom connectToRoom(UUID roomId, UUID userId) {
+    public GameRoomDto connectToRoom(UUID roomId, UUID userId) {
         GameRoom room = getGameRoom(roomId);
-        String userLogin = userService.getUserLogin(userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("No such User with id=" + userId));
 
-        if (room.getCreatorId().equals(userId)) {
-            room.setCreatorId(userId);
-            room.setCreatorLogin(userLogin);
+        if (room.getCreator().getId().equals(userId)) {
+            room.setCreator(user);
         } else {
-            room.setOpponentId(userId);
-            room.setOpponentLogin(userLogin);
+            room.setOpponent(user);
+
         }
-        return guestRoomRepository.save(room);
+        room = guestRoomRepository.save(room);
+        return toGameRoomDto(room);
+    }
+
+    public GameRoomDto toGameRoomDto(GameRoom gameRoom) {
+        return GameRoomDto.builder()
+                .id(gameRoom.getId())
+                .creatorId(gameRoom.getCreator().getId())
+                .creatorLogin(gameRoom.getCreator().getLogin())
+                .creatorRating(gameRoom.getCreator().getRating())
+                .opponentRating(gameRoom.getOpponent() != null ? gameRoom.getOpponent().getRating() : null)
+                .opponentId(gameRoom.getOpponent() != null ? gameRoom.getOpponent().getId() : null)
+                .opponentLogin(gameRoom.getOpponent() != null ? gameRoom.getOpponent().getLogin() : null)
+                .gameConditions(gameRoom.getGameConditions())
+                .build();
     }
 
     public GameRoom getGameRoom(UUID guestRoomId) {
