@@ -36,4 +36,22 @@ export class GamePlayService {
       .set('userId', userId);
     return this.http.put<void>(`${restGamePlay}/${gameId}/timeout`, {}, {params})
   }
+
+  requestDraw(gameId: string, userId: string) {
+    const params = new HttpParams()
+      .set('userId', userId);
+    return this.http.put<void>(`${restGamePlay}/${gameId}/draw/request`, {}, {params})
+  }
+
+  responseDraw(gameId: string, userId: string, result: boolean) {
+    const params = new HttpParams()
+      .set('userId', userId);
+    return this.http.put<void>(`${restGamePlay}/${gameId}/draw/response`, result, {params})
+  }
+  surrender(gameId: string, userId: string) {
+    const params = new HttpParams()
+      .set('userId', userId);
+    return this.http.put<void>(`${restGamePlay}/${gameId}/surrender`, {}, {params})
+  }
+
 }

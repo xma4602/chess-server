@@ -1,9 +1,11 @@
 import {Component, Input, OnDestroy} from '@angular/core';
+import {NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-timer',
   standalone: true,
   templateUrl: './countdown-timer.component.html',
+  imports: [NgIf],
   styleUrls: ['./countdown-timer.component.css']
 })
 export class CountdownTimerComponent implements OnDestroy {
@@ -12,6 +14,7 @@ export class CountdownTimerComponent implements OnDestroy {
   countdown: number = 0; // Время в секундах
   interval: any;
   minus: number = 1
+  visible: boolean = true;
 
   startTimer(login: string, userId: string, timeSeconds: number, endCallback: () => void): void {
     this.countdown = timeSeconds
