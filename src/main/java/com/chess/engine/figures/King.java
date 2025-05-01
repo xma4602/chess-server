@@ -5,12 +5,15 @@ import com.chess.engine.FigureColor;
 import com.chess.engine.FigureType;
 import com.chess.engine.Position;
 import com.chess.engine.actions.Action;
+import com.chess.engine.actions.ActionEat;
 
+import java.io.Serial;
 import java.util.LinkedList;
 import java.util.List;
 
 public class King extends Figure {
-
+    @Serial
+    private static final long serialVersionUID = 1L;
     public King(FigureColor figureColor) {
         super(FigureType.KING, figureColor);
     }
@@ -21,6 +24,16 @@ public class King extends Figure {
 
     @Override
     public List<Action> getActions(Board board, Position position) {
+        List<Action> actions = getEatActions(board, position);
+
+        add(actions, castling(board, figureColor, position, false));
+        add(actions, castling(board, figureColor, position, true));
+
+        return actions;
+    }
+
+    @Override
+    public List<Action> getEatActions(Board board, Position position) {
         List<Action> actions = new LinkedList<>();
 
         add(actions, moveOrEat(board, figureColor, position, position.top(figureColor)));
@@ -31,9 +44,6 @@ public class King extends Figure {
         add(actions, moveOrEat(board, figureColor, position, position.leftBottom(figureColor)));
         add(actions, moveOrEat(board, figureColor, position, position.left(figureColor)));
         add(actions, moveOrEat(board, figureColor, position, position.leftTop(figureColor)));
-
-        add(actions, castling(board, figureColor, position, false));
-        add(actions, castling(board, figureColor, position, true));
 
         return actions;
     }
@@ -55,12 +65,29 @@ public class King extends Figure {
             if (figure.getFigureType() == FigureType.ROOK
                     && figure.getFigureColor() == figureColor
                     && figure.isNotMoved()
-                    && board.hasAllNone(getCastlingPathPositions(kingPosition, isRight))) {
+                    && board.hasAllNone(getCastlingPathPositions(kingPosition, isRight))
+                    && hasNotEatKingActions(board, kingPosition, figureColor.reverseColor())
+            ) {
                 return Action.castling(kingPosition, rookPosition);
             }
         }
 
         return null;
+    }
+
+    public static boolean hasNotEatKingActions(Board board, Position kingPosition, FigureColor opponentFigureColor) {
+        for (Position position : board.getFigurePositionsByColor(opponentFigureColor)) {
+            Figure figure = board.getFigureByPosition(position);
+            List<Action> actions = figure.getEatActions(board, position);
+            for (Action action : actions) {
+                if (action instanceof ActionEat actionEat) {
+                    if (actionEat.getEatenPosition().equals(kingPosition)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     private Position[] getCastlingPathPositions(Position kingPosition, boolean isRight) {

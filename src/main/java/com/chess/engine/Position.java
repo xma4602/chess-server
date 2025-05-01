@@ -4,6 +4,7 @@ import com.chess.engine.exceptions.ChessEngineRuntimeException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Optional;
 
@@ -82,6 +83,8 @@ public enum Position implements Serializable {
     F8("f8", 7, 5, 61, false),
     G8("g8", 7, 6, 62, true),
     H8("h8", 7, 7, 63, false);
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private final String code;
     private final int row;

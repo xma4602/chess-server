@@ -5,11 +5,13 @@ import com.chess.engine.FigureType;
 import com.chess.engine.Position;
 import com.chess.engine.actions.Action;
 
+import java.io.Serial;
 import java.util.Collections;
 import java.util.List;
 
 public class None extends Figure {
-
+    @Serial
+    private static final long serialVersionUID = 1L;
     public static None NONE = new None();
 
     protected None() {

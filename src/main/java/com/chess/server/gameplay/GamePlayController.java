@@ -62,47 +62,46 @@ public class GamePlayController {
         dtoOptional.ifPresent(gamePlayDto -> {
             log.info("Game over by timeout: userId={}, gameId={}", userId, gameId);
             String destination = String.format("/topic/games/%s/action", gameId);
-            messagingTemplate.convertAndSend(destination, dtoOptional);
+            messagingTemplate.convertAndSend(destination, gamePlayDto);
         });
-   
+
         return ResponseEntity.ok().build();
     }
 
-//    @PostMapping("/games/end/{gameId}")
-//    ResponseEntity<String> endGame(@PathVariable UUID gameId,
-//                                   @RequestParam UUID userId,
-//                                   @RequestBody GameResult gameResult) {
-//        GameEnd gameEnd = gameplayService.endGame(gameId, userId, gameResult);
-//        log.info("Game ID(%s) ended by %s".formatted(gameId, gameResult));
-//        sendToUser(gameEnd.getNotifiedUserId(), "/games/end", gameEnd.getGameResult());
-//        return ResponseEntity.ok(NOTHING);
-//    }
+    @PutMapping("/{gameId}/draw/request")
+    ResponseEntity<?> drawRequest(@PathVariable UUID gameId, @RequestParam UUID userId) {
+        UUID opponentId = gameplayService.drawRequest(gameId, userId);
 
-//    @GetMapping("/games/ask-draw/{gameId}")
-//    ResponseEntity<Boolean> askDraw(@PathVariable UUID gameId, @RequestParam UUID userId)
-//            throws InterruptedException {
-//        UUID otherUserId = gameplayService.getOtherUserId(gameId, userId);
-//        Object waiter = new Object();
-//        waitMap.put(userId, Map.entry(waiter, false));
-//        sendToUser(otherUserId, "/games/ask-draw", "ask-draw");
-//        synchronized (waiter) {
-//            waiter.wait();
-//        }
-//        boolean answer = waitMap.remove(userId).getValue();
-//        return ResponseEntity.ok(answer);
-//    }
+        String destination = String.format("/topic/games/%s/draw/request", gameId);
+        messagingTemplate.convertAndSend(destination, opponentId.toString());
 
-//    @PostMapping("/games/answer-draw/{gameId}")
-//    ResponseEntity<String> answerDraw(@PathVariable UUID gameId,
-//                                      @RequestParam UUID userId,
-//                                      @RequestBody boolean answer) {
-//        UUID otherUserId = gameplayService.getOtherUserId(gameId, userId);
-//        Object waiter = waitMap.remove(otherUserId).getKey();
-//        waitMap.put(otherUserId, Map.entry(waiter, answer));
-//        synchronized (waiter) {
-//            waiter.notifyAll();
-//        }
-//        return ResponseEntity.ok(NOTHING);
-//    }
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{gameId}/draw/response")
+    ResponseEntity<?> drawResponse(@PathVariable UUID gameId, @RequestParam UUID userId, @RequestBody boolean result) {
+        Object response = gameplayService.drawResponse(gameId, userId, result);
+
+        if (response instanceof UUID opponentId) {
+            String destination = String.format("/topic/games/%s/draw/response", gameId);
+            messagingTemplate.convertAndSend(destination, opponentId);
+        } else if (response instanceof GamePlayDto gamePlayDto) {
+            String destination = String.format("/topic/games/%s/action", gameId);
+            messagingTemplate.convertAndSend(destination, gamePlayDto);
+        }
+
+        return ResponseEntity.internalServerError().build();
+    }
+
+    @PutMapping("/{gameId}/surrender")
+    ResponseEntity<?> surrender(@PathVariable UUID gameId, @RequestParam UUID userId) {
+        GamePlayDto gamePlayDto = gameplayService.surrender(gameId, userId);
+
+        log.info("Game over by surrender: userId={}, gameId={}", userId, gameId);
+        String destination = String.format("/topic/games/%s/action", gameId);
+        messagingTemplate.convertAndSend(destination, gamePlayDto);
+
+        return ResponseEntity.ok().build();
+    }
 
 }

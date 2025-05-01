@@ -7,11 +7,14 @@ import com.chess.engine.exceptions.ChessEngineIllegalStateException;
 import com.chess.engine.exceptions.ChessEngineRuntimeException;
 import com.chess.engine.figures.Figure;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 
 @SuppressWarnings("unused")
 public class GameEngine implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     private final Board board;
     private final List<Action> madeActions;
     private FigureColor activePlayerColor;

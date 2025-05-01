@@ -4,10 +4,14 @@ import com.chess.engine.FigureColor;
 import com.chess.engine.Position;
 import lombok.Getter;
 
+import java.io.Serial;
 import java.util.Optional;
 
 @Getter
 public class ActionCastling extends Action {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     private final Position kingStartPosition;
     private final Position rookStartPosition;
 

@@ -8,6 +8,7 @@ import com.chess.engine.actions.Action;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,8 @@ import java.util.function.Function;
 
 @Getter
 public abstract class Figure implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     protected FigureType figureType;
     protected FigureColor figureColor;
@@ -44,6 +47,10 @@ public abstract class Figure implements Serializable {
      * @return возможные ходы для заданной фигуры
      */
     public abstract List<Action> getActions(Board board, Position position);
+
+    public List<Action> getEatActions(Board board, Position position){
+        return getActions(board, position);
+    }
 
     public abstract Figure clone();
 

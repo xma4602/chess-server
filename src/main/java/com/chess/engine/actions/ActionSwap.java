@@ -6,6 +6,7 @@ import com.chess.engine.Position;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serial;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -13,6 +14,9 @@ import java.util.regex.Pattern;
 
 @Getter
 public class ActionSwap extends Action {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     public static final Pattern swapPattern = Pattern.compile("([a-h][1-8])-([KQNBRP])([a-h][1-8])");
 
     private final Position startPosition;
