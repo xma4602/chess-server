@@ -1,0 +1,67 @@
+/* user-list.component.css */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+tr:hover {
+  background-color: #f5f5f5;
+}
+
+button {
+  padding: 8px 12px;
+  margin: 0 5px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+button:focus {
+  outline: none;
+}
+
+button.edit {
+  background-color: #ffc107;
+  color: white;
+}
+
+button.delete {
+  background-color: #dc3545;
+  color: white;
+}
+
+button.edit:hover {
+  background-color: #e0a800;
+}
+
+button.delete:hover {
+  background-color: #c82333;
+}
+th {
+  cursor: pointer; /* Указатель при наведении */
+  padding: 10px;
+  background-color: #f2f2f2;
+  border-bottom: 2px solid #ddd;
+}
+
+th:hover {
+  background-color: #e0e0e0; /* Цвет при наведении */
+}

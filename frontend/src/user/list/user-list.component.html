@@ -1,0 +1,25 @@
+<table>
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Логин</th>
+    <th>Пароль</th>
+    <th>Рейтинг</th>
+    <th>Роли</th>
+    <th>Действия</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let user of users">
+    <td>{{ user.id }}</td>
+    <td>{{ user.password }}</td>
+    <td>{{ user.login }}</td>
+    <td>{{ user.rating }}</td>
+    <td>{{ user.roles.join(', ') }}</td>
+    <td>
+      <button class="edit" (click)="editUser(user)">Edit</button>
+      <button class="delete" (click)="deleteUser(user.id)">Delete</button>
+    </td>
+  </tr>
+  </tbody>
+</table>

@@ -10,6 +10,8 @@ export class GameRoom {
     public opponentId: string,
     public creatorLogin: string,
     public opponentLogin: string,
+    public creatorRating: number,
+    public opponentRating: number,
   ) {
   }
 
@@ -20,7 +22,9 @@ export class GameRoom {
       obj.creatorId,
       obj.opponentId,
       obj.creatorLogin,
-      obj.opponentLogin
+      obj.opponentLogin,
+      obj.creatorRating,
+      obj.opponentRating
     );
   }
 

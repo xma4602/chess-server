@@ -82,7 +82,7 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
         this.creatorTimer.startTimer(this.gamePlay.creatorLogin, this.gamePlay.creatorId, partyTime,
           () => this.timeout(this.gamePlay!.creatorId));
         this.opponentTimer.startTimer(this.gamePlay.opponentLogin, this.gamePlay.opponentId, partyTime,
-          () => this.timeout(this.gamePlay!.creatorId));
+          () => this.timeout(this.gamePlay!.opponentId));
 
         if (this.creatorTimer.userId === this.gamePlay!.activeUserId) {
           this.creatorTimer.resumeTimer()

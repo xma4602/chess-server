@@ -6,3 +6,6 @@
   />
   <app-tile [title]="'Своя игра'"/>
 </div>
+
+<!-- Кнопка для перехода к таблице пользователей -->
+<button *ngIf="isAdmin()" (click)="navigateToUserList()">Перейти к таблице пользователей</button>

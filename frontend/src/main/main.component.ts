@@ -1,20 +1,21 @@
 import {Component} from '@angular/core';
-import {NgForOf} from "@angular/common";
+import {NgForOf, NgIf} from "@angular/common";
 import {GameConditions} from '../game_conditions/game-conditions';
 import {TileComponent} from '../tile/tile.component';
-import {RouterModule} from '@angular/router';
+import {Router, RouterModule} from '@angular/router';
+import {UserService} from '../user/user-service';
 
 @Component({
   selector: 'app-main',
   standalone: true,
   templateUrl: './main.component.html',
-  imports: [RouterModule, NgForOf, TileComponent],
+  imports: [RouterModule, NgForOf, TileComponent, NgIf],
   styleUrls: ['./main.component.css']
 })
 export class MainComponent {
   gameConditionsList: GameConditions[] = [];
 
-  constructor() {
+  constructor(private router: Router, private userService: UserService) {
     this.gameConditionsList.push(new GameConditions(1, 0))
     this.gameConditionsList.push(new GameConditions(2, 1))
     this.gameConditionsList.push(new GameConditions(3, 0))
@@ -28,4 +29,13 @@ export class MainComponent {
     this.gameConditionsList.push(new GameConditions(30, 20))
   }
 
+  // Метод для проверки, является ли пользователь администратором
+  isAdmin(): boolean {
+    return this.userService.user!.roles.includes('admin'); // Предполагается, что у вас есть метод для проверки ролей
+  }
+
+  // Метод для перенаправления на таблицу пользователей
+  navigateToUserList(): void {
+    this.router.navigate(['/users']); // Замените на ваш маршрут для таблицы пользователей
+  }
 }
