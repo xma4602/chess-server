@@ -4,6 +4,7 @@ import com.chess.engine.exceptions.ChessEngineRuntimeException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.io.Serial;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -17,6 +18,8 @@ public enum FigureType {
     QUEEN("QUEEN", 5, 'Q', '♛', '♕', "Ферзь"),
     KING("KING", 6, 'K', '♚', '♔', "Король");
 
+    @Serial
+    private static final long serialVersionUID = 1L;
     private static final List<FigureType> swapTypes = List.of(KNIGHT, BISHOP, ROOK, QUEEN);
 
     private final String id;

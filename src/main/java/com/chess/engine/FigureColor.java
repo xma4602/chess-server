@@ -3,15 +3,18 @@ package com.chess.engine;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 @Getter
 @RequiredArgsConstructor
 public enum FigureColor implements Serializable {
+
     WHITE("WHITE"),
     BLACK("BLACK"),
     RANDOM("RANDOM");
-
+    @Serial
+    private static final long serialVersionUID = 1L;
     public static final FigureColor DEFAULT = WHITE;
 
     private final String id;

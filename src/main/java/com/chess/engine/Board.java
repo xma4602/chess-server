@@ -5,12 +5,14 @@ import com.chess.engine.actions.*;
 import com.chess.engine.exceptions.ChessEngineRuntimeException;
 import com.chess.engine.figures.*;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 
 
 public class Board implements Serializable, Cloneable {
-
+    @Serial
+    private static final long serialVersionUID = 1L;
     private final Map<Position, Figure> cells = new EnumMap<>(Position.class);
 
     public static Board newBoard() {

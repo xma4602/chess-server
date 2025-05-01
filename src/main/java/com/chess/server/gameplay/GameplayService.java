@@ -198,4 +198,40 @@ public class GameplayService {
             return Optional.empty();
         }
     }
+
+    public UUID drawRequest(UUID gameId, UUID userId) {
+        GamePlay gameplay = getGameplay(gameId);
+        return gameplay.getCreatorId().equals(userId) ?
+                gameplay.getOpponentId() : gameplay.getCreatorId();
+    }
+
+    public Object drawResponse(UUID gameId, UUID userId, boolean result) {
+        GamePlay gameplay = getGameplay(gameId);
+
+        if (result) {
+            gameplay.getGameEngine().setGameState(GameEngine.GameState.DRAW);
+            gameplay = gameplayRepository.save(gameplay);
+            return toGamePlayDto(gameplay);
+        } else {
+            return gameplay.getCreatorId().equals(userId) ?
+                    gameplay.getOpponentId() : gameplay.getCreatorId();
+        }
+    }
+
+    public GamePlayDto surrender(UUID gameId, UUID userId) {
+        GamePlay gameplay = getGameplay(gameId);
+
+        FigureColor playerColor = gameplay.getCreatorId().equals(userId) ?
+                gameplay.getGameConditions().getCreatorFigureColor() :
+                gameplay.getGameConditions().getCreatorFigureColor().reverseColor();
+
+        gameplay.getGameEngine().setGameState(playerColor == FigureColor.WHITE ?
+                GameEngine.GameState.BLACK_WIN : GameEngine.GameState.WHITE_WIN);
+
+        gameplay = gameplayRepository.save(gameplay);
+
+        return toGamePlayDto(gameplay);
+    }
+
+
 }

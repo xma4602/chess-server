@@ -6,11 +6,13 @@ import com.chess.engine.FigureType;
 import com.chess.engine.Position;
 import com.chess.engine.actions.Action;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Knight extends Figure {
-
+    @Serial
+    private static final long serialVersionUID = 1L;
     public Knight(FigureColor figureColor) {
         super(FigureType.KNIGHT, figureColor);
     }

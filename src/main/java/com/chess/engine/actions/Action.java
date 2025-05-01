@@ -4,6 +4,7 @@ import com.chess.engine.FigureColor;
 import com.chess.engine.Position;
 import lombok.Getter;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -11,6 +12,9 @@ import java.util.regex.Pattern;
 
 @Getter
 public abstract class Action implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     protected final ActionType actionType;
     private static final Predicate<String> actionPredicate = Pattern.compile("(0-0(-0)?)|([a-h][1-8]-[KQRBNP]?[a-h][1-8])|([a-h][1-8][x:][a-h][1-8])").asPredicate();
 

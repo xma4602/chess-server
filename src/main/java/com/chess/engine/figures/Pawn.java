@@ -6,12 +6,14 @@ import com.chess.engine.FigureType;
 import com.chess.engine.Position;
 import com.chess.engine.actions.Action;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class Pawn extends Figure {
-
+    @Serial
+    private static final long serialVersionUID = 1L;
     public Pawn(FigureColor figureColor) {
         super(FigureType.PAWN, figureColor);
     }
@@ -22,6 +24,16 @@ public class Pawn extends Figure {
 
     @Override
     public List<Action> getActions(Board board, Position position) {
+        List<Action> actions = getEatActions(board, position);
+
+        add(actions, moveForward(board, figureColor, position, position.top(figureColor)));
+        add(actions, moveDoubleForward(board, position, position.topTop(figureColor)));
+
+        return actions;
+    }
+
+    @Override
+    public List<Action> getEatActions(Board board, Position position) {
         List<Action> actions = new ArrayList<>();
 
         add(actions, moveForward(board, figureColor, position, position.top(figureColor)));
@@ -50,14 +62,14 @@ public class Pawn extends Figure {
         return null;
     }
 
-    private Action take(Board board, FigureColor figureColor, Position startPosition, Optional<Position> opponentPosition) {
-        if (opponentPosition.isPresent()) {
-            var oppPos = opponentPosition.get();
-            if (board.isPawn(oppPos) //на позиции пешка?
-                    && board.hasOpponent(oppPos, figureColor) //на позиции противник?
-                    && board.wasSpecialMove(oppPos) //противник делал двойной ход?
+    private Action take(Board board, FigureColor figureColor, Position startPosition, Optional<Position> positionOptional) {
+        if (positionOptional.isPresent()) {
+            var opponentPosition = positionOptional.get();
+            if (board.isPawn(opponentPosition) //на позиции пешка?
+                    && board.hasOpponent(opponentPosition, figureColor) //на позиции противник?
+                    && board.wasSpecialMove(opponentPosition) //противник делал двойной ход?
             ) {
-                return Action.take(startPosition, oppPos.top(figureColor).get(), oppPos);
+                return Action.take(startPosition, opponentPosition.top(figureColor).get(), opponentPosition);
             }
         }
 
