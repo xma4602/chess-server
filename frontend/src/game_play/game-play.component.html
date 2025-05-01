@@ -7,14 +7,14 @@
 
   <div class="chess-board-container">
     <div class="chess-board">
-      <div class="row" *ngFor="let rowIndex of [7, 6, 5, 4, 3, 2, 1, 0]">
+      <div class="row" *ngFor="let rowIndex of getRowsIndexes()">
         <div class="row-label left">
           <span class="row-number">{{ rowIndex + 1 }}</span> <!-- Подписи строк (8-1) -->
         </div>
         <app-chess-cell
           #cell
           (click)="onClick(cell)"
-          *ngFor="let colIndex of [0, 1, 2, 3, 4, 5, 6, 7]"
+          *ngFor="let colIndex of getColumnsIndexes()"
           [id]="getCellId(rowIndex, colIndex)"
           [isWhite]="(rowIndex + colIndex) % 2 === 1">
         </app-chess-cell>
@@ -22,27 +22,33 @@
     </div>
     <div class="column-labels">
       <span></span> <!-- Пустая ячейка для верхнего левого угла -->
-      <span *ngFor="let letter of ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']">{{ letter }}</span>
+      <span *ngFor="let letter of getColumnsIndexes() ">
+        {{ ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'][letter] }}
+      </span>
       <!-- Подписи столбцов (A-H) -->
     </div>
   </div>
 
   <!-- Таблица с ходами -->
   <div class="moves-table-container">
+    <div class="button-container">
+      <app-timer #creatorTimer></app-timer>
+      <app-timer #opponentTimer></app-timer>
+    </div>
+    <div class="button-container">
+      <button class="action-button" (click)="offerDraw()">Предложить ничью</button>
+      <button class="action-button" (click)="surrender()">Сдаться</button>
+    </div>
     <div class="moves-table">
-      <div class="timer-container" *ngIf="gamePlay!.gameConditions!.timeControl.code === TimeControl.WATCH.code">
-        <app-timer #creatorTimer></app-timer>
-        <app-timer #opponentTimer></app-timer>
-      </div>
-      <table>
+      <table *ngIf="gamePlay && gamePlay!.madeActions">
         <thead>
         <tr>
-          <th>Номер</th>
-          <th>Ход белых</th>
-          <th>Ход черных</th>
+          <th>№</th>
+          <th>Ход белых <br> {{getWhiteLogin()}}</th>
+          <th>Ход черных <br> {{getBlackLogin()}}</th>
         </tr>
         </thead>
-        <tbody *ngIf="gamePlay && gamePlay!.madeActions">
+        <tbody>
         <tr *ngFor="let index of [].constructor(Math.ceil(gamePlay.madeActions.length / 2)); let i = index">
           <td>{{ i + 1 }}</td>
           <td>{{ gamePlay.madeActions[i * 2] }}</td>

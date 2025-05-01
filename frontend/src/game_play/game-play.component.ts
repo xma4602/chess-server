@@ -18,6 +18,7 @@ import {ConfirmDialogComponent} from './dialog/confirm-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {ChessPieceDialogComponent} from './chess-select/ chess-piece-dialog.component';
 import {CountdownTimerComponent} from './timer/countdown-timer.component';
+import {ChoiceDialogComponent} from './dialog-choice/choice-dialog.component';
 
 @Component({
   selector: 'app-game-play',
@@ -44,12 +45,6 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-
-  }
-
-  ngAfterViewInit() {
-    this.updateBoard(); // Проверяем и обновляем доску после инициализации представления
-
     this.route.paramMap.subscribe(params => {
       const gameId = params.get('id')!;
       this.gamePlayService.getGamePlay(gameId).subscribe(
@@ -61,9 +56,22 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
         console.log
       )
 
-      this.stompService.subscribe(`${wsGamePlay}/${gameId}/action`, this.onNewAction.bind(this))
-
+      this.stompService.subscribe(`${wsGamePlay}/${gameId}/action`, message => this.onNewAction(message))
+        .then(() => {
+          return this.stompService.subscribe(`${wsGamePlay}/${gameId}/draw/request`, message => this.onDrawRequest(message))
+            .then(() => {
+              return this.stompService.subscribe(`${wsGamePlay}/${gameId}/draw/response`, message => this.onDrawResponse(message))
+                .catch(error => {
+                  console.error('Ошибка при подписке:', error);
+                });
+            });
+        })
     })
+  }
+
+  ngAfterViewInit() {
+    this.updateBoard(); // Проверяем и обновляем доску после инициализации представления
+    this.startTimers();
   }
 
   private startTimers() {
@@ -83,6 +91,10 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
           this.opponentTimer.resumeTimer()
           this.creatorTimer.stopTimer()
         }
+      } else {
+        this.creatorTimer.visible = false
+        this.opponentTimer.visible = false
+
       }
     } else {
       console.error('Таймеры или gamePlay не инициализированы');
@@ -196,7 +208,7 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
       const isRookCastling = action.rookStartPosition === selectedCell.id
         && action.rookEndPosition === newSelectedCell.id
 
-      if (isMoveAction || isKingCastling || isRookCastling){
+      if (isMoveAction || isKingCastling || isRookCastling) {
         return action
       }
     }
@@ -281,31 +293,45 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
   private checkGameEnd() {
     const gameState = this.gamePlay!.gameState;
     if (gameState !== GameState.CONTINUES) {
+      this.opponentTimer.stopTimer()
+      this.creatorTimer.stopTimer()
       const figureColor = this.getFigureColorForCurrentUser()
 
-      if ((figureColor.code === FigureColor.WHITE.code && gameState === GameState.WHITE_WIN)
-        || (figureColor.code === FigureColor.BLACK.code && gameState === GameState.BLACK_WIN)) {
-
-        this.opponentTimer.stopTimer()
-        this.creatorTimer.stopTimer()
-
-        this.dialog.open(ConfirmDialogComponent, {
-          data: {
-            title: 'Игра окончена!',
-            message: 'Вы победили!'
+      switch (gameState) {
+        case GameState.BLACK_WIN:
+        case GameState.WHITE_WIN: {
+          if ((figureColor.code === FigureColor.WHITE.code && gameState === GameState.WHITE_WIN)
+            || (figureColor.code === FigureColor.BLACK.code && gameState === GameState.BLACK_WIN)) {
+            this.dialog.open(ConfirmDialogComponent, {
+              data: {
+                title: 'Игра окончена!',
+                message: 'Вы победили!'
+              }
+            }).afterClosed().subscribe(
+              () => this.router.navigate(['']), console.error
+            )
+          } else {
+            this.dialog.open(ConfirmDialogComponent, {
+              data: {
+                title: 'Игра окончена!',
+                message: 'Вы проиграли!'
+              }
+            }).afterClosed().subscribe(
+              () => this.router.navigate(['']), console.error
+            )
           }
-        }).afterClosed().subscribe(
-          () => this.router.navigate(['']), console.error
-        )
-      } else {
-        this.dialog.open(ConfirmDialogComponent, {
-          data: {
-            title: 'Игра окончена!',
-            message: 'Вы проиграли!'
-          }
-        }).afterClosed().subscribe(
-          () => this.router.navigate(['']), console.error
-        )
+        }
+          break;
+        case GameState.DRAW: {
+          this.dialog.open(ConfirmDialogComponent, {
+            data: {
+              title: 'Игра окончена!',
+              message: 'Ничья!'
+            }
+          }).afterClosed().subscribe(
+            () => this.router.navigate(['']), console.error
+          )
+        }
       }
     }
   }
@@ -327,5 +353,77 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
       .subscribe(console.log, console.error)
   }
 
+  // Логика для предложения ничьей
+  offerDraw() {
+    console.log('Предложить ничью');
+
+    this.dialog.open(ChoiceDialogComponent, {
+      width: '250px',
+      data: {title: 'Предложение ничьи', message: 'Вы уверены?'}
+    }).afterClosed().subscribe((result: boolean) => {
+      console.log('Диалог закрыт, результат:', result);
+      if (result) {
+        this.gamePlayService.requestDraw(this.gamePlay!.id, this.userService.user!.id)
+          .subscribe(console.log, console.error)
+      }
+    });
+  }
+
+  // Логика для сдачи
+  surrender() {
+    console.log('Сдаться');
+
+    this.dialog.open(ChoiceDialogComponent, {
+      width: '250px',
+      data: {title: 'Сдаться', message: 'Вы уверены?'}
+    }).afterClosed().subscribe((result: boolean) => {
+      console.log('Диалог закрыт, результат:', result);
+      if (result) {
+        this.gamePlayService.surrender(this.gamePlay!.id, this.userService.user!.id)
+          .subscribe(console.log, console.error)
+      }
+    });
+  }
+
   protected readonly TimeControl = TimeControl;
+
+  private onDrawRequest(message: IMessage) {
+    const userId = message.body;
+    if (userId === this.userService.user?.id) {
+      this.dialog.open(ChoiceDialogComponent, {
+        width: '250px',
+        data: {title: 'Противник предлагает ничью', message: 'Вы согласны?'}
+      }).afterClosed().subscribe((result: boolean) => {
+        console.log('Диалог закрыт, результат:', result);
+        this.gamePlayService.responseDraw(this.gamePlay!.id, this.userService.user!.id, result)
+          .subscribe(console.log, console.error)
+      });
+    }
+  }
+
+  private onDrawResponse(message: IMessage) {
+    this.dialog.open(ConfirmDialogComponent, {
+      data: {title: 'Противник отказался от ничьи'}
+    })
+  }
+
+  getWhiteLogin() {
+    return this.gamePlay!.gameConditions.creatorFigureColor!.code !== FigureColor.WHITE.code ?
+      this.gamePlay?.opponentLogin! : this.gamePlay?.creatorLogin!
+  }
+
+  getBlackLogin() {
+    return this.gamePlay!.gameConditions.creatorFigureColor!.code !== FigureColor.BLACK.code ?
+      this.gamePlay?.opponentLogin! : this.gamePlay?.creatorLogin!
+  }
+
+  getRowsIndexes() {
+    return this.getFigureColorForCurrentUser().code === FigureColor.WHITE.code ?
+      [7, 6, 5, 4, 3, 2, 1, 0] : [0, 1, 2, 3, 4, 5, 6, 7]
+  }
+
+  getColumnsIndexes() {
+    return this.getFigureColorForCurrentUser().code === FigureColor.WHITE.code ?
+      [0, 1, 2, 3, 4, 5, 6, 7] : [7, 6, 5, 4, 3, 2, 1, 0]
+  }
 }
