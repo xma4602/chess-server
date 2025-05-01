@@ -1,0 +1,30 @@
+<div *ngIf="user">
+  <h2>Edit User</h2>
+  <form (ngSubmit)="saveUser()">
+    <div>
+      <label for="login">Логин:</label>
+      <input id="login" type="text" [(ngModel)]="user.login" name="login" required />
+    </div>
+    <div>
+      <label for="password">Пароль:</label>
+      <input id="password" type="text" [(ngModel)]="user.password" name="password" required />
+    </div>
+    <div>
+      <label for="rating">Рейтинг:</label>
+      <input id="rating" type="number" [(ngModel)]="user.rating" name="rating" required />
+    </div>
+    <div>
+      <label>Роли:</label>
+      <div *ngFor="let role of roles" class="role-checkbox">
+        <input
+          type="checkbox"
+          [value]="role"
+          [checked]="isRoleSelected(role)"
+          (change)="onRoleChange(role)" />
+        <label>{{ role }}</label>
+      </div>
+    </div>
+    <button type="submit">Сохранить</button>
+    <button type="button" class="cancel" (click)="router.navigate(['/users'])">Отменить</button>
+  </form>
+</div>

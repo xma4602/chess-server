@@ -1,0 +1,47 @@
+import {Component, OnInit} from '@angular/core';
+import {UserService} from '../user-service';
+import {User} from '../user';
+import {NgForOf} from '@angular/common';
+import {Router} from '@angular/router';
+
+@Component({
+  selector: 'app-user-list',
+  standalone: true,
+  templateUrl: './user-list.component.html',
+  imports: [
+    NgForOf
+  ],
+  styleUrls: ['./user-list.component.css'] // Подключаем стили
+})
+export class UserListComponent implements OnInit {
+  users: User[] = [];
+  sortDirection: { [key: string]: boolean } = {}; // Для хранения направления сортировки
+
+  constructor(private router: Router, private userService: UserService) {
+  }
+
+  ngOnInit(): void {
+    this.loadUsers();
+  }
+
+  loadUsers(): void {
+    this.userService.getUsers().subscribe(users => {
+      this.users = users;
+    });
+  }
+
+  editUser(user: User): void {
+    // Здесь вы можете реализовать логику редактирования пользователя
+    console.log('Edit user:', user);
+    this.router.navigate([`/users/${user.id}`]); // Замените на ваш маршрут для таблицы пользователей
+  }
+
+  deleteUser(userId: string): void {
+    if (confirm('Are you sure you want to delete this user?')) {
+      this.userService.deleteUser(userId).subscribe(() => {
+        this.loadUsers(); // Обновляем список пользователей после удаления
+      });
+    }
+  }
+
+}

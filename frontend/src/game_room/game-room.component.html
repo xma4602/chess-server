@@ -15,11 +15,11 @@
   </div>
 
   <div class="panel">
-    <h2>Владелец игры: {{ gameRoom.creatorLogin }}</h2>
+    <h2>Владелец игры: {{ gameRoom.creatorLogin }} ({{gameRoom.creatorRating}})</h2>
   </div>
 
   <div class="panel" *ngIf="gameRoom.opponentLogin">
-    <h2>Гость игры: {{ gameRoom.opponentLogin }}</h2>
+    <h2>Гость игры: {{ gameRoom.opponentLogin }} ({{gameRoom.opponentRating}})</h2>
   </div>
 
   <div class="invite-link">
