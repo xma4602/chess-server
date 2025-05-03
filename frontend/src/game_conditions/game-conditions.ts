@@ -28,7 +28,7 @@ export class GameConditions {
 
   getTileSubtitle(): string {
     if (this.partyTime < 10) {
-      return 'Блитц'
+      return 'Блиц'
     } else if (this.partyTime < 30) {
       return 'Рапид'
     } else {
