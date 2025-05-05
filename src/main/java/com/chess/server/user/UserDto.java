@@ -16,4 +16,5 @@ public class UserDto {
     private String password;
     private Integer rating;
     private List<String> roles;
+    private byte[] avatar;
 }

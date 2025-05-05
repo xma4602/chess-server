@@ -22,10 +22,8 @@ public class UserService {
 
     public UserDto singIn(String login, String password) throws AuthException, AccountNotFoundException {
         User user = userRepository.findByLogin(login)
-                .orElseThrow(() -> new AccountNotFoundException("Не сущестувет пользователя с логином " + login));
-//        if (!Password.equals(password, user.getPassword())) {
-//            throw new AuthException("Неверное имя и/или логин пользователя");
-//        }
+                .orElseThrow(() -> new AccountNotFoundException("Не существует пользователя с логином " + login));
+
         if (!password.equals(user.getPassword())) {
             throw new AuthException("Неверное имя и/или логин пользователя");
         }
@@ -36,7 +34,7 @@ public class UserService {
         Password.validate(password);
         Login.validate(login);
         if (userRepository.existsUserByLogin(login)) {
-            throw new AccountException("Dublicate user login=" + login);
+            throw new AccountException("Duplicate user login=" + login);
         }
 
 //        password = Password.hash(password);
@@ -57,6 +55,7 @@ public class UserService {
         user.setLogin(userData.getLogin());
         user.setPassword(userData.getPassword());
         user.setRating(user.getRating());
+        user.setAvatar(user.getAvatar());
 
         List<Role> roleList = userData.getRoles().stream()
                 .map(roleRepository::findByName)
@@ -91,6 +90,10 @@ public class UserService {
         return roleRepository.findAll().stream()
                 .map(Role::getName)
                 .toList();
+    }
+
+    public Optional<User> findById(UUID id) {
+        return userRepository.findById(id);
     }
 }
 

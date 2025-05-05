@@ -39,6 +39,9 @@ public class User {
     @OneToMany(mappedBy = "opponent", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<GamePlay> opponentGames;
 
+    @Lob
+    private byte[] avatar;
+
     public User(String login, String password) {
         this.login = login;
         this.password = password;

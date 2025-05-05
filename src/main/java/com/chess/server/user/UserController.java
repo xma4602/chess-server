@@ -1,20 +1,27 @@
 package com.chess.server.user;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.security.auth.login.AccountNotFoundException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/chess/users")
 @RequiredArgsConstructor
 public class UserController {
+    private final static String DEFAULT_AVATAR_PATH = "classpath:static/default_avatar.png"; // Путь к стандартному аватару
 
     private final UserService userService;
+    private final ResourceLoader resourceLoader;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestParam String login, @RequestParam String password) {
@@ -58,5 +65,24 @@ public class UserController {
     public ResponseEntity<?> deleteUser(@PathVariable UUID userId) throws AccountNotFoundException {
         userService.deleteUser(userId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{id}/avatar")
+    public ResponseEntity<Resource> getUserAvatar(@PathVariable UUID id) {
+        Optional<User> userOptional = userService.findById(id);
+        Resource avatarResource;
+
+        if (userOptional.isPresent() && userOptional.get().getAvatar() != null) {
+            // Если у пользователя есть аватар, возвращаем его
+            byte[] avatar = userOptional.get().getAvatar();
+            avatarResource = new ByteArrayResource(avatar);
+        } else {
+            // Если у пользователя нет аватара, возвращаем стандартное изображение
+            avatarResource = resourceLoader.getResource(DEFAULT_AVATAR_PATH);
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.CONTENT_TYPE, "image/png"); // Укажите правильный тип изображения
+        return new ResponseEntity<>(avatarResource, headers, HttpStatus.OK);
     }
 }
