@@ -4,6 +4,7 @@ import {GameConditions} from '../game_conditions/game-conditions';
 import {TileComponent} from '../tile/tile.component';
 import {Router, RouterModule} from '@angular/router';
 import {UserService} from '../user/user-service';
+import {User} from '../user/user';
 
 @Component({
   selector: 'app-main',
@@ -14,7 +15,9 @@ import {UserService} from '../user/user-service';
 })
 export class MainComponent {
   gameConditionsList: GameConditions[] = [];
+  myGame: GameConditions = new GameConditions(5, 3)
 
+  currentUser: User;
   constructor(private router: Router, private userService: UserService) {
     this.gameConditionsList.push(new GameConditions(1, 0))
     this.gameConditionsList.push(new GameConditions(2, 1))
@@ -27,6 +30,8 @@ export class MainComponent {
     this.gameConditionsList.push(new GameConditions(15, 10))
     this.gameConditionsList.push(new GameConditions(30, 0))
     this.gameConditionsList.push(new GameConditions(30, 20))
+
+    this.currentUser = userService.user!;
   }
 
   // Метод для проверки, является ли пользователь администратором
@@ -37,5 +42,9 @@ export class MainComponent {
   // Метод для перенаправления на таблицу пользователей
   navigateToUserList(): void {
     this.router.navigate(['/users']); // Замените на ваш маршрут для таблицы пользователей
+  }
+
+  openProfile() {
+    console.log('Открыть профиль пользователя:', this.currentUser.login);
   }
 }

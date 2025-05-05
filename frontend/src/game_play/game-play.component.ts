@@ -402,9 +402,12 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
   }
 
   private onDrawResponse(message: IMessage) {
-    this.dialog.open(ConfirmDialogComponent, {
-      data: {title: 'Противник отказался от ничьи'}
-    })
+    const userId = message.body;
+    if (this.userService.user!.id !== userId) {
+      this.dialog.open(ConfirmDialogComponent, {
+        data: {title: 'Противник отказался от ничьи'}
+      })
+    }
   }
 
   getWhiteLogin() {

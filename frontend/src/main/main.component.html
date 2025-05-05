@@ -4,8 +4,15 @@
             [subtitle]="game.getTileSubtitle()"
             [gameConditions]="game"
   />
-  <app-tile [title]="'Своя игра'"/>
+  <app-tile [title]="'Своя игра'"
+            [gameConditions]="myGame"/>
 </div>
 
 <!-- Кнопка для перехода к таблице пользователей -->
 <button *ngIf="isAdmin()" (click)="navigateToUserList()">Перейти к таблице пользователей</button>
+
+<!-- Профиль пользователя в правом верхнем углу -->
+<div class="profile-container" (click)="openProfile()">
+  <span class="username">{{ currentUser.login }}</span>
+  <img [src]="currentUser.getAvatarLink()" alt="{{ currentUser.login }}'s avatar" class="avatar" />
+</div>
