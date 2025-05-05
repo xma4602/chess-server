@@ -6,6 +6,7 @@ import com.chess.engine.FigureType;
 import com.chess.engine.Position;
 import com.chess.engine.actions.Action;
 import com.chess.engine.actions.ActionEat;
+import com.chess.engine.actions.ActionMove;
 
 import java.io.Serial;
 import java.util.LinkedList;
@@ -14,6 +15,7 @@ import java.util.List;
 public class King extends Figure {
     @Serial
     private static final long serialVersionUID = 1L;
+
     public King(FigureColor figureColor) {
         super(FigureType.KING, figureColor);
     }
@@ -55,45 +57,63 @@ public class King extends Figure {
 
     private Action castling(Board board, FigureColor figureColor, Position kingPosition, boolean isRight) {
         //условия для рокировки
-        if (board.wasNotMoving(kingPosition)) {
-            Position rookPosition = (figureColor == FigureColor.WHITE) ?
-                    (isRight ? Position.H1 : Position.A1) :
-                    (isRight ? Position.H8 : Position.A8);
+        Position rookPosition = (figureColor == FigureColor.WHITE) ?
+                (isRight ? Position.H1 : Position.A1) :
+                (isRight ? Position.H8 : Position.A8);
 
-            Figure figure = board.getFigureByPosition(rookPosition);
+        Figure king = board.getFigureByPosition(kingPosition);
+        Figure rook = board.getFigureByPosition(rookPosition);
 
-            if (figure.getFigureType() == FigureType.ROOK
-                    && figure.getFigureColor() == figureColor
-                    && figure.isNotMoved()
-                    && board.hasAllNone(getCastlingPathPositions(kingPosition, isRight))
-                    && hasNotEatKingActions(board, kingPosition, figureColor.reverseColor())
-            ) {
-                return Action.castling(kingPosition, rookPosition);
+        if (rook.getFigureType() != FigureType.ROOK //если там не ладья
+                || rook.getFigureColor() != figureColor // если не моего цвета
+                || king.isMoved()  //если король двигался
+                || rook.isMoved()) //если ладья двигалась
+        {
+            return null; //то нет рокировки
+        }
+
+        //путь короля для рокировки
+        List<Position> castlingPathPositions = isRight ?
+                List.of(kingPosition.offset(0, 1), kingPosition.offset(0, 2)) :
+                List.of(kingPosition.offset(0, -1), kingPosition.offset(0, -2), kingPosition.offset(0, -3));
+
+        for (Position position : castlingPathPositions) {
+            //фигура на пути
+            Figure figure = board.getFigureByPosition(position);
+            //фигура на пути != пустая ячейка
+            if (figure.getFigureType() != FigureType.NONE) {
+                //то рокировка невозможна
+                return null;
             }
         }
 
-        return null;
-    }
+        //позиции фигур противника
+        List<Position> opponentPositions = board.getFigurePositionsByColor(figureColor.reverseColor());
 
-    public static boolean hasNotEatKingActions(Board board, Position kingPosition, FigureColor opponentFigureColor) {
-        for (Position position : board.getFigurePositionsByColor(opponentFigureColor)) {
+        for (Position position : opponentPositions) {
+            //фигура противника
             Figure figure = board.getFigureByPosition(position);
+            //действия фигуры противника
             List<Action> actions = figure.getEatActions(board, position);
             for (Action action : actions) {
+                //если действие "съесть"
                 if (action instanceof ActionEat actionEat) {
-                    if (actionEat.getEatenPosition().equals(kingPosition)) {
-                        return false;
+                    //если король под шахом
+                    if (actionEat.getEatenPosition().equals(kingPosition)){
+                        //то рокировка невозможна
+                        return null;
+                    }
+                    //если действие "сдвинуться"
+                } else if (action instanceof ActionMove actionMove) {
+                    //если атакуется позиция по пути короля
+                    if (castlingPathPositions.contains(actionMove.getEndPosition())) {
+                        //то рокировка невозможна
+                        return null;
                     }
                 }
             }
         }
-        return true;
-    }
 
-    private Position[] getCastlingPathPositions(Position kingPosition, boolean isRight) {
-        return isRight ?
-                new Position[]{kingPosition.offset(0, 1), kingPosition.offset(0, 2)} :
-                new Position[]{kingPosition.offset(0, -1), kingPosition.offset(0, -2), kingPosition.offset(0, -3)};
+        return Action.castling(kingPosition, rookPosition);
     }
-
 }

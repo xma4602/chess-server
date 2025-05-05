@@ -211,36 +211,40 @@ public class Board implements Serializable, Cloneable {
     }
 
     public String toString(boolean isReverse) {
-
         StringBuilder builder = new StringBuilder("  ");
         builder.append(isReverse ? "H  G  F E  D C  B  A" : "A  B  C D  E F  G  H");
         builder.append("\n ╔═════════════════════╗\n");
+
         for (int row = 7; row >= 0; row--) {
             builder.append(isReverse ? 8 - row : row + 1);
             builder.append("║");
+
             for (int col = 0; col <= 7; col++) {
                 Position position = Position.of(row, col);
                 Figure figure = getFigureByPosition(position);
+
                 if (figure.getFigureType() == FigureType.NONE) {
-                    builder.append(' ');
-                    if (col % 4 == 1) builder.append(' ');
+                    builder.append("  "); // Два пробела для пустой клетки
                 } else {
                     builder.append(figure.getFigureType().getImageChar(figure.getFigureColor()));
+                    builder.append(" "); // Пробел после символа фигуры
                 }
-
                 builder.append('|');
             }
-            builder.replace(builder.length() - 1, builder.length(), " ");
+
+            builder.replace(builder.length() - 1, builder.length(), " "); // Заменяем последний '|' на пробел
             builder.append("║");
             builder.append(isReverse ? 8 - row : row + 1);
             builder.append('\n');
         }
+
         builder.append(" ╚═════════════════════╝\n");
         builder.append("  ");
         builder.append(isReverse ? "H  G  F E  D C  B  A" : "A  B  C D  E F  G  H");
 
         return builder.toString();
     }
+
 
 
 //    private Board flipBoard() {

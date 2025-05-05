@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import javax.security.auth.login.AccountException;
 import javax.security.auth.login.AccountNotFoundException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -38,9 +39,13 @@ public class UserService {
         if (userRepository.existsUserByLogin(login)) {
             throw new AccountException("Dublicate user login=" + login);
         }
+        Role role = roleRepository.findByName("player")
+                .orElseThrow(() -> new NoSuchElementException("No such role with name=player"));
+
 
 //        password = Password.hash(password);
         User user = new User(login, password);
+        user.getRoles().add(role);
         user = userRepository.save(user);
         return toUserDto(user);
     }

@@ -219,8 +219,7 @@ public class GameplayService {
 
             return toGamePlayDto(gameplay);
         } else {
-            return gameplay.getCreator().getId().equals(userId) ?
-                    gameplay.getOpponent().getId() : gameplay.getCreator().getId();
+            return userId;
         }
     }
 

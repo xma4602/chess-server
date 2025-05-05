@@ -84,7 +84,7 @@ public class GamePlayController {
 
         if (response instanceof UUID opponentId) {
             String destination = String.format("/topic/games/%s/draw/response", gameId);
-            messagingTemplate.convertAndSend(destination, opponentId);
+            messagingTemplate.convertAndSend(destination, opponentId.toString());
         } else if (response instanceof GamePlayDto gamePlayDto) {
             String destination = String.format("/topic/games/%s/action", gameId);
             messagingTemplate.convertAndSend(destination, gamePlayDto);
