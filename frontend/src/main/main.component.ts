@@ -14,6 +14,7 @@ import {UserService} from '../user/user-service';
 })
 export class MainComponent {
   gameConditionsList: GameConditions[] = [];
+  myGame: GameConditions = new GameConditions(5, 3)
 
   constructor(private router: Router, private userService: UserService) {
     this.gameConditionsList.push(new GameConditions(1, 0))
