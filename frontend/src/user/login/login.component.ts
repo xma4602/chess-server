@@ -39,11 +39,12 @@ export class LoginComponent {
       (response: {
         id: string,
         login: string,
+        password: string,
         rating: number,
         roles: string[]
       }) => {
         console.log('User logged in successfully', response);
-        this.userService.user = new User(response.id, response.login, response.rating, response.roles)
+        this.userService.user = new User(response.id, response.login, response.password, response.rating, response.roles)
         this.router.navigateByUrl(this.returnUrl); // Перенаправление на нужную страницу
       }, error => {
         console.error('Login failed', error);
@@ -63,5 +64,9 @@ export class LoginComponent {
 
   crackLogin2() {
     this.makeLogin('player2', 'password2')
+  }
+
+  crackLoginAdmin() {
+    this.makeLogin('admin', 'admin')
   }
 }

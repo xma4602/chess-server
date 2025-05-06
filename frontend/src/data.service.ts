@@ -10,6 +10,7 @@ export const restUsers = restUrl + '/users'
 export const restRoomsLink = http + frontHost + restPrefix + '/rooms'
 export const restGamePlay = restUrl + '/games';
 export const restChat = restUrl + '/chats';
+export const restHistory = restUrl + '/history';
 
 export const wsConnect = ws + serverHost + '/ws'
 export const wsRooms = topicPrefix + '/rooms'

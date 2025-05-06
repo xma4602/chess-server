@@ -3,7 +3,8 @@
 table {
   width: 100%;
   border-collapse: collapse;
-  margin: 20px 0;
+  padding-left: 100px;
+  padding-right: 100px;
 }
 
 th, td {

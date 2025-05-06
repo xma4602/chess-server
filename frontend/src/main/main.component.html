@@ -8,11 +8,14 @@
             [gameConditions]="myGame"/>
 </div>
 
-<!-- Кнопка для перехода к таблице пользователей -->
-<button *ngIf="isAdmin()" (click)="navigateToUserList()">Перейти к таблице пользователей</button>
 
-<!-- Профиль пользователя в правом верхнем углу -->
-<div class="profile-container" (click)="openProfile()">
-  <span class="username">{{ currentUser.login }}</span>
-  <img [src]="currentUser.getAvatarLink()" alt="{{ currentUser.login }}'s avatar" class="avatar" />
+
+<div class="profile-container">
+  <div class="profile-info" (click)="openProfile()">
+    <span class="username">{{ currentUser.login }}</span>
+    <img [src]="currentUser.getAvatarLink()" alt="{{ currentUser.login }}'s avatar" class="avatar"/>
+  </div>
+  <button (click)="logout()" class="logout-button">Выйти</button>
+  <button *ngIf="isAdmin()" (click)="navigateToUserList()">Пользователи</button>
 </div>
+

@@ -27,6 +27,7 @@ export class UserListComponent implements OnInit {
   loadUsers(): void {
     this.userService.getUsers().subscribe(users => {
       this.users = users;
+      this.users.sort((a, b) => a.login.localeCompare(b.login));
     });
   }
 

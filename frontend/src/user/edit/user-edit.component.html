@@ -1,6 +1,10 @@
 <div *ngIf="user">
-  <h2>Edit User</h2>
+  <h2>Редактирование польователя</h2>
   <form (ngSubmit)="saveUser()">
+    <div >
+      <img [src]="user.avatarUrl || user.getAvatarLink()" alt="{{ user.login }}'s avatar" class="avatar" />
+      <input type="file" (change)="onFileSelected($event)" accept="image/png, image/jpeg" />
+    </div>
     <div>
       <label for="login">Логин:</label>
       <input id="login" type="text" [(ngModel)]="user.login" name="login" required />

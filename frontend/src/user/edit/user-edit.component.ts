@@ -19,6 +19,7 @@ import {NgForOf, NgIf} from '@angular/common';
 export class UserEditComponent implements OnInit {
   user: User | null = null;
   roles: string[] = []; // Массив для хранения ролей
+  selectedFile: File | null = null; // Для хранения загруженного файла
 
   constructor(
     private userService: UserService,
@@ -47,11 +48,19 @@ export class UserEditComponent implements OnInit {
   }
 
   saveUser(): void {
-    if (this.user) {
-      this.userService.updateUser(this.user).subscribe(() => {
-        this.router.navigate(['/users']); // Перенаправление на список пользователей после сохранения
-      });
+    const formData = new FormData();
+    formData.append('login', this.user!.login);
+    formData.append('password', this.user!.password || '');
+    formData.append('rating', this.user!.rating.toString());
+    formData.append('roles', this.user!.roles.join(','));
+
+    if (this.selectedFile) {
+      formData.append('avatar', this.selectedFile, this.selectedFile.name); // Добавляем файл
     }
+
+    this.userService.updateUser(this.user!.id, formData).subscribe(user => {
+      this.router.navigate(['/users']); // Перенаправление на список пользователей после сохранения
+    });
   }
 
   onRoleChange(role: string) {
@@ -66,4 +75,17 @@ export class UserEditComponent implements OnInit {
     return this.user?.roles.includes(role) || false; // Проверяем, выбрана ли роль
   }
 
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedFile = input.files[0]; // Сохраняем загруженный файл
+
+      // Создаем URL для нового изображения
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.user!.avatarUrl = e.target.result; // Обновляем URL аватара
+      };
+      reader.readAsDataURL(this.selectedFile); // Читаем файл как Data URL
+    }
+  }
 }

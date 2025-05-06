@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
-import {Observable} from 'rxjs';
+import {map, Observable} from 'rxjs';
 import {restUsers} from '../data.service';
 import {User} from './user';
 
@@ -18,31 +18,36 @@ export class UserService {
     const params = new HttpParams()
       .set("login", login)
       .set("password", password)
-    return this.http.post(`${restUsers}/register`, {}, {params});
+    return this.http.post<any>(`${restUsers}/register`, {}, {params})
+      .pipe(map(obj => User.fromObject(obj)));
   }
 
   login(login: string, password: string): Observable<any> {
     const params = new HttpParams()
       .set("login", login)
       .set("password", password)
-    return this.http.post(`${restUsers}/login`, {}, {params});
+    return this.http.post<any>(`${restUsers}/login`, {}, {params})
+      .pipe(map(obj => User.fromObject(obj)));
   }
 
   isLoggedIn() {
     return this.user !== null;
   }
 
-  getUsers(): Observable<User[]> {
-    return this.http.get<User[]>(`${restUsers}/all`);
+  getUsers() {
+    return this.http.get<any[]>(`${restUsers}/all`)
+      .pipe(map(obj => obj.map(item => User.fromObject(item))));
   }
 
-  updateUser(user: User): Observable<User> {
-    return this.http.put<User>(`${restUsers}/${user.id}`, user);
+  updateUser(userId: string, data: FormData): Observable<User> {
+    return this.http.put<User>(`${restUsers}/${userId}/profile`, data)
+      .pipe(map(obj => User.fromObject(obj)));
   }
 
   deleteUser(userId: string): Observable<void> {
     return this.http.delete<void>(`${restUsers}/${userId}`);
   }
+
   getRoles(): Observable<string[]> {
     return this.http.get<string[]>(`${restUsers}/roles`);
   }

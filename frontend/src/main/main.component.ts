@@ -18,6 +18,7 @@ export class MainComponent {
   myGame: GameConditions = new GameConditions(5, 3)
 
   currentUser: User;
+
   constructor(private router: Router, private userService: UserService) {
     this.gameConditionsList.push(new GameConditions(1, 0))
     this.gameConditionsList.push(new GameConditions(2, 1))
@@ -45,6 +46,11 @@ export class MainComponent {
   }
 
   openProfile() {
-    console.log('Открыть профиль пользователя:', this.currentUser.login);
+    this.router.navigate([`/users/${this.userService.user!.id}/profile`]);
+  }
+
+  logout() {
+    this.userService.user = null
+    this.router.navigate(['login']);
   }
 }
