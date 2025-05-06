@@ -25,4 +25,8 @@ public class GameConditions implements Serializable {
     private TimeControl timeControl;
     private int moveTime;
     private int partyTime;
+
+    public FigureColor getOpponentFigureColor() {
+        return creatorFigureColor.reverseColor();
+    }
 }

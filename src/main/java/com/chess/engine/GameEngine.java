@@ -223,11 +223,4 @@ public class GameEngine implements Serializable {
     public String toString() {
         return board.toString();
     }
-
-    public enum GameState implements Serializable {
-        BLACK_WIN,
-        WHITE_WIN,
-        DRAW,
-        CONTINUES
-    }
 }

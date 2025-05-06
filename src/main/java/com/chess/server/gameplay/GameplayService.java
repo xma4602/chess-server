@@ -3,19 +3,18 @@ package com.chess.server.gameplay;
 import com.chess.engine.FigureColor;
 import com.chess.engine.FigureType;
 import com.chess.engine.GameEngine;
+import com.chess.engine.GameState;
 import com.chess.engine.actions.*;
 import com.chess.engine.exceptions.ChessEngineIllegalArgumentException;
 import com.chess.engine.exceptions.ChessEngineIllegalStateException;
 import com.chess.server.chat.GameChatService;
 import com.chess.server.gameconditions.GameConditions;
 import com.chess.server.gameconditions.GameConditionsRepository;
-import com.chess.server.gameconditions.MatchMode;
+import com.chess.server.gamehostory.GameHistoryService;
 import com.chess.server.gameplay.dto.GameActionDto;
 import com.chess.server.gameplay.dto.GamePlayDto;
 import com.chess.server.gameroom.GameRoom;
 import com.chess.server.gameroom.GameRoomService;
-import com.chess.server.user.User;
-import com.chess.server.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,12 +25,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class GameplayService {
 
-    public static final int RATING = 100;
+
     private final GameConditionsRepository gameConditionsRepository;
     private final GameplayRepository gameplayRepository;
     private final GameRoomService gameRoomService;
     private final GameChatService gameChatService;
-    private final UserRepository userRepository;
+    private final GameHistoryService gameHistoryService;
 
     public GamePlay createGameplay(UUID guestRoomId) {
         GameRoom gameRoom = gameRoomService.getGameRoom(guestRoomId);
@@ -188,9 +187,9 @@ public class GameplayService {
         GamePlay gameplay = getGameplay(gameId);
         FigureColor playerColor = getPlayerColor(userId, gameplay);
 
-        if (gameplay.getGameEngine().getGameState() == GameEngine.GameState.CONTINUES) {
+        if (gameplay.getGameEngine().getGameState() == GameState.CONTINUES) {
             gameplay.getGameEngine().setGameState(playerColor == FigureColor.WHITE ?
-                    GameEngine.GameState.BLACK_WIN : GameEngine.GameState.WHITE_WIN);
+                    GameState.BLACK_WIN : GameState.WHITE_WIN);
             checkGameOver(gameplay);
             return Optional.of(toGamePlayDto(gameplay));
         } else {
@@ -214,7 +213,7 @@ public class GameplayService {
         GamePlay gameplay = getGameplay(gameId);
 
         if (result) {
-            gameplay.getGameEngine().setGameState(GameEngine.GameState.DRAW);
+            gameplay.getGameEngine().setGameState(GameState.DRAW);
             checkGameOver(gameplay);
 
             return toGamePlayDto(gameplay);
@@ -230,7 +229,7 @@ public class GameplayService {
         FigureColor playerColor = getPlayerColor(userId, gameplay);
 
         gameplay.getGameEngine().setGameState(playerColor == FigureColor.WHITE ?
-                GameEngine.GameState.BLACK_WIN : GameEngine.GameState.WHITE_WIN);
+                GameState.BLACK_WIN : GameState.WHITE_WIN);
 
         gameplay = gameplayRepository.save(gameplay);
 
@@ -240,31 +239,10 @@ public class GameplayService {
     }
 
     private void checkGameOver(GamePlay gamePlay) {
-        if (gamePlay.getGameEngine().getGameState() != GameEngine.GameState.CONTINUES) {
-            if (gamePlay.getGameConditions().getMatchMode() == MatchMode.RATING) {
-                User creator = gamePlay.getCreator();
-                User opponent = gamePlay.getOpponent();
-
-                Integer creatorRating = creator.getRating();
-                Integer opponentRating = opponent.getRating();
-
-                boolean creatorWhiteWin = gamePlay.getGameConditions().getCreatorFigureColor() == FigureColor.WHITE
-                        && gamePlay.getGameEngine().getGameState() == GameEngine.GameState.WHITE_WIN;
-                boolean creatorBlackWin = gamePlay.getGameConditions().getCreatorFigureColor() == FigureColor.BLACK
-                        && gamePlay.getGameEngine().getGameState() == GameEngine.GameState.BLACK_WIN;
-                if (creatorWhiteWin || creatorBlackWin) {
-                    creatorRating += RATING;
-                    opponentRating = Math.max(opponentRating - RATING, 0);
-                } else {
-                    opponentRating += RATING;
-                    creatorRating = Math.max(creatorRating - RATING, 0);
-                }
-
-                creator.setRating(creatorRating);
-                opponent.setRating(opponentRating);
-
-                userRepository.saveAll(List.of(creator, opponent));
-            }
+        if (gamePlay.getGameEngine().getGameState() != GameState.CONTINUES) {
+            gameHistoryService.createGameHistory(gamePlay);
         }
     }
+
+
 }

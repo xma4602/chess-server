@@ -27,6 +27,7 @@ public class GameChat {
     @JoinColumn(name = "game_play_id", nullable = false, unique = true)
     private GamePlay gamePlay;
 
+    @Builder.Default
     @OneToMany(mappedBy = "gameChat", orphanRemoval = true)
     private List<GameChatMessage> gameChatMessages = new ArrayList<>();
 

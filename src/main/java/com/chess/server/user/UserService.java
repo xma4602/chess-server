@@ -54,14 +54,20 @@ public class UserService {
 
         user.setLogin(userData.getLogin());
         user.setPassword(userData.getPassword());
-        user.setRating(user.getRating());
-        user.setAvatar(user.getAvatar());
+        user.setAvatar(userData.getAvatar());
 
-        List<Role> roleList = userData.getRoles().stream()
-                .map(roleRepository::findByName)
-                .map(Optional::orElseThrow)
-                .collect(Collectors.toList());
-        user.setRoles(roleList);
+        if (userData.getRating() != null){
+            user.setRating(userData.getRating());
+        }
+
+        if (userData.getRoles() != null){
+            List<Role> roleList = userData.getRoles().stream()
+                    .map(roleRepository::findByName)
+                    .map(Optional::orElseThrow)
+                    .collect(Collectors.toList());
+            user.setRoles(roleList);
+        }
+
         user = userRepository.save(user);
         return toUserDto(user);
     }

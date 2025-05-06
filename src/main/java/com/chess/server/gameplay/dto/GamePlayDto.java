@@ -1,6 +1,6 @@
 package com.chess.server.gameplay.dto;
 
-import com.chess.engine.GameEngine;
+import com.chess.engine.GameState;
 import com.chess.server.gameconditions.GameConditions;
 import lombok.*;
 
@@ -22,7 +22,7 @@ public class GamePlayDto {
     private String creatorLogin;
     private String opponentLogin;
     private GameConditions gameConditions;
-    private GameEngine.GameState gameState;
+    private GameState gameState;
     private List<String > madeActions;
     private List<GameActionDto> whiteActions;
     private List<GameActionDto> blackActions;

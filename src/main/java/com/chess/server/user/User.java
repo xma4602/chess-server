@@ -1,6 +1,5 @@
 package com.chess.server.user;
 
-import com.chess.server.gameplay.GamePlay;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,27 +23,24 @@ public class User {
     private String login;
     @Column(nullable = false)
     private String password;
-    @Column(columnDefinition = "DEFAULT 100")
-    private Integer rating;
 
+    @Builder.Default
+    @Column(columnDefinition = "DEFAULT 100")
+    private Integer rating = 100;
+
+    @Builder.Default
     @ManyToMany
     @JoinTable(name = "app_user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "roles_id"))
     private List<Role> roles = new ArrayList<>();
 
-    @OneToMany(mappedBy = "creator", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<GamePlay> createdGames;
 
-    @OneToMany(mappedBy = "opponent", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<GamePlay> opponentGames;
-
-    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    @Column(name = "avatar")
     private byte[] avatar;
-
     public User(String login, String password) {
         this.login = login;
         this.password = password;
-        this.rating = 100;
     }
 }

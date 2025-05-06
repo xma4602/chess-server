@@ -125,3 +125,26 @@ create table if not exists game_chat_message
         foreign key (user_id) references app_user
 );
 
+CREATE TABLE game_history
+(
+    id                         UUID                        NOT NULL,
+    creator_id                 UUID                        NOT NULL,
+    opponent_id                UUID                        NOT NULL,
+    creator_rating             INTEGER                     NOT NULL,
+    opponent_rating            INTEGER                     NOT NULL,
+    creator_rating_difference  INTEGER                     NOT NULL,
+    opponent_rating_difference INTEGER                     NOT NULL,
+    game_conditions_id         UUID                        NOT NULL,
+    game_state                 SMALLINT                    NOT NULL,
+    timestamp                  TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    CONSTRAINT pk_gamehistory PRIMARY KEY (id)
+);
+
+ALTER TABLE game_history
+    ADD CONSTRAINT FK_GAMEHISTORY_ON_CREATOR FOREIGN KEY (creator_id) REFERENCES app_user (id);
+
+ALTER TABLE game_history
+    ADD CONSTRAINT FK_GAMEHISTORY_ON_GAME_CONDITIONS FOREIGN KEY (game_conditions_id) REFERENCES game_conditions (id);
+
+ALTER TABLE game_history
+    ADD CONSTRAINT FK_GAMEHISTORY_ON_OPPONENT FOREIGN KEY (opponent_id) REFERENCES app_user (id);

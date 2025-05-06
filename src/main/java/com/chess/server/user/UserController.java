@@ -8,8 +8,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.security.auth.login.AccountNotFoundException;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -82,7 +84,26 @@ public class UserController {
         }
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set(HttpHeaders.CONTENT_TYPE, "image/png"); // Укажите правильный тип изображения
         return new ResponseEntity<>(avatarResource, headers, HttpStatus.OK);
+    }
+
+    @PutMapping("/{userId}/profile")
+    public ResponseEntity<UserDto> updateUserProfile(
+            @PathVariable UUID userId,
+            @RequestParam("login") String login,
+            @RequestParam("password") String password,
+            @RequestParam(value = "avatar", required = false) MultipartFile avatar) throws IOException, AccountNotFoundException {
+
+        UserDto userDto = UserDto.builder()
+                .id(userId)
+                .login(login)
+                .password(password)
+                .avatar(avatar.getBytes())
+                .build();
+
+        userDto = userService.updateUser(userId, userDto);
+
+        // Верните обновленного пользователя
+        return ResponseEntity.ok(userDto);
     }
 }
