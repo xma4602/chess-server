@@ -37,7 +37,7 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
 
   constructor(private router: Router,
               private route: ActivatedRoute,
-              private userService: UserService,
+              public userService: UserService,
               private gamePlayService: GamePlayService,
               private stompService: StompService,
               public dialog: MatDialog
@@ -172,9 +172,7 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
 
   private executeAction(action: GameAction) {
     if (action.actionType.code === ActionType.SWAP.code) {
-      const figureColor = this.gamePlay!.creatorId === this.gamePlay!.activeUserId ?
-        this.gamePlay!.gameConditions.creatorFigureColor :
-        this.gamePlay!.gameConditions.creatorFigureColor.reverseValue()
+      const figureColor = this.getFigureColorForCurrentUser()
 
       this.dialog.open(ChessPieceDialogComponent, {data: {figureColor: figureColor}})
         .afterClosed().subscribe((figure: Figure) => {

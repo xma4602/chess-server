@@ -38,7 +38,12 @@ export class UserProfileComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       const userId = params.get('id')!; // Получаем userId из параметров маршрута
       this.gameHistoryService.getHistories(userId).subscribe(
-        histories => this.histories = histories
+        histories =>{
+          histories.sort((a, b) => {
+            return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+          });
+          this.histories = histories
+        }
       );
     });
   }

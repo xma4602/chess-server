@@ -19,7 +19,7 @@ export class GamePlayService {
   }
 
   getGamePlay(gameId: string) {
-    return this.http.get<GamePlay>(`${restGamePlay}/${gameId}`)
+    return this.http.get<any>(`${restGamePlay}/${gameId}`)
       .pipe(map(dto => GamePlay.fromObject(dto)))
   }
 

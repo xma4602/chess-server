@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import {GameConditions} from '../game_conditions/game-conditions';
-import {GameConditionsService} from '../game_conditions/game-conditions-service';
+import {GameConditions} from '../../game_conditions/game-conditions';
+import {GameConditionsService} from '../../game_conditions/game-conditions-service';
 
 @Component({
   selector: 'app-tile',

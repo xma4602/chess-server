@@ -4,6 +4,10 @@
   align-items: center;
   text-align: center;
   padding: 20px;
+  border: 1px solid #ccc; /* Добавляет границу вокруг контейнера */
+  border-radius: 5px; /* Закругляет углы контейнера */
+  background-color: #fff; /* Устанавливает белый фон для контейнера */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Добавляет тень для эффекта поднятия */
 }
 
 .player-info {

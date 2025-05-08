@@ -1,4 +1,4 @@
-import {FigureColor, TimeControl} from '../../../game_conditions/game-conditions';
+import {GameConditions} from '../../../game_conditions/game-conditions';
 import {GameState} from '../../../game_play/game-play';
 
 export class GameHistory {
@@ -9,9 +9,9 @@ export class GameHistory {
               public opponentRating: number,
               public creatorRatingDifference: number,
               public opponentRatingDifference: number,
-              public creatorFigureColor: FigureColor,
               public gameState: GameState,
-              public timeControl: TimeControl) {
+              public gameConditions: GameConditions,
+              public timestamp: string) {
   }
 
   static fromObject(obj: any): GameHistory {
@@ -23,9 +23,9 @@ export class GameHistory {
       obj.opponentRating,
       obj.creatorRatingDifference,
       obj.opponentRatingDifference,
-      FigureColor.fromCode(obj.creatorFigureColor)!,
       GameState.fromCode(obj.gameState)!,
-      TimeControl.fromCode(obj.timeControl)!
+      GameConditions.fromObject(obj.gameConditions),
+      obj.timestamp
     );
   }
 }

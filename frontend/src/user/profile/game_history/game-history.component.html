@@ -1,16 +1,16 @@
 <div class="container">
+  <span>{{gameHistory.timestamp}}</span>
   <div class="player-info">
-    <span>{{ getCreatorColor() }} {{ gameHistory.creatorLogin }}</span>
+    <span>♔ {{ getLogin(FigureColor.WHITE) }}</span>
     <span class="cross">✖</span>
-    <span>{{ gameHistory.opponentLogin }} {{ getOpponentColor() }}</span>
+    <span>{{ getLogin(FigureColor.BLACK) }} ♚</span>
   </div>
   <div class="ratings">
-    <span>{{ gameHistory.creatorRating }} ({{ gameHistory.creatorRatingDifference >= 0 ? '+' : '' }}{{ gameHistory.creatorRatingDifference }})</span>
+    <span>{{ getRating(FigureColor.WHITE) }}</span>
     <span class="cross"></span>
-    <span>{{ gameHistory.opponentRating }} ({{ gameHistory.opponentRatingDifference >= 0 ? '+' : '' }}{{ gameHistory.opponentRatingDifference }})</span>
+    <span>{{ getRating(FigureColor.BLACK)  }}</span>
   </div>
   <div class="game-state">
-    <span>{{ gameHistory.gameState.title }} · {{ gameHistory.timeControl.title }}</span>
-    <span></span>
+    <span>{{ getGameState() }} · {{getTimeControl()}}</span>
   </div>
 </div>

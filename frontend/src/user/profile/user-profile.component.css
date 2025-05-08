@@ -3,7 +3,7 @@
   padding: 16px;
   border-radius: 8px;
   text-align: center;
-  max-width: 50%;
+  max-width: 70%;
   margin: 0 auto; /* Центрирует компонент по горизонтали */
   display: flex; /* Используем Flexbox */
   flex-direction: column; /* Устанавливаем направление по вертикали */
@@ -22,6 +22,9 @@
   border: 1px solid #ccc; /* Adds a light gray border around the section */
   border-radius: 5px; /* Rounds the corners of the border */
   background-color: #f9f9f9; /* Sets a light background color */
+  display: grid; /* Use grid layout */
+  grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
+  gap: 10px; /* Space between the grid items */
 }
 
 .game-histories h3 {
@@ -33,7 +36,6 @@
 .game-histories app-game-history {
   margin-bottom: 15px; /* Adds space between each game history component */
 }
-
 .button-container {
   display: flex; /* Используем Flexbox для горизонтального расположения */
   justify-content: center; /* Центрируем кнопки по горизонтали */

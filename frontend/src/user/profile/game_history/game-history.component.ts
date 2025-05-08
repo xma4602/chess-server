@@ -1,6 +1,8 @@
-import { Component, Input } from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {GameHistory} from './game-history';
-import {FigureColor} from '../../../game_conditions/game-conditions';
+import {FigureColor, TimeControl} from '../../../game_conditions/game-conditions';
+import {GameState} from '../../../game_play/game-play';
+import {UserService} from '../../user-service';
 
 
 @Component({
@@ -12,11 +14,50 @@ import {FigureColor} from '../../../game_conditions/game-conditions';
 export class GameHistoryComponent {
   @Input() gameHistory!: GameHistory;
 
-  getCreatorColor() {
-    return this.gameHistory.creatorFigureColor.code === FigureColor.WHITE.code ? '♔' : '♚'
+  constructor(private userService: UserService) {
   }
 
-  getOpponentColor() {
-    return this.gameHistory.creatorFigureColor.reverseValue().code === FigureColor.WHITE.code ? '♔' : '♚'
+  getLogin(figureColor: FigureColor) {
+    return this.gameHistory.gameConditions.creatorFigureColor.code == figureColor.code ?
+      `${this.gameHistory.creatorLogin}` :
+      `${this.gameHistory.opponentLogin}`;
+  }
+
+  getRating(figureColor: FigureColor) {
+    if (this.gameHistory.gameConditions.creatorFigureColor.code == figureColor.code) {
+      const rating = this.gameHistory.creatorRating.toString()
+      let ratingDif = `${this.gameHistory.creatorRatingDifference >= 0 ? '+' : ''}${this.gameHistory.creatorRatingDifference}`
+      return `${rating} (${ratingDif})`
+    } else {
+      const rating = this.gameHistory.opponentRating.toString()
+      let ratingDif = `${this.gameHistory.opponentRatingDifference >= 0 ? '+' : ''}${this.gameHistory.opponentRatingDifference}`
+      return `${rating} (${ratingDif})`
+    }
+  }
+
+  getGameState() {
+    const userLogin = this.userService.user!.login!;
+    const userFigureColor = this.gameHistory.creatorLogin == userLogin ?
+      this.gameHistory.gameConditions.creatorFigureColor : this.gameHistory.gameConditions.creatorFigureColor.reverseValue()
+    const gameState = this.gameHistory.gameState;
+
+    if (
+      (userFigureColor.code === FigureColor.WHITE.code && gameState === GameState.WHITE_WIN) ||
+      (userFigureColor.code === FigureColor.BLACK.code && gameState === GameState.BLACK_WIN)
+    ) {
+      return 'Вы победили'
+    } else {
+      return 'Вы проиграли'
+    }
+  }
+
+  protected readonly FigureColor = FigureColor;
+
+  getTimeControl() {
+    if (this.gameHistory.gameConditions.timeControl.code == TimeControl.WATCH.code){
+      return this.gameHistory.gameConditions.getTileSubtitle() + ' ' + this.gameHistory.gameConditions.getTileTitle()
+    } else {
+      return 'Без времени'
+    }
   }
 }

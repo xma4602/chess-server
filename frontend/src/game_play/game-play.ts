@@ -36,9 +36,24 @@ export class GamePlay {
   ) {
   }
 
-  static fromObject(obj: any): GamePlay {
+  static fromObject(obj:
+                      {
+                        id: string,
+                        chatId: string,
+                        creatorId: string,
+                        opponentId: string,
+                        activeUserId: string,
+                        creatorLogin: string,
+                        opponentLogin: string,
+                        gameState: string,
+                        gameConditions: any,
+                        madeActions: string[],
+                        whiteActions: any[],
+                        blackActions: any[],
+                        figures: any
+                      }): GamePlay {
     const gameConditions = GameConditions.fromObject(obj.gameConditions);
-    const gameState = GameState.fromCode(obj.gameConditions)!;
+    const gameState = GameState.fromCode(obj.gameState)!;
     const whiteActions = (obj.whiteActions || []).map((action: any) => GameAction.fromObject(action));
     const blackActions = (obj.blackActions || []).map((action: any) => GameAction.fromObject(action));
     const figures = new Map<string, string>(Object.entries(obj.figures || {}));
@@ -53,7 +68,7 @@ export class GamePlay {
       obj.opponentLogin,
       gameState,
       gameConditions,
-      obj.madeActions ?? [],
+      obj.madeActions,
       whiteActions,
       blackActions,
       figures

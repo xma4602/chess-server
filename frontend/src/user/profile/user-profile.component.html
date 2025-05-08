@@ -1,5 +1,5 @@
 <div class="user-profile">
-  <img [src]="user.avatarUrl || user.getAvatarLink()" alt="{{ user.login }}'s avatar" class="avatar" />
+  <img [src]="user.avatarUrl || user.getAvatarLink()" alt="{{ user.login }}'s avatar" class="avatar"/>
 
   <div *ngIf="!isEditing; else editTemplate">
     <h2>{{ user.login }}</h2>
@@ -8,19 +8,20 @@
   </div>
 
   <ng-template #editTemplate>
-    <input [(ngModel)]="user.login"  type="text" placeholder="Логин" />
-    <input [(ngModel)]="user.password" type="text" placeholder="Пароль" />
-    <input type="file" (change)="onFileSelected($event)" accept="image/png, image/jpeg" />
+    <input [(ngModel)]="user.login" type="text" placeholder="Логин"/>
+    <input [(ngModel)]="user.password" type="text" placeholder="Пароль"/>
+    <input type="file" (change)="onFileSelected($event)" accept="image/png, image/jpeg"/>
     <div class="button-container">
       <button (click)="saveChanges()">Сохранить</button>
       <button class="cancel-button" (click)="cancelChanges()">Отменить</button>
     </div>
   </ng-template>
 
-  <ng-container *ngIf="this.histories && this.histories.length > 0">
+  <div>
     <h3>История игр:</h3>
-    <div class="game-histories" *ngFor="let history of histories">
-      <app-game-history [gameHistory]="history"></app-game-history>
+    <div class="game-histories" *ngIf="this.histories && this.histories.length > 0">
+      <app-game-history *ngFor="let history of histories" [gameHistory]="history"></app-game-history>
     </div>
-  </ng-container>
+  </div>
+
 </div>

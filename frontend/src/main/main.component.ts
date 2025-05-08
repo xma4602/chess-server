@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {NgForOf, NgIf} from "@angular/common";
 import {GameConditions} from '../game_conditions/game-conditions';
-import {TileComponent} from '../tile/tile.component';
+import {TileComponent} from './tile/tile.component';
 import {Router, RouterModule} from '@angular/router';
 import {UserService} from '../user/user-service';
 import {User} from '../user/user';

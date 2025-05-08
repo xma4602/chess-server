@@ -112,6 +112,34 @@ th {
   font-size: 16px;
 }
 
+.profile-container {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: column; /* Вертикальное выравнивание */
+  align-items: center; /* Центрирование содержимого */
+  cursor: pointer;
+  z-index: 1000; /* Убедитесь, что профиль отображается поверх других элементов */
+}
+
+.profile-info {
+  display: flex; /* Горизонтальное выравнивание */
+  align-items: center; /* Центрирование по вертикали */
+}
+
+.avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+}
+
+.username {
+  margin-right: 8px; /* Изменено на margin-right для правильного отступа */
+  font-size: 24px;
+  font-weight: bold;
+}
+
 /* Медиа-запрос для адаптивного дизайна */
 @media (max-width: 800px) {
   .container {

@@ -28,8 +28,8 @@ export class ChessPieceDialogComponent {
 
   getFigures() {
     return this.data.figureColor.code === FigureColor.WHITE.code ?
-      [Figure.B_QUEEN, Figure.B_KNIGHT, Figure.B_BISHOP, Figure.B_ROOK] :
-      [Figure.W_QUEEN, Figure.W_KNIGHT, Figure.W_BISHOP, Figure.W_ROOK];
+      [Figure.W_QUEEN, Figure.W_KNIGHT, Figure.W_BISHOP, Figure.W_ROOK] :
+      [Figure.B_QUEEN, Figure.B_KNIGHT, Figure.B_BISHOP, Figure.B_ROOK];
   }
 
   onSelect(piece: Figure): void {
