@@ -1,6 +1,7 @@
 package com.chess.engine.actions;
 
 import com.chess.engine.FigureColor;
+import com.chess.engine.FigureType;
 import com.chess.engine.Position;
 import lombok.Getter;
 
@@ -28,8 +29,8 @@ public abstract class Action implements Serializable {
 
     public abstract boolean equalsPositions(String startPosition, String endPosition);
 
-    public static Action move(Position startPosition, Position endPosition) {
-        return new ActionMove(startPosition, endPosition);
+    public static Action move(Position startPosition, Position endPosition, FigureType figureType) {
+        return new ActionMove(startPosition, endPosition, figureType);
     }
 
     public static Action eat(Position startPosition, Position eatenPosition) {

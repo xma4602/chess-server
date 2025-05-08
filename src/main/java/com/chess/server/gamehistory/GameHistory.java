@@ -1,4 +1,4 @@
-package com.chess.server.gamehostory;
+package com.chess.server.gamehistory;
 
 import com.chess.engine.GameState;
 import com.chess.server.gameconditions.GameConditions;

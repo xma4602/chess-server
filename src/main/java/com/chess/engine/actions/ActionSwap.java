@@ -17,7 +17,7 @@ public class ActionSwap extends Action {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    public static final Pattern swapPattern = Pattern.compile("([a-h][1-8])-([KQNBRP])([a-h][1-8])");
+    public static final Pattern swapPattern = Pattern.compile("^([a-h][1-8])-([a-h][1-8])([KQNBRP])$");
 
     private final Position startPosition;
     private final Position endPosition;
@@ -43,20 +43,19 @@ public class ActionSwap extends Action {
 
     public static Optional<ActionSwap> parse(String action) {
         Matcher matcher = swapPattern.matcher(action);
-        return Optional.ofNullable(
-                matcher.find() ?
-                        new ActionSwap(
-                                Position.of(matcher.group(1)),
-                                FigureType.getTypeByNotationChar(matcher.group(2).charAt(0)),
-                                Position.of(matcher.group(3))
-                        ) :
-                        null
-        );
+        if (matcher.find()) {
+            Position startPosition = Position.of(matcher.group(1));
+            Position endPosition = Position.of(matcher.group(2));
+            FigureType figureType = FigureType.getTypeByNotationChar(matcher.group(3));
+            return Optional.of(new ActionSwap(startPosition, figureType, endPosition));
+        } else {
+            return Optional.empty();
+        }
     }
 
     @Override
     public String toString() {
-        return startPosition + "-" + swapType.getNotationChar() + endPosition;
+        return startPosition + "-" + endPosition + swapType.getNotationChar();
     }
 
     @Override

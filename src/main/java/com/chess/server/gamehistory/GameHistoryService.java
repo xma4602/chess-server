@@ -1,4 +1,4 @@
-package com.chess.server.gamehostory;
+package com.chess.server.gamehistory;
 
 import com.chess.engine.FigureColor;
 import com.chess.engine.GameEngine;
@@ -20,7 +20,7 @@ public class GameHistoryService {
 
     // Коэффициент K, который определяет, насколько сильно изменится рейтинг
     private static final int K = 40;
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
 
     private final GameHistoryRepository gameHistoryRepository;
@@ -119,8 +119,7 @@ public class GameHistoryService {
                 .creatorRatingDifference(gameHistory.getCreatorRatingDifference())
                 .opponentRatingDifference(gameHistory.getOpponentRatingDifference())
                 .gameState(gameHistory.getGameState())
-                .timeControl(gameHistory.getGameConditions().getTimeControl())
-                .creatorFigureColor(gameHistory.getGameConditions().getCreatorFigureColor())
+                .gameConditions(gameHistory.getGameConditions())
                 .timestamp(formatter.format(gameHistory.getTimestamp()))
                 .build();
     }

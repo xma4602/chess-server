@@ -1,5 +1,6 @@
 package com.chess.engine.actions;
 
+import com.chess.engine.FigureType;
 import com.chess.engine.Position;
 import lombok.Getter;
 
@@ -13,24 +14,30 @@ public class ActionMove extends Action {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private static final Pattern movePattern = Pattern.compile("([a-h][1-8])-([a-h][1-8])");
+    private static final Pattern movePattern = Pattern.compile("^([a-h][1-8])-([KQBNR])?([a-h][1-8])$");
 
     private final Position startPosition;
     private final Position endPosition;
+    private final FigureType figureType;
 
-    protected ActionMove(Position startPosition, Position endPosition) {
+    protected ActionMove(Position startPosition, Position endPosition, FigureType figureType) {
         super(ActionType.MOVE);
         this.startPosition = startPosition;
         this.endPosition = endPosition;
+        this.figureType = figureType;
     }
 
     public static Optional<ActionMove> parse(String action) {
         Matcher matcher = movePattern.matcher(action);
-        return Optional.ofNullable(
-                matcher.find() ?
-                        new ActionMove(Position.of(matcher.group(1)), Position.of(matcher.group(2))) :
-                        null
-        );
+        if (matcher.find()) {
+            Position startPosition = Position.of(matcher.group(1));
+            Position endPosition = Position.of(matcher.group(3));
+            String group = matcher.group(2) != null ? matcher.group(2) : "";
+            FigureType figureType = FigureType.getTypeByNotationChar(group);
+            return Optional.of(new ActionMove(startPosition, endPosition, figureType));
+        } else {
+            return Optional.empty();
+        }
     }
 
     public boolean isDoubleMove() {
@@ -39,7 +46,7 @@ public class ActionMove extends Action {
 
     @Override
     public String toString() {
-        return startPosition + "-" + endPosition;
+        return startPosition + "-" + figureType.getNotationChar() + endPosition;
     }
 
     @Override

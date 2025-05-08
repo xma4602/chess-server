@@ -25,10 +25,10 @@ public class Rook extends Figure {
     public List<Action> getActions(Board board, Position position) {
         List<Action> actions = new ArrayList<>();
 
-        add(actions, moveOrEatInDirection(board, figureColor, position, x -> x.right(figureColor)));
-        add(actions, moveOrEatInDirection(board, figureColor, position, x -> x.left(figureColor)));
-        add(actions, moveOrEatInDirection(board, figureColor, position, x -> x.top(figureColor)));
-        add(actions, moveOrEatInDirection(board, figureColor, position, x -> x.bottom(figureColor)));
+        add(actions, moveOrEatInDirection(board, position, x -> x.right(figureColor)));
+        add(actions, moveOrEatInDirection(board, position, x -> x.left(figureColor)));
+        add(actions, moveOrEatInDirection(board, position, x -> x.top(figureColor)));
+        add(actions, moveOrEatInDirection(board, position, x -> x.bottom(figureColor)));
 
         return actions;
     }

@@ -25,14 +25,14 @@ public class Knight extends Figure {
     public List<Action> getActions(Board board, Position position) {
         List<Action> actions = new ArrayList<>();
 
-        add(actions, moveOrEat(board, figureColor, position, position.offsetOptional(+2, +1)));
-        add(actions, moveOrEat(board, figureColor, position, position.offsetOptional(+1, +2)));
-        add(actions, moveOrEat(board, figureColor, position, position.offsetOptional(-1, +2)));
-        add(actions, moveOrEat(board, figureColor, position, position.offsetOptional(-2, +1)));
-        add(actions, moveOrEat(board, figureColor, position, position.offsetOptional(-2, -1)));
-        add(actions, moveOrEat(board, figureColor, position, position.offsetOptional(-1, -2)));
-        add(actions, moveOrEat(board, figureColor, position, position.offsetOptional(+1, -2)));
-        add(actions, moveOrEat(board, figureColor, position, position.offsetOptional(+2, -1)));
+        add(actions, moveOrEat(board, position, position.offsetOptional(+2, +1)));
+        add(actions, moveOrEat(board, position, position.offsetOptional(+1, +2)));
+        add(actions, moveOrEat(board, position, position.offsetOptional(-1, +2)));
+        add(actions, moveOrEat(board, position, position.offsetOptional(-2, +1)));
+        add(actions, moveOrEat(board, position, position.offsetOptional(-2, -1)));
+        add(actions, moveOrEat(board, position, position.offsetOptional(-1, -2)));
+        add(actions, moveOrEat(board, position, position.offsetOptional(+1, -2)));
+        add(actions, moveOrEat(board, position, position.offsetOptional(+2, -1)));
 
         return actions;
     }

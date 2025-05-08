@@ -27,14 +27,14 @@ public class Queen extends Figure {
         List<Action> actions = new ArrayList<>();
         FigureColor figureColor = board.getFigureColor(position);
 
-        add(actions, moveOrEatInDirection(board, figureColor, position, x -> x.top(figureColor)));
-        add(actions, moveOrEatInDirection(board, figureColor, position, x -> x.rightTop(figureColor)));
-        add(actions, moveOrEatInDirection(board, figureColor, position, x -> x.right(figureColor)));
-        add(actions, moveOrEatInDirection(board, figureColor, position, x -> x.rightBottom(figureColor)));
-        add(actions, moveOrEatInDirection(board, figureColor, position, x -> x.bottom(figureColor)));
-        add(actions, moveOrEatInDirection(board, figureColor, position, x -> x.leftBottom(figureColor)));
-        add(actions, moveOrEatInDirection(board, figureColor, position, x -> x.left(figureColor)));
-        add(actions, moveOrEatInDirection(board, figureColor, position, x -> x.leftTop(figureColor)));
+        add(actions, moveOrEatInDirection(board, position, x -> x.top(figureColor)));
+        add(actions, moveOrEatInDirection(board, position, x -> x.rightTop(figureColor)));
+        add(actions, moveOrEatInDirection(board, position, x -> x.right(figureColor)));
+        add(actions, moveOrEatInDirection(board, position, x -> x.rightBottom(figureColor)));
+        add(actions, moveOrEatInDirection(board, position, x -> x.bottom(figureColor)));
+        add(actions, moveOrEatInDirection(board, position, x -> x.leftBottom(figureColor)));
+        add(actions, moveOrEatInDirection(board, position, x -> x.left(figureColor)));
+        add(actions, moveOrEatInDirection(board, position, x -> x.leftTop(figureColor)));
 
         return actions;
     }

@@ -1,4 +1,4 @@
-package com.chess.server.gamehostory;
+package com.chess.server.gamehistory;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

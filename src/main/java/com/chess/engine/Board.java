@@ -141,20 +141,15 @@ public class Board implements Serializable, Cloneable {
     //---------------------------------------------------------------------------------------
 
     public void executeAction(Action action) {
+        cells.values().forEach(figure -> figure.setActioned(false));
         switch (action.getActionType()) {
             case MOVE -> {
                 ActionMove actionMove = (ActionMove) action;
                 Figure figure = getFigureByPosition(actionMove.getStartPosition());
                 move(actionMove.getStartPosition(), actionMove.getEndPosition());
 
-                Position endPosition = actionMove.getEndPosition();
-                if (isPawn(endPosition)) {
-                    if (actionMove.isDoubleMove() && !figure.isActioned()) {
-                        figure.setActioned(true);
-                    }
-                    if (!actionMove.isDoubleMove() && figure.isActioned()) {
-                        figure.setActioned(false);
-                    }
+                if (isPawn(actionMove.getEndPosition()) && actionMove.isDoubleMove()) {
+                    figure.setActioned(true);
                 }
             }
             case EAT -> {

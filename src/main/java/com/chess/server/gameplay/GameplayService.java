@@ -10,7 +10,7 @@ import com.chess.engine.exceptions.ChessEngineIllegalStateException;
 import com.chess.server.chat.GameChatService;
 import com.chess.server.gameconditions.GameConditions;
 import com.chess.server.gameconditions.GameConditionsRepository;
-import com.chess.server.gamehostory.GameHistoryService;
+import com.chess.server.gamehistory.GameHistoryService;
 import com.chess.server.gameplay.dto.GameActionDto;
 import com.chess.server.gameplay.dto.GamePlayDto;
 import com.chess.server.gameroom.GameRoom;
@@ -74,9 +74,7 @@ public class GameplayService {
 
         FigureColor playerColor = getPlayerColor(userId, gameplay);
         if (activePlayerColor == playerColor) {
-            Action action = Action.parse(actionString, playerColor)
-                    .orElseThrow(() -> new ChessEngineIllegalArgumentException("Not valid action: " + actionString));
-            gameplay.getGameEngine().makeAction(playerColor, action);
+            gameplay.getGameEngine().makeAction(playerColor, actionString);
 
             if (gameplay.getActiveUser().getId().equals(gameplay.getCreator().getId())) {
                 gameplay.setActiveUser(gameplay.getOpponent());

@@ -24,10 +24,10 @@ public class Bishop extends Figure {
     @Override
     public List<Action> getActions(Board board, Position position) {
         List<Action> actions = new ArrayList<>();
-        add(actions, moveOrEatInDirection(board, figureColor, position, x -> x.rightTop(figureColor)));
-        add(actions, moveOrEatInDirection(board, figureColor, position, x -> x.rightBottom(figureColor)));
-        add(actions, moveOrEatInDirection(board, figureColor, position, x -> x.leftTop(figureColor)));
-        add(actions, moveOrEatInDirection(board, figureColor, position, x -> x.leftBottom(figureColor)));
+        add(actions, moveOrEatInDirection(board, position, x -> x.rightTop(figureColor)));
+        add(actions, moveOrEatInDirection(board, position, x -> x.rightBottom(figureColor)));
+        add(actions, moveOrEatInDirection(board, position, x -> x.leftTop(figureColor)));
+        add(actions, moveOrEatInDirection(board, position, x -> x.leftBottom(figureColor)));
 
         return actions;
     }

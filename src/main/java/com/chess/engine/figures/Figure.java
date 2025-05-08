@@ -81,11 +81,13 @@ public abstract class Figure implements Serializable {
         if (actions != null) actions.addAll(action);
     }
 
-    protected Action moveOrEat(Board board, FigureColor figureColor, Position startPosition, Optional<Position> endPosition) {
+    protected Action moveOrEat(Board board,
+                               Position startPosition,
+                               Optional<Position> endPosition) {
         if (endPosition.isPresent()) { //следующая позиция существует?
             var endPos = endPosition.get();
             if (board.isNone(endPos)) { //следующая позиция пустая?
-                return Action.move(startPosition, endPos); //можно двинуться
+                return Action.move(startPosition, endPos, figureType); //можно двинуться
             } else if (board.hasOpponent(endPos, figureColor)) { //на позиции противник?
                 return Action.eat(startPosition, endPos); //можно съесть
             }
@@ -94,14 +96,12 @@ public abstract class Figure implements Serializable {
     }
 
     protected List<Action> moveOrEatInDirection(Board board,
-                                                FigureColor figureColor,
                                                 Position startPosition,
                                                 Function<Position, Optional<Position>> direction) {
-        return moveOrEatInDirection(board, figureColor, startPosition, direction, direction.apply(startPosition));
+        return moveOrEatInDirection(board, startPosition, direction, direction.apply(startPosition));
     }
 
     protected List<Action> moveOrEatInDirection(Board board,
-                                                FigureColor figureColor,
                                                 Position startPosition,
                                                 Function<Position, Optional<Position>> direction,
                                                 Optional<Position> nextPosition) {
@@ -110,8 +110,8 @@ public abstract class Figure implements Serializable {
         if (nextPosition.isPresent()) { //следующая позиция существует?
             Position nextPos = nextPosition.get();
             if (board.isNone(nextPos)) { //следующая позиция пустая?
-                actions.add(Action.move(startPosition, nextPos)); //можно двинуться
-                actions.addAll(moveOrEatInDirection(board, figureColor, startPosition, direction, direction.apply(nextPos))); //проверить дальше
+                actions.add(Action.move(startPosition, nextPos, figureType)); //можно двинуться
+                actions.addAll(moveOrEatInDirection(board, startPosition, direction, direction.apply(nextPos))); //проверить дальше
             } else if (board.hasOpponent(nextPos, figureColor)) { //на позиции противник?
                 actions.add(Action.eat(startPosition, nextPos)); //можно съесть
             }

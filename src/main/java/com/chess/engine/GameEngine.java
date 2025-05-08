@@ -101,7 +101,10 @@ public class GameEngine implements Serializable {
         );
     }
 
-    public void makeAction(FigureColor playerColor, Action action) throws ChessEngineIllegalArgumentException, ChessEngineIllegalStateException {
+    public void makeAction(FigureColor playerColor, String actionString) throws ChessEngineIllegalArgumentException, ChessEngineIllegalStateException {
+        Action action = Action.parse(actionString, playerColor)
+                .orElseThrow(() -> new ChessEngineIllegalArgumentException("Not valid action: " + actionString));
+
         verifyGameEnd();
         verifyPlayerMoveOrder(playerColor);
         verifyAction(action);

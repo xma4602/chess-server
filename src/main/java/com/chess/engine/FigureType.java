@@ -6,17 +6,18 @@ import lombok.RequiredArgsConstructor;
 
 import java.io.Serial;
 import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Getter
 public enum FigureType {
-    NONE("NONE", 0, 'X', '◼', '◻', "Пусто"),
-    PAWN("PAWN", 1, 'P', '♟', '♙', "Пешка"),
-    KNIGHT("KNIGHT", 2, 'N', '♞', '♘', "Конь"),
-    BISHOP("BISHOP", 3, 'B', '♝', '♗', "Слон"),
-    ROOK("ROOK", 4, 'R', '♜', '♖', "Ладья"),
-    QUEEN("QUEEN", 5, 'Q', '♛', '♕', "Ферзь"),
-    KING("KING", 6, 'K', '♚', '♔', "Король");
+    NONE("NONE", 0, "X", '◼', '◻', "Пусто"),
+    PAWN("PAWN", 1, "", '♟', '♙', "Пешка"),
+    KNIGHT("KNIGHT", 2, "N", '♞', '♘', "Конь"),
+    BISHOP("BISHOP", 3, "B", '♝', '♗', "Слон"),
+    ROOK("ROOK", 4, "R", '♜', '♖', "Ладья"),
+    QUEEN("QUEEN", 5, "Q", '♛', '♕', "Ферзь"),
+    KING("KING", 6, "K", '♚', '♔', "Король");
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -24,7 +25,7 @@ public enum FigureType {
 
     private final String id;
     private final int code;
-    private final char notationChar;
+    private final String notationChar;
     private final char imageWhiteChar;
     private final char imageBlackChar;
     private final String name;
@@ -41,9 +42,9 @@ public enum FigureType {
         return FigureType.values()[code];
     }
 
-    public static FigureType getTypeByNotationChar(char notationChar) {
+    public static FigureType getTypeByNotationChar(String notationChar) {
         for (var figure : FigureType.values()) {
-            if (figure.notationChar == notationChar) {
+            if (Objects.equals(figure.notationChar, notationChar)) {
                 return figure;
             }
         }

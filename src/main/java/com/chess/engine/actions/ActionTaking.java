@@ -13,7 +13,7 @@ public class ActionTaking extends Action {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    public static final Pattern takingPattern = Pattern.compile("([a-h][1-8]):([a-h][1-8])");
+    public static final Pattern takingPattern = Pattern.compile("^([a-h][1-8]):([a-h][1-8])$");
     private final Position startPosition;
     private final Position endPosition;
     private final Position eatenPosition;
@@ -34,11 +34,13 @@ public class ActionTaking extends Action {
 
     public static Optional<ActionTaking> parse(String action) {
         Matcher matcher = takingPattern.matcher(action);
-        return Optional.ofNullable(
-                matcher.find() ?
-                        new ActionTaking(Position.of(matcher.group(1)), Position.of(matcher.group(2))) :
-                        null
-        );
+        if (matcher.find()) {
+            Position startPosition = Position.of(matcher.group(1));
+            Position endPosition = Position.of(matcher.group(2));
+            return Optional.of(new ActionTaking(startPosition, endPosition));
+        } else {
+            return Optional.empty();
+        }
     }
 
     @Override

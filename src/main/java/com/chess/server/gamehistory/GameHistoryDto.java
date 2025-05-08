@@ -1,8 +1,7 @@
-package com.chess.server.gamehostory;
+package com.chess.server.gamehistory;
 
-import com.chess.engine.FigureColor;
 import com.chess.engine.GameState;
-import com.chess.server.gameconditions.TimeControl;
+import com.chess.server.gameconditions.GameConditions;
 import lombok.*;
 
 import java.util.UUID;
@@ -22,8 +21,7 @@ public class GameHistoryDto {
     private Integer creatorRatingDifference;
     private Integer opponentRatingDifference;
     private GameState gameState;
-    private FigureColor creatorFigureColor;
-    private TimeControl timeControl;
+    private GameConditions gameConditions;
     private String timestamp;
 
 }
