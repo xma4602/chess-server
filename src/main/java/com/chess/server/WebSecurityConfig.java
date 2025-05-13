@@ -21,7 +21,11 @@ public class WebSecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
-                .httpBasic(Customizer.withDefaults());
+                .httpBasic(Customizer.withDefaults())
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/chess/users/register", "/ws").permitAll() // Разрешить доступ к этому пути без авторизации
+                        .anyRequest().authenticated() // Все остальные пути требуют авторизации
+                );
 
         return http.build();
     }

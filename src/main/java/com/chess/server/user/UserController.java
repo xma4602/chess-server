@@ -92,14 +92,16 @@ public class UserController {
     @PutMapping("/{userId}/profile")
     public ResponseEntity<UserDto> updateUserProfile(
             @PathVariable UUID userId,
-            @RequestParam("login") String login,
-            @RequestParam("password") String password,
+            @RequestParam(value = "login", required = false) String login,
+            @RequestParam(value = "password", required = false) String password,
+            @RequestParam(value = "rating", required = false) Integer rating,
             @RequestParam(value = "avatar", required = false) MultipartFile avatar) throws IOException, AccountNotFoundException {
 
         UserDto userDto = UserDto.builder()
                 .id(userId)
                 .login(login)
                 .password(password)
+                .rating(rating)
                 .avatar(avatar != null ? avatar.getBytes() : null)
                 .build();
 

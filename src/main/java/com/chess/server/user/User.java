@@ -42,10 +42,6 @@ public class User implements UserDetails {
     @Basic(fetch = FetchType.LAZY)
     @Column(name = "avatar")
     private byte[] avatar;
-    public User(String login, String password) {
-        this.login = login;
-        this.password = password;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
