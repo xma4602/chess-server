@@ -8,13 +8,13 @@ import {
 import {NgForOf} from '@angular/common';
 import {FigureColor} from '../../game_conditions/game-conditions';
 import {Figure} from '../figure';
-import {AuthModule} from '../../app/auth.module';
+
 
 @Component({
   selector: 'app-chess-piece-dialog',
   standalone: true,
   templateUrl: './chess-piece-dialog.component.html',
-  imports: [AuthModule,
+  imports: [
     MatDialogTitle,
     NgForOf,
     MatDialogContent,

@@ -1,18 +1,19 @@
 import {Injectable} from '@angular/core';
 import {GameHistory} from './game-history';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {restHistory} from '../../../data.service';
 import {map} from 'rxjs';
+import {RequestService} from '../../../request.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GameHistoryService {
-  constructor(private http: HttpClient) {
+  constructor(private requestService :RequestService) {
   }
 
   getHistories(userId: string) {
-    return this.http.get<Object[]>(`${restHistory}/${userId}`)
+    return this.requestService.get<Object[]>(`${restHistory}/${userId}`)
       .pipe(map(histories => histories.map(history => GameHistory.fromObject(history))))
   }
 }

@@ -7,7 +7,7 @@ import {
   MatDialogActions
 } from '@angular/material/dialog';
 import {MatButton} from '@angular/material/button';
-import {AuthModule} from '../../app/auth.module';
+
 
 export interface DialogData {
   title: string;
@@ -18,7 +18,7 @@ export interface DialogData {
   selector: 'app-choice-dialog',
   standalone: true,
   templateUrl: './choice-dialog.component.html',
-  imports: [AuthModule,
+  imports: [
     MatDialogTitle,
     MatDialogContent,
     MatDialogActions,

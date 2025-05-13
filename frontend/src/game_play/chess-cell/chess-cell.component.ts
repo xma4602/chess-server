@@ -1,14 +1,14 @@
 import {Component, Input} from '@angular/core';
 import {NgClass, NgIf} from '@angular/common';
 import {Figure} from '../figure';
-import {AuthModule} from '../../app/auth.module';
+
 
 @Component({
   selector: 'app-chess-cell',
   standalone: true,
   templateUrl: './chess-cell.component.html',
   styleUrls: ['./chess-cell.component.css'],
-  imports: [AuthModule,NgIf, NgClass],
+  imports: [NgIf, NgClass],
 })
 export class ChessCellComponent {
   @Input() id!: string; // Определяет, белая ли ячейка

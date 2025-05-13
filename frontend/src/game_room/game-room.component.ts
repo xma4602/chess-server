@@ -3,7 +3,6 @@ import {GameRoom} from './game-room';
 import {CommonModule, NgIf} from '@angular/common';
 import {ActivatedRoute, Router} from '@angular/router';
 import {GameRoomService} from './game-room-service';
-import {HttpClientModule} from '@angular/common/http';
 import {GamePlayService} from '../game_play/game-play-service';
 import {StompService} from '../stomp.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -12,14 +11,14 @@ import {UserService} from '../user/user-service';
 import {IMessage} from '@stomp/stompjs';
 import {ConfirmDialogComponent} from '../game_play/dialog/confirm-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
-import {AuthModule} from '../app/auth.module';
+
 
 @Component({
   selector: 'app-game-room',
   standalone: true,
   templateUrl: './game-room.component.html',
   styleUrls: ['./game-room.component.css'],
-  imports: [AuthModule,NgIf, HttpClientModule, CommonModule],
+  imports: [NgIf, CommonModule],
 })
 export class GameRoomComponent implements OnInit {
   gameRoom!: GameRoom;

@@ -4,7 +4,7 @@ import {User} from '../user';
 import {UserService} from '../user-service';
 import {FormsModule} from '@angular/forms';
 import {NgForOf, NgIf} from '@angular/common';
-import {AuthModule} from '../../app/auth.module';
+
 import {UserAvatarComponent} from '../avatar/user-avatar.component';
 
 @Component({
@@ -12,7 +12,7 @@ import {UserAvatarComponent} from '../avatar/user-avatar.component';
   standalone: true,
   templateUrl: './user-edit.component.html',
   styleUrls: ['./user-edit.component.css'],
-  imports: [AuthModule,
+  imports: [
     FormsModule,
     NgForOf,
     NgIf, UserAvatarComponent
@@ -60,6 +60,9 @@ export class UserEditComponent implements OnInit {
       formData.append('avatar', this.selectedFile, this.selectedFile.name); // Добавляем файл
     }
 
+    formData.forEach((value, key) => {
+      console.log(key, value);
+    });
     this.userService.updateUser(this.user!.id, formData).subscribe(user => {
       this.router.navigate(['/users']); // Перенаправление на список пользователей после сохранения
     });

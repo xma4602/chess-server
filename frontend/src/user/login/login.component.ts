@@ -4,14 +4,14 @@ import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {FormsModule} from '@angular/forms';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {User} from '../user';
-import {AuthModule} from '../../app/auth.module';
-import {HttpErrorResponse} from '@angular/common/http';
+
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [AuthModule,
+  imports: [
     RouterLink,
     FormsModule
   ],

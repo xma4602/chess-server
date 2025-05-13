@@ -1,7 +1,6 @@
 import {AfterViewInit, Component, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {NgForOf, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {HttpClientModule} from '@angular/common/http';
 import {ActivatedRoute, Router} from '@angular/router';
 import {GamePlay, GameState} from './game-play';
 import {IMessage} from '@stomp/stompjs';
@@ -19,7 +18,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {ChessPieceDialogComponent} from './chess-select/ chess-piece-dialog.component';
 import {CountdownTimerComponent} from './timer/countdown-timer.component';
 import {ChoiceDialogComponent} from './dialog-choice/choice-dialog.component';
-import {AuthModule} from '../app/auth.module';
+
 import {UserAvatarComponent} from '../user/avatar/user-avatar.component';
 
 @Component({
@@ -27,7 +26,7 @@ import {UserAvatarComponent} from '../user/avatar/user-avatar.component';
   standalone: true,
   templateUrl: './game-play.component.html',
   styleUrls: ['./game-play.component.css'],
-  imports: [AuthModule, FormsModule, NgForOf, HttpClientModule, ChessCellComponent, NgIf, ChatComponent, CountdownTimerComponent, UserAvatarComponent],
+  imports: [ FormsModule, NgForOf, ChessCellComponent, NgIf, ChatComponent, CountdownTimerComponent, UserAvatarComponent],
 })
 export class GamePlayComponent implements OnInit, AfterViewInit {
   @ViewChildren(ChessCellComponent) cells!: QueryList<ChessCellComponent>;

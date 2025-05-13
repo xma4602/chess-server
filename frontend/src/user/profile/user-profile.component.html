@@ -1,15 +1,15 @@
 <div class="user-profile">
-  <app-user-avatar [user]="user"/>
+  <app-user-avatar [user]="coryUser"/>
 
   <div *ngIf="!isEditing; else editTemplate">
-    <h2>{{ user.login }}</h2>
-    <p>Рейтинг: {{ user.rating }}</p>
+    <h2>{{ coryUser.login }}</h2>
+    <p>Рейтинг: {{ coryUser.rating }}</p>
     <button (click)="isEditing = true">Редактировать</button>
   </div>
 
   <ng-template #editTemplate>
-    <input [(ngModel)]="user.login" type="text" placeholder="Логин"/>
-    <input [(ngModel)]="user.password" type="text" placeholder="Пароль"/>
+    <input [(ngModel)]="coryUser.login" type="text" placeholder="Логин"/>
+    <input [(ngModel)]="coryUser.password" type="text" placeholder="Пароль"/>
     <input type="file" (change)="onFileSelected($event)" accept="image/png, image/jpeg"/>
     <div class="button-container">
       <button (click)="saveChanges()">Сохранить</button>

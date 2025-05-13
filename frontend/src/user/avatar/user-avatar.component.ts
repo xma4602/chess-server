@@ -1,32 +1,33 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {restUsers} from '../../data.service';
 import {NgIf} from '@angular/common';
 import {User} from '../user';
-import {AuthModule} from '../../app/auth.module'; // Убедитесь, что путь правильный
+import {RequestService} from '../../request.service';
+
+// Убедитесь, что путь правильный
 
 @Component({
   selector: 'app-user-avatar',
   standalone: true,
-  imports: [NgIf, AuthModule],
+  imports: [NgIf],
   templateUrl: './user-avatar.component.html',
   styleUrls: ['user-avatar.component.css']
 })
 export class UserAvatarComponent implements OnInit {
-  avatarUrl: string | null = null;
   @Input() user: User | null = null;
 
-  constructor(private http: HttpClient) {
+  constructor(private requestService: RequestService) {
   }
 
   ngOnInit() {
-    const userId = this.user!.id;
-    if (userId) {
-      this.http.get<Blob>(`${restUsers}/${userId}/avatar`, { responseType: 'blob' as 'json' }).subscribe(blob => {
-        this.avatarUrl = URL.createObjectURL(blob);
-      }, error => {
-        console.error('Error loading avatar:', error);
-      });
+    if (!this.user!.avatarUrl) {
+      this.requestService.get<Blob>(`${restUsers}/${this.user?.id}/avatar`, new HttpParams(), 'blob')
+        .subscribe(blob => {
+          this.user!.avatarUrl = URL.createObjectURL(blob);
+        }, error => {
+          console.error('Error loading avatar:', error);
+        });
     }
   }
 }

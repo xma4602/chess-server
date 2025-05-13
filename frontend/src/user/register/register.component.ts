@@ -4,14 +4,14 @@ import {User} from '../user';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {FormsModule} from '@angular/forms';
-import {AuthModule} from '../../app/auth.module';
+
 
 @Component({
   selector: 'app-register',
   standalone: true,
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css'],
-  imports: [AuthModule,RouterLink, FormsModule]
+  imports: [RouterLink, FormsModule]
 })
 export class RegisterComponent {
   @Input() login?: string;

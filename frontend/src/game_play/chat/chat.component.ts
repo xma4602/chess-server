@@ -6,14 +6,14 @@ import {StompService} from '../../stomp.service';
 import {ChatMessage} from './chat';
 import {wsChat} from '../../data.service';
 import {ChatService} from './chat-service';
-import {AuthModule} from '../../app/auth.module';
+
 
 @Component({
   selector: 'app-chat',
   standalone: true,
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.css'],
-  imports: [AuthModule, NgForOf, FormsModule]
+  imports: [ NgForOf, FormsModule]
 })
 export class ChatComponent implements OnInit {
   @Input() chatId: string = '';

@@ -4,22 +4,23 @@ import {map} from 'rxjs';
 import {restGamePlay} from '../data.service';
 import {GamePlay} from './game-play';
 import {UserService} from '../user/user-service';
+import {RequestService} from '../request.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GamePlayService {
-  constructor(private http: HttpClient,
+  constructor(private requestService :RequestService,
               private userService: UserService) {
   }
 
   startGameplay(roomId: string) {
     const params = new HttpParams().set('roomId', roomId);
-    return this.http.post<void>(`${restGamePlay}`, {}, {params})
+    return this.requestService.post<void>(`${restGamePlay}`, {}, params)
   }
 
   getGamePlay(gameId: string) {
-    return this.http.get<any>(`${restGamePlay}/${gameId}`)
+    return this.requestService.get<any>(`${restGamePlay}/${gameId}`)
       .pipe(map(dto => GamePlay.fromObject(dto)))
   }
 
@@ -28,30 +29,30 @@ export class GamePlayService {
     const params = new HttpParams()
       .set('userId', userId)
       .set('action', action);
-    return this.http.post<void>(`${restGamePlay}/${gameId}/action`, {}, {params})
+    return this.requestService.post<void>(`${restGamePlay}/${gameId}/action`, {}, params)
   }
 
   timeout(gameId: string, userId: string) {
     const params = new HttpParams()
       .set('userId', userId);
-    return this.http.put<void>(`${restGamePlay}/${gameId}/timeout`, {}, {params})
+    return this.requestService.put<void>(`${restGamePlay}/${gameId}/timeout`, {}, params)
   }
 
   requestDraw(gameId: string, userId: string) {
     const params = new HttpParams()
       .set('userId', userId);
-    return this.http.put<void>(`${restGamePlay}/${gameId}/draw/request`, {}, {params})
+    return this.requestService.put<void>(`${restGamePlay}/${gameId}/draw/request`, {}, params)
   }
 
   responseDraw(gameId: string, userId: string, result: boolean) {
     const params = new HttpParams()
       .set('userId', userId);
-    return this.http.put<void>(`${restGamePlay}/${gameId}/draw/response`, result, {params})
+    return this.requestService.put<void>(`${restGamePlay}/${gameId}/draw/response`, result, params)
   }
   surrender(gameId: string, userId: string) {
     const params = new HttpParams()
       .set('userId', userId);
-    return this.http.put<void>(`${restGamePlay}/${gameId}/surrender`, {}, {params})
+    return this.requestService.put<void>(`${restGamePlay}/${gameId}/surrender`, {}, params)
   }
 
 }

@@ -5,13 +5,14 @@ import {HttpClient, HttpParams} from '@angular/common/http';
 import {map, Observable} from 'rxjs';
 import {restRooms} from '../data.service';
 import {UserService} from '../user/user-service';
+import {RequestService} from '../request.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GameRoomService {
 
-  constructor(private http: HttpClient,
+  constructor(private requestService :RequestService,
               private userService: UserService) {
   }
 
@@ -25,18 +26,18 @@ export class GameRoomService {
       timeControl: gameConditions.timeControl.code,
       matchMode: gameConditions.matchMode.code
     }
-    return this.http.post<string>(`${restRooms}`, gameConditionsDto, {params});
+    return this.requestService.post<string>(`${restRooms}`, gameConditionsDto, params);
   }
 
   connectToRoom(roomId: any): Observable<GameRoom> {
     const userId = this.userService.user?.id!
     const params = new HttpParams().set('userId', userId);
 
-    return this.http.put<GameRoom>(`${restRooms}/${roomId}/join`, {}, {params})
+    return this.requestService.put<GameRoom>(`${restRooms}/${roomId}/join`, {}, params)
       .pipe(map(dto => GameRoom.fromObject(dto)))
   }
 
   closeRoom(roomId: string) {
-    return this.http.delete<void>(`${restRooms}/${roomId}/close`)
+    return this.requestService.delete<void>(`${restRooms}/${roomId}/close`)
   }
 }

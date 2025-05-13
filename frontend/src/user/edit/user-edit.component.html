@@ -1,21 +1,22 @@
 <div *ngIf="user">
   <h2>Редактирование польователя</h2>
   <form (ngSubmit)="saveUser()">
-    <div >
-      <app-user-avatar [user]="this.userService.user"/>
-      <input type="file" (change)="onFileSelected($event)" accept="image/png, image/jpeg" />
+    <div class="center-container">
+      <app-user-avatar [user]="this.user"></app-user-avatar>
+      <input type="file" (change)="onFileSelected($event)" accept="image/png, image/jpeg"/>
     </div>
+
     <div>
       <label for="login">Логин:</label>
-      <input id="login" type="text" [(ngModel)]="user.login" name="login" required />
+      <input id="login" type="text" [(ngModel)]="user.login" name="login" required/>
     </div>
     <div>
       <label for="password">Пароль:</label>
-      <input id="password" type="text" [(ngModel)]="user.password" name="password" required />
+      <input id="password" type="text" [(ngModel)]="user.password" name="password" required/>
     </div>
     <div>
       <label for="rating">Рейтинг:</label>
-      <input id="rating" type="number" [(ngModel)]="user.rating" name="rating" required />
+      <input id="rating" type="number" [(ngModel)]="user.rating" name="rating" required/>
     </div>
     <div>
       <label>Роли:</label>
@@ -24,7 +25,7 @@
           type="checkbox"
           [value]="role"
           [checked]="isRoleSelected(role)"
-          (change)="onRoleChange(role)" />
+          (change)="onRoleChange(role)"/>
         <label>{{ role }}</label>
       </div>
     </div>
