@@ -7,20 +7,21 @@ import {GameConditionsService} from './game-conditions-service';
 import {GameRoomService} from '../game_room/game-room-service';
 import {HttpClientModule} from '@angular/common/http';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {AuthModule} from '../app/auth.module';
 
 @Component({
   selector: 'app-game-conditions',
   standalone: true,
   templateUrl: './game-conditions.component.html',
   styleUrls: ['./game-conditions.component.css'],
-  imports: [FormsModule, NgForOf, NgClass, NgIf, HttpClientModule],
+  imports: [AuthModule, FormsModule, NgForOf, NgClass, NgIf, HttpClientModule],
 })
 export class GameConditionsComponent implements OnInit {
   @Input()
   gameConditions: GameConditions = new GameConditions(5, 3); // Пример значений по умолчанию
   timeControls: TimeControl[] = [TimeControl.WATCH, TimeControl.NONE];
   matchModes: MatchMode[] = [MatchMode.FRIENDLY, MatchMode.RATING];
-  figureColors: FigureColor[] =[FigureColor.WHITE, FigureColor.RANDOM, FigureColor.BLACK];
+  figureColors: FigureColor[] = [FigureColor.WHITE, FigureColor.RANDOM, FigureColor.BLACK];
 
   constructor(private router: Router,
               private gameConditionsService: GameConditionsService,

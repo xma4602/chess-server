@@ -1,11 +1,12 @@
 import {Component, Input, OnDestroy} from '@angular/core';
 import {NgIf} from '@angular/common';
+import {AuthModule} from '../../app/auth.module';
 
 @Component({
   selector: 'app-timer',
   standalone: true,
   templateUrl: './countdown-timer.component.html',
-  imports: [NgIf],
+  imports: [AuthModule,NgIf],
   styleUrls: ['./countdown-timer.component.css']
 })
 export class CountdownTimerComponent implements OnDestroy {

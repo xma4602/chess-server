@@ -2,7 +2,7 @@
   <h2>Редактирование польователя</h2>
   <form (ngSubmit)="saveUser()">
     <div >
-      <img [src]="user.avatarUrl || user.getAvatarLink()" alt="{{ user.login }}'s avatar" class="avatar" />
+      <app-user-avatar [user]="this.userService.user"/>
       <input type="file" (change)="onFileSelected($event)" accept="image/png, image/jpeg" />
     </div>
     <div>

@@ -5,12 +5,14 @@ import {TileComponent} from './tile/tile.component';
 import {Router, RouterModule} from '@angular/router';
 import {UserService} from '../user/user-service';
 import {User} from '../user/user';
+import {AuthModule} from '../app/auth.module';
+import {UserAvatarComponent} from '../user/avatar/user-avatar.component';
 
 @Component({
   selector: 'app-main',
   standalone: true,
   templateUrl: './main.component.html',
-  imports: [RouterModule, NgForOf, TileComponent, NgIf],
+  imports: [AuthModule, RouterModule, NgForOf, TileComponent, NgIf, UserAvatarComponent],
   styleUrls: ['./main.component.css']
 })
 export class MainComponent {

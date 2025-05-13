@@ -4,16 +4,18 @@ import {User} from '../user';
 import {UserService} from '../user-service';
 import {FormsModule} from '@angular/forms';
 import {NgForOf, NgIf} from '@angular/common';
+import {AuthModule} from '../../app/auth.module';
+import {UserAvatarComponent} from '../avatar/user-avatar.component';
 
 @Component({
   selector: 'app-user-edit',
   standalone: true,
   templateUrl: './user-edit.component.html',
   styleUrls: ['./user-edit.component.css'],
-  imports: [
+  imports: [AuthModule,
     FormsModule,
     NgForOf,
-    NgIf
+    NgIf, UserAvatarComponent
   ],
 })
 export class UserEditComponent implements OnInit {
@@ -22,7 +24,7 @@ export class UserEditComponent implements OnInit {
   selectedFile: File | null = null; // Для хранения загруженного файла
 
   constructor(
-    private userService: UserService,
+    public userService: UserService,
     private route: ActivatedRoute,
     public router: Router
   ) {

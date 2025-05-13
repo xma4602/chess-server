@@ -18,16 +18,14 @@ export class UserService {
     const params = new HttpParams()
       .set("login", login)
       .set("password", password)
-    return this.http.post<any>(`${restUsers}/register`, {}, {params})
-      .pipe(map(obj => User.fromObject(obj)));
+    return this.http.post<any>(`${restUsers}/register`, {}, {params});
   }
 
   login(login: string, password: string): Observable<any> {
     const params = new HttpParams()
       .set("login", login)
       .set("password", password)
-    return this.http.post<any>(`${restUsers}/login`, {}, {params})
-      .pipe(map(obj => User.fromObject(obj)));
+    return this.http.post<any>(`${restUsers}/login`, {}, {params});
   }
 
   isLoggedIn() {

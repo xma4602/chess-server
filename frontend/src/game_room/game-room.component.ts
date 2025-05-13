@@ -12,13 +12,14 @@ import {UserService} from '../user/user-service';
 import {IMessage} from '@stomp/stompjs';
 import {ConfirmDialogComponent} from '../game_play/dialog/confirm-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
+import {AuthModule} from '../app/auth.module';
 
 @Component({
   selector: 'app-game-room',
   standalone: true,
   templateUrl: './game-room.component.html',
   styleUrls: ['./game-room.component.css'],
-  imports: [NgIf, HttpClientModule, CommonModule],
+  imports: [AuthModule,NgIf, HttpClientModule, CommonModule],
 })
 export class GameRoomComponent implements OnInit {
   gameRoom!: GameRoom;

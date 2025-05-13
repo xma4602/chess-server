@@ -3,12 +3,13 @@ import {UserService} from '../user-service';
 import {User} from '../user';
 import {NgForOf} from '@angular/common';
 import {Router} from '@angular/router';
+import {AuthModule} from '../../app/auth.module';
 
 @Component({
   selector: 'app-user-list',
   standalone: true,
   templateUrl: './user-list.component.html',
-  imports: [
+  imports: [AuthModule,
     NgForOf
   ],
   styleUrls: ['./user-list.component.css'] // Подключаем стили

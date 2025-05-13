@@ -63,7 +63,7 @@
 <div class="profile-container">
   <div class="profile-info">
     <span class="username">{{ userService.user!.login }}</span>
-    <img [src]="userService.user!.getAvatarLink()" alt="{{ userService.user!.login }}'s avatar" class="avatar"/>
+    <app-user-avatar [user]="userService.user"/>
   </div>
 </div>
 

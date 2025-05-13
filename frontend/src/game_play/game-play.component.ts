@@ -19,13 +19,15 @@ import {MatDialog} from '@angular/material/dialog';
 import {ChessPieceDialogComponent} from './chess-select/ chess-piece-dialog.component';
 import {CountdownTimerComponent} from './timer/countdown-timer.component';
 import {ChoiceDialogComponent} from './dialog-choice/choice-dialog.component';
+import {AuthModule} from '../app/auth.module';
+import {UserAvatarComponent} from '../user/avatar/user-avatar.component';
 
 @Component({
   selector: 'app-game-play',
   standalone: true,
   templateUrl: './game-play.component.html',
   styleUrls: ['./game-play.component.css'],
-  imports: [FormsModule, NgForOf, HttpClientModule, ChessCellComponent, NgIf, ChatComponent, CountdownTimerComponent],
+  imports: [AuthModule, FormsModule, NgForOf, HttpClientModule, ChessCellComponent, NgIf, ChatComponent, CountdownTimerComponent, UserAvatarComponent],
 })
 export class GamePlayComponent implements OnInit, AfterViewInit {
   @ViewChildren(ChessCellComponent) cells!: QueryList<ChessCellComponent>;

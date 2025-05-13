@@ -7,17 +7,19 @@ import {GameHistoryService} from './game_history/game-history.service';
 import {ActivatedRoute} from '@angular/router';
 import {UserService} from '../user-service';
 import {FormsModule} from '@angular/forms';
+import {AuthModule} from '../../app/auth.module';
+import {UserAvatarComponent} from '../avatar/user-avatar.component';
 
 @Component({
   selector: 'app-user-profile',
   standalone: true,
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.css'],
-  imports: [
+  imports: [AuthModule,
     GameHistoryComponent,
     NgForOf,
     NgIf,
-    FormsModule
+    FormsModule, UserAvatarComponent
   ],
 })
 export class UserProfileComponent implements OnInit {

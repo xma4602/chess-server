@@ -6,13 +6,14 @@ import {StompService} from '../../stomp.service';
 import {ChatMessage} from './chat';
 import {wsChat} from '../../data.service';
 import {ChatService} from './chat-service';
+import {AuthModule} from '../../app/auth.module';
 
 @Component({
   selector: 'app-chat',
   standalone: true,
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.css'],
-  imports: [NgForOf, FormsModule]
+  imports: [AuthModule, NgForOf, FormsModule]
 })
 export class ChatComponent implements OnInit {
   @Input() chatId: string = '';
@@ -47,7 +48,7 @@ export class ChatComponent implements OnInit {
   sendMessage() {
     if (this.newMessage.trim()) {
       this.charService.sendMessage(this.chatId, this.newMessage).subscribe(
-        () =>  this.newMessage = '', // Очистка поля ввода
+        () => this.newMessage = '', // Очистка поля ввода
         console.error
       )
     }

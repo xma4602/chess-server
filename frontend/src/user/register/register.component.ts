@@ -4,13 +4,14 @@ import {User} from '../user';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {FormsModule} from '@angular/forms';
+import {AuthModule} from '../../app/auth.module';
 
 @Component({
   selector: 'app-register',
   standalone: true,
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css'],
-  imports: [RouterLink, FormsModule]
+  imports: [AuthModule,RouterLink, FormsModule]
 })
 export class RegisterComponent {
   @Input() login?: string;
@@ -29,12 +30,10 @@ export class RegisterComponent {
   register() {
     this.userService.register(this.login!, this.password!).subscribe((response: {
       id: string,
-      login: string,
-      password: string,
       rating: number,
       roles: string[]
     }) => {
-      this.userService.user = new User(response.id, response.login, response.password, response.rating, response.roles)
+      this.userService.user = new User(response.id, this.login!, this.password!, response.rating, response.roles)
       console.log('User registered successfully', response);
       this.router.navigateByUrl(this.returnUrl); // Перенаправление на нужную страницу
     }, error => {

@@ -1,5 +1,5 @@
 <div class="user-profile">
-  <img [src]="user.avatarUrl || user.getAvatarLink()" alt="{{ user.login }}'s avatar" class="avatar"/>
+  <app-user-avatar [user]="user"/>
 
   <div *ngIf="!isEditing; else editTemplate">
     <h2>{{ user.login }}</h2>

@@ -4,12 +4,14 @@ import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {FormsModule} from '@angular/forms';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {User} from '../user';
+import {AuthModule} from '../../app/auth.module';
+import {HttpErrorResponse} from '@angular/common/http';
 
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [
+  imports: [AuthModule,
     RouterLink,
     FormsModule
   ],
@@ -39,16 +41,15 @@ export class LoginComponent {
       (response: {
         id: string,
         login: string,
-        password: string,
         rating: number,
         roles: string[]
       }) => {
         console.log('User logged in successfully', response);
-        this.userService.user = new User(response.id, response.login, response.password, response.rating, response.roles)
+        this.userService.user = new User(response.id, login, password, response.rating, response.roles)
         this.router.navigateByUrl(this.returnUrl); // Перенаправление на нужную страницу
-      }, error => {
-        console.error('Login failed', error);
-        this.openSnackBar('Login failed: ' + error.error, 'Close');
+      }, (error: HttpErrorResponse) => {
+        console.error('Ошибка авторизации', error);
+        this.openSnackBar('Ошибка авторизации', 'Close');
       });
   }
 
