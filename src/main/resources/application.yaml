@@ -16,5 +16,7 @@ spring:
 logging:
   level:
     org.springframework.web: DEBUG
-    org.springframework.web.filter: DEBUG
+server:
+  cors:
+    origins: http://localhost:4200
 

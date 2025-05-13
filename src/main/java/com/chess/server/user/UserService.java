@@ -4,6 +4,10 @@ import com.chess.server.user.auth.Login;
 import com.chess.server.user.auth.Password;
 import jakarta.security.auth.message.AuthException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.security.auth.login.AccountException;
@@ -11,12 +15,15 @@ import javax.security.auth.login.AccountNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService {
+    private final static Pattern BCRYPT_PATTERN = Pattern.compile("\\A\\$2(a|y|b)?\\$(\\d\\d)\\$[./0-9A-Za-z]{53}");
 
+    private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
 
@@ -37,7 +44,7 @@ public class UserService {
             throw new AccountException("Duplicate user login=" + login);
         }
 
-//        password = Password.hash(password);
+        password = passwordEncoder.encode(password);
         User user = new User(login, password);
         user = userRepository.save(user);
         return toUserDto(user);
@@ -45,6 +52,7 @@ public class UserService {
 
     public List<UserDto> getAllUsers() {
         return userRepository.findAll().stream()
+                .map(this::checkUserPasswordEncode)
                 .map(this::toUserDto)
                 .toList();
     }
@@ -54,7 +62,7 @@ public class UserService {
 
         user.setLogin(userData.getLogin());
         user.setPassword(userData.getPassword());
-        user.setAvatar(userData.getAvatar());
+        user.setAvatar(userData.getAvatar() != null ? user.getAvatar() : null);
 
         if (userData.getRating() != null){
             user.setRating(userData.getRating());
@@ -72,11 +80,10 @@ public class UserService {
         return toUserDto(user);
     }
 
-    private UserDto toUserDto(User user) {
+    public UserDto toUserDto(User user) {
         return UserDto.builder()
                 .id(user.getId())
                 .login(user.getLogin())
-                .password(user.getPassword())
                 .rating(user.getRating())
                 .roles(user.getRoles().stream().map(Role::getName).toList())
                 .build();
@@ -89,6 +96,7 @@ public class UserService {
 
     private User getUser(UUID userId) throws AccountNotFoundException {
         return userRepository.findById(userId)
+                .map(this::checkUserPasswordEncode)
                 .orElseThrow(() -> new AccountNotFoundException("Не существует пользователя с id " + userId));
     }
 
@@ -100,6 +108,29 @@ public class UserService {
 
     public Optional<User> findById(UUID id) {
         return userRepository.findById(id);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return findByLogin(username)
+                .map(this::checkUserPasswordEncode)
+                .orElseThrow(() -> new UsernameNotFoundException("No such user with username=" + username));
+    }
+
+    public Optional<User> findByLogin(String username) {
+        return userRepository.findByLogin(username)
+                .map(this::checkUserPasswordEncode);
+    }
+
+    private User checkUserPasswordEncode(User user){
+        String password = user.getPassword();
+        if (password != null && BCRYPT_PATTERN.matcher(password).matches()){
+            return user;
+        } else {
+            password = passwordEncoder.encode(password);
+            user.setPassword(password);
+            return userRepository.save(user);
+        }
     }
 }
 

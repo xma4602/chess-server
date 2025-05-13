@@ -28,7 +28,9 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestParam String login, @RequestParam String password) {
         try {
-            UserDto user = userService.singIn(login, password);
+            UserDto user = userService.findByLogin(login)
+                    .map(userService::toUserDto)
+                    .get();
             return ResponseEntity.ok(user);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -98,7 +100,7 @@ public class UserController {
                 .id(userId)
                 .login(login)
                 .password(password)
-                .avatar(avatar.getBytes())
+                .avatar(avatar != null ? avatar.getBytes() : null)
                 .build();
 
         userDto = userService.updateUser(userId, userDto);

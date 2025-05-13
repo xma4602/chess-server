@@ -4,6 +4,7 @@ import com.chess.engine.FigureColor;
 import com.chess.engine.GameEngine;
 import com.chess.engine.GameState;
 import com.chess.server.gameconditions.GameConditions;
+import com.chess.server.gameconditions.MatchMode;
 import com.chess.server.gameplay.GamePlay;
 import com.chess.server.user.User;
 import com.chess.server.user.UserRepository;
@@ -27,10 +28,15 @@ public class GameHistoryService {
     private final UserRepository userRepository;
 
     public void createGameHistory(GamePlay gamePlay) {
-
-        int[] newRating = calculateRating(gamePlay);
         User creator = gamePlay.getCreator();
         User opponent = gamePlay.getOpponent();
+
+        int[] newRating;
+        if (gamePlay.getGameConditions().getMatchMode() == MatchMode.RATING) {
+            newRating = calculateRating(gamePlay);
+        } else {
+            newRating = new int[]{creator.getRating(), opponent.getRating(), 0, 0};
+        }
 
         GameHistory gameHistory = GameHistory.builder()
                 .gameConditions(gamePlay.getGameConditions())
