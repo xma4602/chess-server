@@ -13,7 +13,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**") // Разрешить доступ ко всем URL
-                .allowedOrigins("http://194.87.102.76:4200") // Разрешите доступ только с этого домена
+                .allowedOrigins("http://194.87.102.76") // Разрешите доступ только с этого домена
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Разрешите необходимые методы
                 .allowedHeaders("*") // Разрешите все заголовки
                 .allowCredentials(true); // Разрешите отправку куки

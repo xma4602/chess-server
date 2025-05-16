@@ -1,7 +1,7 @@
 const http = 'http://';
 const ws = 'ws://';
-const serverHost = '194.87.102.76:8080';
-const frontHost = '194.87.102.76:4200';
+const serverHost = '194.87.102.76';
+const frontHost = '194.87.102.76';
 const restPrefix = '/chess';
 const topicPrefix = '/topic';
 export const restUrl = http + serverHost + restPrefix
