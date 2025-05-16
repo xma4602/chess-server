@@ -10,7 +10,7 @@ set -a; source .env; set +a; java -jar target/server-0.0.1.jar
 ```bash
 cd frontend/ && npm start
 ```
-- Приложение доступно на [http://localhost:4200/](http://localhost:4200/)
+- Приложение доступно на [http://194.87.102.76/](http://194.87.102.76/)
 
 Должен быть .env файл, в котором:
 - DB_USERNAME=
