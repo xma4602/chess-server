@@ -14,7 +14,7 @@ import java.util.UUID;
 @Controller
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/api/chess/rooms")
+@RequestMapping("/chess/rooms")
 public class GameRoomController {
 
     private final GameRoomService gameRoomService;

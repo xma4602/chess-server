@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/chess/history")
+@RequestMapping("/chess/history")
 @RequiredArgsConstructor
 public class GameHistoryController {
 
