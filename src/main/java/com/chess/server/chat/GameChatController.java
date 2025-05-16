@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/chess/chats")
+@RequestMapping("/api/chess/chats")
 @RequiredArgsConstructor
 public class GameChatController {
 
