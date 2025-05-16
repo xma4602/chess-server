@@ -1,6 +1,6 @@
 const http = 'http://';
 const ws = 'ws://';
-const serverHost = '194.87.102.76';
+const serverHost = '194.87.102.76/api';
 const frontHost = '194.87.102.76';
 const restPrefix = '/chess';
 const topicPrefix = '/topic';
