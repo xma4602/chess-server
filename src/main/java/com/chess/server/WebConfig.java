@@ -15,7 +15,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**") // Разрешить доступ ко всем URL
                 .allowedOrigins("*") // Разрешите доступ только с этого домена
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Разрешите необходимые методы
-                .allowedHeaders("*") // Разрешите все заголовки
-                .allowCredentials(true); // Разрешите отправку куки
+                .allowedHeaders("*"); // Разрешите все заголовки
+//                .allowCredentials(true); // Разрешите отправку куки
     }
 }
