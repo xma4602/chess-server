@@ -17,7 +17,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/chess/users")
+@RequestMapping("/chess/users")
 @RequiredArgsConstructor
 public class UserController {
     private final static String DEFAULT_AVATAR_PATH = "classpath:static/default_avatar.png"; // Путь к стандартному аватару
