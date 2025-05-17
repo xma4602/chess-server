@@ -23,8 +23,8 @@ public class WebSecurityConfig {
                 .cors(Customizer.withDefaults())
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/chess/users/register", "/chess/users/login", "/ws").permitAll() // Разрешить доступ к этому пути без авторизации
-                        .anyRequest().authenticated() // Все остальные пути требуют авторизации
+//                        .requestMatchers("/chess/users/register", "/chess/users/login", "/ws").permitAll() // Разрешить доступ к этому пути без авторизации
+                        .anyRequest().permitAll() // Все остальные пути требуют авторизации
                 );
 
         return http.build();
