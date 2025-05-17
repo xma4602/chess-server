@@ -93,11 +93,23 @@ th {
 }
 
 .timer-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: 5px;
-  gap: 20px; /* Установите нужное значение для расстояния между таймерами */
+  display: flex; /* Используем Flexbox для создания столбцов */
+  justify-content: space-between; /* Распределяем пространство между столбцами */
+  margin: 5px; /* Отступ вокруг контейнера */
 }
+
+.timer-column {
+  display: flex;
+  flex-direction: column; /* Располагаем элементы в столбик */
+  align-items: center; /* Центрируем элементы по горизонтали */
+  width: 45%; /* Ширина каждого столбца */
+}
+
+.timer-column label {
+  margin-bottom: 10px; /* Отступ между надписью и таймером */
+  text-align: center;
+}
+
 
 .button-container {
   display: flex;

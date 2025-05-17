@@ -1,8 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {UserService} from '../user-service';
 import {User} from '../user';
-import {NgForOf} from '@angular/common';
+import {NgForOf, NgIf} from '@angular/common';
 import {Router} from '@angular/router';
+import {ConfirmDialogComponent} from '../../game_play/dialog/confirm-dialog.component';
+import {MatDialog} from '@angular/material/dialog';
 
 
 @Component({
@@ -10,19 +12,35 @@ import {Router} from '@angular/router';
   standalone: true,
   templateUrl: './user-list.component.html',
   imports: [
-    NgForOf
+    NgForOf,
+    NgIf
   ],
   styleUrls: ['./user-list.component.css'] // Подключаем стили
 })
 export class UserListComponent implements OnInit {
   users: User[] = [];
-  sortDirection: { [key: string]: boolean } = {}; // Для хранения направления сортировки
 
-  constructor(private router: Router, private userService: UserService) {
+  public currentUser: User ;
+
+  constructor(private router: Router,
+              public dialog: MatDialog,
+              private userService: UserService) {
+    this.currentUser = userService.user!;
   }
 
   ngOnInit(): void {
-    this.loadUsers();
+    if (this.userService.user!.roles.includes('admin')) {
+      this.loadUsers();
+    } else {
+      this.dialog.open(ConfirmDialogComponent, {
+        data: {
+          title: 'У вас нет доступа к этой странице',
+          message: 'Вы будете перенаправлены на начальный экран'
+        }
+      }).afterClosed().subscribe(
+        () => this.router.navigate(['']), console.error
+      )
+    }
   }
 
   loadUsers(): void {

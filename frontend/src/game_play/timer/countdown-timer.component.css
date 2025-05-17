@@ -6,3 +6,10 @@ p {
   font-size: 20px;
   font-weight: bold;
 }
+
+.timer-container {
+  height: 20px; /* Задайте желаемую высоту */
+  display: flex; /* Используем Flexbox для центрирования содержимого */
+  justify-content: center; /* Центрируем содержимое по горизонтали */
+  align-items: center; /* Центрируем содержимое по вертикали */
+}

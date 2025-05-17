@@ -26,12 +26,12 @@ import {UserAvatarComponent} from '../user/avatar/user-avatar.component';
   standalone: true,
   templateUrl: './game-play.component.html',
   styleUrls: ['./game-play.component.css'],
-  imports: [ FormsModule, NgForOf, ChessCellComponent, NgIf, ChatComponent, CountdownTimerComponent, UserAvatarComponent],
+  imports: [FormsModule, NgForOf, ChessCellComponent, NgIf, ChatComponent, CountdownTimerComponent, UserAvatarComponent],
 })
 export class GamePlayComponent implements OnInit, AfterViewInit {
   @ViewChildren(ChessCellComponent) cells!: QueryList<ChessCellComponent>;
-  @ViewChild('creatorTimer') creatorTimer!: CountdownTimerComponent; // Получаем доступ к таймеру создателя
-  @ViewChild('opponentTimer') opponentTimer!: CountdownTimerComponent; // Получаем доступ к таймеру противника
+  @ViewChild('whiteTimer') creatorTimer!: CountdownTimerComponent; // Получаем доступ к таймеру создателя
+  @ViewChild('blackTimer') opponentTimer!: CountdownTimerComponent; // Получаем доступ к таймеру противника
 
   public gamePlay: GamePlay | null = null
   private selectedCell: ChessCellComponent | null = null;
@@ -75,68 +75,6 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
     this.startTimers();
   }
 
-  private startTimers() {
-    // Убедитесь, что таймеры инициализированы
-    if (this.creatorTimer && this.opponentTimer && this.gamePlay) {
-      if (this.gamePlay.gameConditions.timeControl.code === TimeControl.WATCH.code) {
-        const partyTime = this.gamePlay.gameConditions.partyTime * 60;
-        this.creatorTimer.startTimer(this.gamePlay.creatorLogin, this.gamePlay.creatorId, partyTime,
-          () => this.timeout(this.gamePlay!.creatorId));
-        this.opponentTimer.startTimer(this.gamePlay.opponentLogin, this.gamePlay.opponentId, partyTime,
-          () => this.timeout(this.gamePlay!.opponentId));
-
-        if (this.creatorTimer.userId === this.gamePlay!.activeUserId) {
-          this.creatorTimer.resumeTimer()
-          this.opponentTimer.stopTimer()
-        } else {
-          this.opponentTimer.resumeTimer()
-          this.creatorTimer.stopTimer()
-        }
-      } else {
-        this.creatorTimer.visible = false
-        this.opponentTimer.visible = false
-
-      }
-    } else {
-      console.error('Таймеры или gamePlay не инициализированы');
-    }
-  }
-
-
-  private updateBoard() {
-    if (this.gamePlay && this.cells) { // Проверяем, что gamePlay загружен и cells инициализированы
-      this.clearViewActions()
-      for (let cell of this.cells) {
-        const figureCode = this.gamePlay.figures.get(cell.id);
-        cell.figure = figureCode === undefined ? null : Figure.fromCode(figureCode);
-      }
-    }
-  }
-
-
-  private onNewAction(message: IMessage) {
-    console.log(`new action`)
-    const obj = JSON.parse(message.body);
-    this.gamePlay = GamePlay.fromObject(obj)
-    this.updateBoard();
-    this.updateTimers();
-    this.checkGameEnd();
-  }
-
-  private updateTimers() {
-    if (this.gamePlay!.gameConditions.timeControl.code === TimeControl.WATCH.code) {
-      if (this.creatorTimer.userId == this.gamePlay!.activeUserId) {
-        this.creatorTimer.resumeTimer()
-        this.opponentTimer.countdown! += this.gamePlay!.gameConditions.moveTime
-        this.opponentTimer.stopTimer()
-      } else {
-        this.opponentTimer.resumeTimer()
-        this.creatorTimer.countdown! += this.gamePlay!.gameConditions.moveTime
-        this.creatorTimer.stopTimer()
-      }
-    }
-  }
-
   getCellId(rowIndex: number, colIndex: number): string {
     const columnLetter = String.fromCharCode(97 + colIndex); // 'a' + colIndex
     return `${columnLetter}${rowIndex + 1}`; // Формат: a1, b1, ..., h8
@@ -171,6 +109,114 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
     }
   }
 
+  getPlayerLabel(figureColor: FigureColor) {
+    return this.gamePlay!.gameConditions.creatorFigureColor!.code === figureColor.code ?
+      `${this.gamePlay?.creatorLogin} (${this.gamePlay?.creatorRating})` :
+      `${this.gamePlay?.opponentLogin} (${this.gamePlay?.opponentRating})`
+  }
+
+  getRowsIndexes() {
+    return this.getFigureColorForCurrentUser().code === FigureColor.WHITE.code ?
+      [7, 6, 5, 4, 3, 2, 1, 0] : [0, 1, 2, 3, 4, 5, 6, 7]
+  }
+
+  getColumnsIndexes() {
+    return this.getFigureColorForCurrentUser().code === FigureColor.WHITE.code ?
+      [0, 1, 2, 3, 4, 5, 6, 7] : [7, 6, 5, 4, 3, 2, 1, 0]
+  }
+
+  // Логика для предложения ничьей
+  offerDraw() {
+    console.log('Предложить ничью');
+
+    this.dialog.open(ChoiceDialogComponent, {
+      width: '250px',
+      data: {title: 'Предложение ничьи', message: 'Вы уверены?'}
+    }).afterClosed().subscribe((result: boolean) => {
+      console.log('Диалог закрыт, результат:', result);
+      if (result) {
+        this.gamePlayService.requestDraw(this.gamePlay!.id, this.userService.user!.id)
+          .subscribe(console.log, console.error)
+      }
+    });
+  }
+
+  // Логика для сдачи
+  surrender() {
+    console.log('Сдаться');
+
+    this.dialog.open(ChoiceDialogComponent, {
+      width: '250px',
+      data: {title: 'Сдаться', message: 'Вы уверены?'}
+    }).afterClosed().subscribe((result: boolean) => {
+      console.log('Диалог закрыт, результат:', result);
+      if (result) {
+        this.gamePlayService.surrender(this.gamePlay!.id, this.userService.user!.id)
+          .subscribe(console.log, console.error)
+      }
+    });
+  }
+
+  private startTimers() {
+    // Убедитесь, что таймеры инициализированы
+    if (this.creatorTimer && this.opponentTimer && this.gamePlay) {
+      if (this.gamePlay.gameConditions.timeControl.code === TimeControl.WATCH.code) {
+        const partyTime = this.gamePlay.gameConditions.partyTime * 60;
+        this.creatorTimer.startTimer(this.gamePlay.id, this.gamePlay.creatorId, partyTime,
+          () => this.timeout(this.gamePlay!.creatorId));
+        this.opponentTimer.startTimer(this.gamePlay.id, this.gamePlay.opponentId, partyTime,
+          () => this.timeout(this.gamePlay!.opponentId));
+
+        if (this.creatorTimer.userId === this.gamePlay!.activeUserId) {
+          this.creatorTimer.resumeTimer()
+          this.opponentTimer.stopTimer()
+        } else {
+          this.opponentTimer.resumeTimer()
+          this.creatorTimer.stopTimer()
+        }
+      } else {
+        this.creatorTimer.visible = false
+        this.opponentTimer.visible = false
+
+      }
+    } else {
+      console.error('Таймеры или gamePlay не инициализированы');
+    }
+  }
+
+  private updateBoard() {
+    if (this.gamePlay && this.cells) { // Проверяем, что gamePlay загружен и cells инициализированы
+      this.clearViewActions()
+      for (let cell of this.cells) {
+        const figureCode = this.gamePlay.figures.get(cell.id);
+        cell.figure = figureCode === undefined ? null : Figure.fromCode(figureCode);
+      }
+    }
+  }
+
+  private onNewAction(message: IMessage) {
+    console.log(`new action`)
+    const obj = JSON.parse(message.body);
+    this.gamePlay = GamePlay.fromObject(obj)
+    this.updateBoard();
+    this.updateTimers();
+    this.checkGameEnd();
+  }
+
+  private updateTimers() {
+    if (this.gamePlay!.gameConditions.timeControl.code === TimeControl.WATCH.code) {
+      if (this.creatorTimer.userId == this.gamePlay!.activeUserId) {
+        this.creatorTimer.resumeTimer()
+        this.opponentTimer.countdown! += this.gamePlay!.gameConditions.moveTime
+        this.opponentTimer.stopTimer()
+      } else {
+        this.opponentTimer.resumeTimer()
+        this.creatorTimer.countdown! += this.gamePlay!.gameConditions.moveTime
+        this.creatorTimer.stopTimer()
+      }
+    }
+  }
+
   private executeAction(action: GameAction) {
     if (action.actionType.code === ActionType.SWAP.code) {
       const figureColor = this.getFigureColorForCurrentUser()
@@ -195,7 +241,6 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
     )
   }
 
-
   private findActionByCells(selectedCell: ChessCellComponent, newSelectedCell: ChessCellComponent) {
     for (let action of this.getActionsForCurrentUser()) {
       const isMoveAction = action.startPosition === selectedCell.id &&
@@ -215,7 +260,7 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
     return null
   }
 
-  getActionsForCurrentUser() {
+  private getActionsForCurrentUser() {
     if (this.gamePlay!.activeUserId !== this.userService.user?.id) {
       return []
     } else {
@@ -287,8 +332,6 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
     }
   }
 
-  protected readonly Math = Math;
-
   private checkGameEnd() {
     const gameState = this.gamePlay!.gameState;
     if (gameState !== GameState.CONTINUES) {
@@ -352,40 +395,6 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
       .subscribe(console.log, console.error)
   }
 
-  // Логика для предложения ничьей
-  offerDraw() {
-    console.log('Предложить ничью');
-
-    this.dialog.open(ChoiceDialogComponent, {
-      width: '250px',
-      data: {title: 'Предложение ничьи', message: 'Вы уверены?'}
-    }).afterClosed().subscribe((result: boolean) => {
-      console.log('Диалог закрыт, результат:', result);
-      if (result) {
-        this.gamePlayService.requestDraw(this.gamePlay!.id, this.userService.user!.id)
-          .subscribe(console.log, console.error)
-      }
-    });
-  }
-
-  // Логика для сдачи
-  surrender() {
-    console.log('Сдаться');
-
-    this.dialog.open(ChoiceDialogComponent, {
-      width: '250px',
-      data: {title: 'Сдаться', message: 'Вы уверены?'}
-    }).afterClosed().subscribe((result: boolean) => {
-      console.log('Диалог закрыт, результат:', result);
-      if (result) {
-        this.gamePlayService.surrender(this.gamePlay!.id, this.userService.user!.id)
-          .subscribe(console.log, console.error)
-      }
-    });
-  }
-
-  protected readonly TimeControl = TimeControl;
-
   private onDrawRequest(message: IMessage) {
     const userId = message.body;
     if (userId === this.userService.user?.id) {
@@ -402,30 +411,16 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
 
   private onDrawResponse(message: IMessage) {
     const userId = message.body;
-    if (this.userService.user!.id !== userId) {
+    if (this.userService.user!.id === userId) {
       this.dialog.open(ConfirmDialogComponent, {
         data: {title: 'Противник отказался от ничьи'}
       })
     }
   }
 
-  getWhiteLogin() {
-    return this.gamePlay!.gameConditions.creatorFigureColor!.code !== FigureColor.WHITE.code ?
-      this.gamePlay?.opponentLogin! : this.gamePlay?.creatorLogin!
-  }
+  protected readonly FigureColor = FigureColor;
 
-  getBlackLogin() {
-    return this.gamePlay!.gameConditions.creatorFigureColor!.code !== FigureColor.BLACK.code ?
-      this.gamePlay?.opponentLogin! : this.gamePlay?.creatorLogin!
-  }
+  protected readonly TimeControl = TimeControl;
 
-  getRowsIndexes() {
-    return this.getFigureColorForCurrentUser().code === FigureColor.WHITE.code ?
-      [7, 6, 5, 4, 3, 2, 1, 0] : [0, 1, 2, 3, 4, 5, 6, 7]
-  }
-
-  getColumnsIndexes() {
-    return this.getFigureColorForCurrentUser().code === FigureColor.WHITE.code ?
-      [0, 1, 2, 3, 4, 5, 6, 7] : [7, 6, 5, 4, 3, 2, 1, 0]
-  }
+  protected readonly Math = Math;
 }
