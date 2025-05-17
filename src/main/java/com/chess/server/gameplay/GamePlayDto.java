@@ -1,4 +1,4 @@
-package com.chess.server.gameplay.dto;
+package com.chess.server.gameplay;
 
 import com.chess.engine.GameState;
 import com.chess.server.gameconditions.GameConditions;
@@ -21,9 +21,11 @@ public class GamePlayDto {
     private UUID activeUserId;
     private String creatorLogin;
     private String opponentLogin;
+    private Integer creatorRating;
+    private Integer opponentRating;
     private GameConditions gameConditions;
     private GameState gameState;
-    private List<String > madeActions;
+    private List<String> madeActions;
     private List<GameActionDto> whiteActions;
     private List<GameActionDto> blackActions;
     private Map<String, String> figures;

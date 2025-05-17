@@ -26,10 +26,8 @@ public class User implements UserDetails {
     private String login;
     @Column(nullable = false)
     private String password;
-
-    @Builder.Default
-    @Column(columnDefinition = "DEFAULT 100")
-    private Integer rating = 100;
+    @Column
+    private Integer rating;
 
     @Builder.Default
     @ManyToMany(fetch = FetchType.EAGER)

@@ -1,4 +1,4 @@
-package com.chess.server.gameplay.dto;
+package com.chess.server.gameplay;
 
 import lombok.*;
 

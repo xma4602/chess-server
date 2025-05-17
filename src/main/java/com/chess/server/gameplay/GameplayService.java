@@ -11,8 +11,6 @@ import com.chess.server.chat.GameChatService;
 import com.chess.server.gameconditions.GameConditions;
 import com.chess.server.gameconditions.GameConditionsRepository;
 import com.chess.server.gamehistory.GameHistoryService;
-import com.chess.server.gameplay.dto.GameActionDto;
-import com.chess.server.gameplay.dto.GamePlayDto;
 import com.chess.server.gameroom.GameRoom;
 import com.chess.server.gameroom.GameRoomService;
 import lombok.RequiredArgsConstructor;
@@ -127,6 +125,8 @@ public class GameplayService {
                 .activeUserId(gamePlay.getActiveUser().getId())
                 .opponentId(gamePlay.getOpponent().getId())
                 .opponentLogin(gamePlay.getOpponent().getLogin())
+                .creatorRating(gamePlay.getCreator().getRating())
+                .opponentRating(gamePlay.getOpponent().getRating())
                 .gameState(gameEngine.getGameState())
                 .gameConditions(gamePlay.getGameConditions())
                 .madeActions(madeActions)
