@@ -14,13 +14,13 @@ public class ActionMove extends Action {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private static final Pattern movePattern = Pattern.compile("^([a-h][1-8])-([KQBNR])?([a-h][1-8])$");
+    private static final Pattern movePattern = Pattern.compile("^([a-h][1-8])-([KQBNR]|[ФСЛК]|Кр)?([a-h][1-8])$");
 
     private final Position startPosition;
     private final Position endPosition;
     private final FigureType figureType;
 
-    protected ActionMove(Position startPosition, Position endPosition, FigureType figureType) {
+    public ActionMove(Position startPosition, Position endPosition, FigureType figureType) {
         super(ActionType.MOVE);
         this.startPosition = startPosition;
         this.endPosition = endPosition;
@@ -31,9 +31,8 @@ public class ActionMove extends Action {
         Matcher matcher = movePattern.matcher(action);
         if (matcher.find()) {
             Position startPosition = Position.of(matcher.group(1));
+            FigureType figureType = FigureType.fromNotationChar(matcher.group(2) != null ? matcher.group(2) : "");
             Position endPosition = Position.of(matcher.group(3));
-            String group = matcher.group(2) != null ? matcher.group(2) : "";
-            FigureType figureType = FigureType.getTypeByNotationChar(group);
             return Optional.of(new ActionMove(startPosition, endPosition, figureType));
         } else {
             return Optional.empty();
@@ -45,8 +44,13 @@ public class ActionMove extends Action {
     }
 
     @Override
-    public String toString() {
-        return startPosition + "-" + figureType.getNotationChar() + endPosition;
+    public String getCodeNotation() {
+        return startPosition + "-" + figureType.getNotationCharRu() + endPosition;
+    }
+
+    @Override
+    public String getAlgebraicNotation() {
+        return figureType.getNotationCharRu() + endPosition;
     }
 
     @Override

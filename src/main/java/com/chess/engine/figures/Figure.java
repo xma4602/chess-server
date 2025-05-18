@@ -5,6 +5,8 @@ import com.chess.engine.FigureColor;
 import com.chess.engine.FigureType;
 import com.chess.engine.Position;
 import com.chess.engine.actions.Action;
+import com.chess.engine.actions.ActionEat;
+import com.chess.engine.actions.ActionMove;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -87,9 +89,9 @@ public abstract class Figure implements Serializable {
         if (endPosition.isPresent()) { //следующая позиция существует?
             var endPos = endPosition.get();
             if (board.isNone(endPos)) { //следующая позиция пустая?
-                return Action.move(startPosition, endPos, figureType); //можно двинуться
+                return new ActionMove(startPosition, endPos, figureType); //можно двинуться
             } else if (board.hasOpponent(endPos, figureColor)) { //на позиции противник?
-                return Action.eat(startPosition, endPos); //можно съесть
+                return new ActionEat(startPosition, endPos, figureType); //можно съесть
             }
         }
         return null;
@@ -110,10 +112,10 @@ public abstract class Figure implements Serializable {
         if (nextPosition.isPresent()) { //следующая позиция существует?
             Position nextPos = nextPosition.get();
             if (board.isNone(nextPos)) { //следующая позиция пустая?
-                actions.add(Action.move(startPosition, nextPos, figureType)); //можно двинуться
+                actions.add(new ActionMove(startPosition, nextPos, figureType)); //можно двинуться
                 actions.addAll(moveOrEatInDirection(board, startPosition, direction, direction.apply(nextPos))); //проверить дальше
             } else if (board.hasOpponent(nextPos, figureColor)) { //на позиции противник?
-                actions.add(Action.eat(startPosition, nextPos)); //можно съесть
+                actions.add(new ActionEat(startPosition, nextPos, figureType)); //можно съесть
             }
         }
         return actions;

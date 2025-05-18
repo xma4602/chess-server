@@ -1,5 +1,6 @@
 package com.chess.engine.actions;
 
+import com.chess.engine.FigureType;
 import com.chess.engine.Position;
 import lombok.Getter;
 
@@ -13,30 +14,39 @@ public class ActionEat extends Action {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    public static final Pattern eatPattern = Pattern.compile("^([a-h][1-8])x([a-h][1-8])$");
+    public static final Pattern eatPattern = Pattern.compile("^([KQBNR]|[ФСЛК]|Кр)?([a-h][1-8])x([a-h][1-8])$");
+
     private final Position startPosition;
     private final Position eatenPosition;
+    private final FigureType figureType;
 
-    protected ActionEat(Position startPosition, Position eatenPosition) {
+    public ActionEat(Position startPosition, Position eatenPosition, FigureType figureType) {
         super(ActionType.EAT);
         this.startPosition = startPosition;
         this.eatenPosition = eatenPosition;
+        this.figureType = figureType;
     }
 
     public static Optional<ActionEat> parse(String action) {
         Matcher matcher = eatPattern.matcher(action);
         if (matcher.find()) {
-            Position startPosition = Position.of(matcher.group(1));
-            Position endPosition = Position.of(matcher.group(2));
-            return Optional.of(new ActionEat(startPosition, endPosition));
+            FigureType figureType = FigureType.fromNotationChar(matcher.group(1) != null ? matcher.group(1) : "");
+            Position startPosition = Position.of(matcher.group(2));
+            Position endPosition = Position.of(matcher.group(3));
+            return Optional.of(new ActionEat(startPosition, endPosition, figureType));
         } else {
             return Optional.empty();
         }
     }
 
     @Override
-    public String toString() {
-        return startPosition + "x" + eatenPosition;
+    public String getCodeNotation() {
+        return figureType.getNotationCharRu() + startPosition + "x" + eatenPosition;
+    }
+
+    @Override
+    public String getAlgebraicNotation() {
+        return figureType.getNotationCharRu() + "x" + eatenPosition;
     }
 
     @Override

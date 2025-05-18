@@ -2,6 +2,7 @@
 package com.chess.engine;
 
 import com.chess.engine.actions.*;
+import com.chess.engine.exceptions.ChessEngineIllegalStateException;
 import com.chess.engine.exceptions.ChessEngineRuntimeException;
 import com.chess.engine.figures.*;
 
@@ -262,6 +263,20 @@ public class Board implements Serializable, Cloneable {
 
     public Figure getFigureByPosition(Position position) {
         return cells.get(position);
+    }
+
+    public Position getKingPosition(FigureColor figureColor) {
+        for (Map.Entry<Position, Figure> positionFigureEntry : cells.entrySet()) {
+            Figure figure = positionFigureEntry.getValue();
+            if (figure.getFigureType() == FigureType.KING && figure.getFigureColor() == figureColor){
+                return positionFigureEntry.getKey();
+            }
+        }
+        throw new ChessEngineIllegalStateException("No such king with color " + figureColor);
+    }
+
+    public FigureType getFigureType(Position position) {
+        return cells.get(position).getFigureType();
     }
 
     /*

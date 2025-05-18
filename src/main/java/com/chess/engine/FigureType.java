@@ -11,13 +11,13 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Getter
 public enum FigureType {
-    NONE("NONE", 0, "X", '◼', '◻', "Пусто"),
-    PAWN("PAWN", 1, "", '♟', '♙', "Пешка"),
-    KNIGHT("KNIGHT", 2, "N", '♞', '♘', "Конь"),
-    BISHOP("BISHOP", 3, "B", '♝', '♗', "Слон"),
-    ROOK("ROOK", 4, "R", '♜', '♖', "Ладья"),
-    QUEEN("QUEEN", 5, "Q", '♛', '♕', "Ферзь"),
-    KING("KING", 6, "K", '♚', '♔', "Король");
+    NONE("NONE", 0, "X", "X", '◼', '◻', "Пусто"),
+    PAWN("PAWN", 1, "", "", '♟', '♙', "Пешка"),
+    KNIGHT("KNIGHT", 2, "N", "К", '♞', '♘', "Конь"),
+    BISHOP("BISHOP", 3, "B", "С", '♝', '♗', "Слон"),
+    ROOK("ROOK", 4, "R", "Л", '♜', '♖', "Ладья"),
+    QUEEN("QUEEN", 5, "Q", "Ф", '♛', '♕', "Ферзь"),
+    KING("KING", 6, "K", "Кр", '♚', '♔', "Король");
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -25,7 +25,8 @@ public enum FigureType {
 
     private final String id;
     private final int code;
-    private final String notationChar;
+    private final String notationCharEn;
+    private final String notationCharRu;
     private final char imageWhiteChar;
     private final char imageBlackChar;
     private final String name;
@@ -42,13 +43,16 @@ public enum FigureType {
         return FigureType.values()[code];
     }
 
-    public static FigureType getTypeByNotationChar(String notationChar) {
+    public static FigureType fromNotationChar(String notationChar) {
         for (var figure : FigureType.values()) {
-            if (Objects.equals(figure.notationChar, notationChar)) {
+            if (Objects.equals(figure.notationCharRu, notationChar)) {
+                return figure;
+            }
+            if (Objects.equals(figure.notationCharEn, notationChar)) {
                 return figure;
             }
         }
-        throw new ChessEngineRuntimeException("Не найдено типа фигуры с символом: " + notationChar);
+        return null;
     }
 
     public static FigureType getTypeByImageChar(char imageChar) {
@@ -57,10 +61,10 @@ public enum FigureType {
                 return figure;
             }
         }
-        throw new ChessEngineRuntimeException("Не найдено типа фигуры с символом: " + imageChar);
+        return null;
     }
 
-    public static boolean getColorByImageChar(char imageChar) {
+    public static Boolean getColorByImageChar(char imageChar) {
         for (var figure : FigureType.values()) {
             if (figure.imageWhiteChar == imageChar) {
                 return true;
@@ -69,7 +73,7 @@ public enum FigureType {
                 return false;
             }
         }
-        throw new ChessEngineRuntimeException("Не найдено типа фигуры с символом: " + imageChar);
+        return null;
     }
 
     @Override

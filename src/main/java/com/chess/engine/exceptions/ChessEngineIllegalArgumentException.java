@@ -1,11 +1,7 @@
 package com.chess.engine.exceptions;
 
-public class ChessEngineIllegalArgumentException extends Exception {
-    public ChessEngineIllegalArgumentException(String message) {
-        super(message);
-    }
+import lombok.experimental.StandardException;
 
-    public ChessEngineIllegalArgumentException(Throwable e) {
-        super(e);
-    }
+@StandardException
+public class ChessEngineIllegalArgumentException extends RuntimeException {
 }

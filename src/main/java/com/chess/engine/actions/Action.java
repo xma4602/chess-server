@@ -1,8 +1,6 @@
 package com.chess.engine.actions;
 
 import com.chess.engine.FigureColor;
-import com.chess.engine.FigureType;
-import com.chess.engine.Position;
 import lombok.Getter;
 
 import java.io.Serial;
@@ -23,31 +21,18 @@ public abstract class Action implements Serializable {
         this.actionType = actionType;
     }
 
-    public abstract String toString();
+    @Override
+    public String toString() {
+        return getCodeNotation();
+    }
+
+    public abstract String getCodeNotation();
+
+    public abstract String getAlgebraicNotation();
 
     public abstract boolean equals(Action action);
 
     public abstract boolean equalsPositions(String startPosition, String endPosition);
-
-    public static Action move(Position startPosition, Position endPosition, FigureType figureType) {
-        return new ActionMove(startPosition, endPosition, figureType);
-    }
-
-    public static Action eat(Position startPosition, Position eatenPosition) {
-        return new ActionEat(startPosition, eatenPosition);
-    }
-
-    public static Action swap(Position startPosition, Position endPosition, FigureColor figureColor) {
-        return new ActionSwap(startPosition, endPosition, figureColor);
-    }
-
-    public static Action take(Position startPosition, Position endPosition, Position eatenPosition) {
-        return new ActionTaking(startPosition, endPosition, eatenPosition);
-    }
-
-    public static Action castling(Position kingPosition, Position rookPosition) {
-        return new ActionCastling(kingPosition, rookPosition);
-    }
 
     public static Optional<? extends Action> parse(String actionString, FigureColor playerColor) {
         Optional<? extends Action> action;
