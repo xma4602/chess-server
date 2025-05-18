@@ -223,7 +223,7 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
 
       this.dialog.open(ChessPieceDialogComponent, {data: {figureColor: figureColor}})
         .afterClosed().subscribe((figure: Figure) => {
-        action.actionNotation = action.actionNotation.replace('X', figure.notationChar)
+        action.codeNotation = action.codeNotation.replace('X', figure.notationChar)
         this.sendAction(action)
       })
 
@@ -233,9 +233,9 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
   }
 
   private sendAction(action: GameAction) {
-    this.gamePlayService.makeAction(this.gamePlay!.id, action.actionNotation).subscribe(
+    this.gamePlayService.makeAction(this.gamePlay!.id, action.codeNotation).subscribe(
       () => {
-        console.log(`made action: ${action.actionNotation}`)
+        console.log(`made action: ${action.codeNotation}`)
         this.updateTimers();
       }, console.error
     )
@@ -246,13 +246,10 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
       const isMoveAction = action.startPosition === selectedCell.id &&
         (action.endPosition == newSelectedCell.id || action.eatenPosition == newSelectedCell.id);
 
-      const isKingCastling = action.kingStartPosition === selectedCell.id
-        && action.kingEndPosition === newSelectedCell.id
+      const isKingCastling = action.startPosition === selectedCell.id
+        && action.endPosition === newSelectedCell.id
 
-      const isRookCastling = action.rookStartPosition === selectedCell.id
-        && action.rookEndPosition === newSelectedCell.id
-
-      if (isMoveAction || isKingCastling || isRookCastling) {
+      if (isMoveAction || isKingCastling) {
         return action
       }
     }
@@ -273,9 +270,7 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
   private findActionsForCurrentUser(selectedCell: ChessCellComponent) {
     const actions: GameAction[] = []
     for (let action of this.getActionsForCurrentUser()) {
-      if (action.startPosition === selectedCell.id
-        || action.kingStartPosition === selectedCell.id
-        || action.rookStartPosition === selectedCell.id) {
+      if (action.startPosition === selectedCell.id) {
         actions.push(action)
       }
     }
@@ -286,11 +281,11 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
     this.clearViewActions()
     const actions = this.findActionsForCurrentUser(selectedCell);
     for (let action of actions) {
-      this.viewAction(selectedCell, action)
+      this.viewAction(action)
     }
   }
 
-  private viewAction(selectedCell: ChessCellComponent, action: GameAction) {
+  private viewAction(action: GameAction) {
     switch (action.actionType) {
       case ActionType.MOVE: {
         const moveCell = this.cells.find(cell => cell.id === action.endPosition);
@@ -310,13 +305,8 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
       }
         break;
       case ActionType.CASTLING: {
-        if (selectedCell.figure!.notationChar == 'K') {
-          const moveCell = this.cells.find(cell => cell.id === action.kingEndPosition);
+          const moveCell = this.cells.find(cell => cell.id === action.endPosition);
           moveCell!.isMove = true;
-        } else {
-          const moveCell = this.cells.find(cell => cell.id === action.rookEndPosition);
-          moveCell!.isMove = true;
-        }
       }
         break;
       case ActionType.SWAP: {
@@ -419,8 +409,6 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
   }
 
   protected readonly FigureColor = FigureColor;
-
-  protected readonly TimeControl = TimeControl;
 
   protected readonly Math = Math;
 }
