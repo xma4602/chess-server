@@ -1,5 +1,7 @@
 ## Шаг 0: Быстрый старт
+``` bash
 cd frontend && npm install && npm run build --configuration frontend && cd .. && mvn clean package -Dmaven.test.skip=true
+```
 
 1. Запуск сервера:
 ``` bash
