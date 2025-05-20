@@ -41,7 +41,9 @@ export class GameHistoryComponent {
       this.gameHistory.gameConditions.creatorFigureColor : this.gameHistory.gameConditions.creatorFigureColor.reverseValue()
     const gameState = this.gameHistory.gameState;
 
-    if (
+    if (gameState === GameState.DRAW) {
+      return 'Ничья'
+    } else if (
       (userFigureColor.code === FigureColor.WHITE.code && gameState === GameState.WHITE_WIN) ||
       (userFigureColor.code === FigureColor.BLACK.code && gameState === GameState.BLACK_WIN)
     ) {
@@ -54,7 +56,7 @@ export class GameHistoryComponent {
   protected readonly FigureColor = FigureColor;
 
   getTimeControl() {
-    if (this.gameHistory.gameConditions.timeControl.code == TimeControl.WATCH.code){
+    if (this.gameHistory.gameConditions.timeControl.code == TimeControl.WATCH.code) {
       return this.gameHistory.gameConditions.getTileSubtitle() + ' ' + this.gameHistory.gameConditions.getTileTitle()
     } else {
       return 'Без времени'

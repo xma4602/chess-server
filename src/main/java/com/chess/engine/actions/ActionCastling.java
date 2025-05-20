@@ -15,7 +15,7 @@ public class ActionCastling extends Action {
     private final Position kingStartPosition;
     private final Position rookStartPosition;
 
-    protected ActionCastling(Position kingStartPosition, Position rookStartPosition) {
+    public ActionCastling(Position kingStartPosition, Position rookStartPosition) {
         super(ActionType.CASTLING);
         this.kingStartPosition = kingStartPosition;
         this.rookStartPosition = rookStartPosition;
@@ -60,7 +60,12 @@ public class ActionCastling extends Action {
     }
 
     @Override
-    public String toString() {
+    public String getCodeNotation() {
+        return isLongCastling() ? "0-0-0" : "0-0";
+    }
+
+    @Override
+    public String getAlgebraicNotation() {
         return isLongCastling() ? "0-0-0" : "0-0";
     }
 

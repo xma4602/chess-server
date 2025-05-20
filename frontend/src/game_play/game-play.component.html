@@ -31,10 +31,18 @@
 
   <!-- Таблица с ходами -->
   <div class="moves-table-container">
-    <div class="button-container">
-      <app-timer #creatorTimer></app-timer>
-      <app-timer #opponentTimer></app-timer>
+
+    <div class="timer-container">
+      <div class="timer-column">
+        <label>{{ getPlayerLabel(FigureColor.WHITE) }}</label>
+        <app-timer #whiteTimer></app-timer>
+      </div>
+      <div class="timer-column">
+        <label>{{ getPlayerLabel(FigureColor.BLACK) }}</label>
+        <app-timer #blackTimer></app-timer>
+      </div>
     </div>
+
     <div class="button-container">
       <button class="action-button" (click)="offerDraw()">Предложить ничью</button>
       <button class="action-button" (click)="surrender()">Сдаться</button>
@@ -44,8 +52,8 @@
         <thead>
         <tr>
           <th>№</th>
-          <th>Ход белых <br> {{getWhiteLogin()}}</th>
-          <th>Ход черных <br> {{getBlackLogin()}}</th>
+          <th>Ход белых</th>
+          <th>Ход черных</th>
         </tr>
         </thead>
         <tbody>

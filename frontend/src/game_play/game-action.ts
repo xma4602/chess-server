@@ -1,28 +1,30 @@
 export class GameAction {
-  public constructor(public actionNotation: string,
+  public constructor(public codeNotation: string,
+                     public algebraicNotation: string,
                      public actionType: ActionType,
                      public startPosition: string,
                      public endPosition: string,
                      public eatenPosition: string | null = null,
-                     public figureCode: string | null = null,
-                     public kingStartPosition: string | null = null,
-                     public rookStartPosition: string | null = null,
-                     public kingEndPosition: string | null = null,
-                     public rookEndPosition: string | null = null) {
+                     public figureCode: string | null = null) {
   }
 
-  static fromObject(obj: any): GameAction {
+  static fromObject(obj: {
+    codeNotation: string,
+    algebraicNotation: string,
+    actionType: string,
+    startPosition: string,
+    endPosition: string,
+    eatenPosition: string | null,
+    figureCode: string | null
+  }): GameAction {
     return new GameAction(
-      obj.actionNotation,
+      obj.codeNotation,
+      obj.algebraicNotation,
       ActionType.fromCode(obj.actionType)!,
       obj.startPosition,
       obj.endPosition,
       obj.eatenPosition,
-      obj.figureCode,
-      obj.kingStartPosition,
-      obj.rookStartPosition,
-      obj.kingEndPosition,
-      obj.rookEndPosition
+      obj.figureCode
     );
   }
 }

@@ -117,7 +117,6 @@ public class GameEngine implements Serializable {
         blackActions = CheckmateResolver.calcActions(board, FigureColor.BLACK);
 
         updateGameState();
-
     }
 
     private void verifyAction(Action verifingAction) throws ChessEngineIllegalArgumentException {
@@ -157,11 +156,20 @@ public class GameEngine implements Serializable {
     }
 
     private void updateGameState() {
-        if (activePlayerColor == FigureColor.WHITE && whiteActions.isEmpty()) {
-            gameState = GameState.BLACK_WIN;
-        } else if (activePlayerColor == FigureColor.BLACK && blackActions.isEmpty()) {
-            gameState = GameState.WHITE_WIN;
-        } else gameState = GameState.CONTINUES;
+        List<Action> currentActions = (activePlayerColor == FigureColor.WHITE) ? whiteActions : blackActions;
+        List<Action> opponentActions = (activePlayerColor == FigureColor.WHITE) ? blackActions : whiteActions;
+        Position kingPosition = board.getKingPosition(activePlayerColor);
+
+        if (currentActions.isEmpty()) {
+            if (CheckmateResolver.notContainsAttackOnKing(opponentActions, kingPosition)) {
+                gameState = GameState.DRAW;
+            } else {
+                gameState = (activePlayerColor == FigureColor.WHITE) ? GameState.BLACK_WIN : GameState.WHITE_WIN;
+            }
+        } else {
+            gameState = GameState.CONTINUES;
+        }
+
     }
 
     private static class CheckmateResolver {
@@ -212,10 +220,12 @@ public class GameEngine implements Serializable {
             return board.getFigureByPosition(position).getActions(board, position);
         }
 
-        private static boolean notContainsAttackOnKing(List<ActionEat> actions, Position kingPosition) {
+        private static boolean notContainsAttackOnKing(List<? extends Action> actions, Position kingPosition) {
             for (var action : actions) {
-                if (action.getEatenPosition().equals(kingPosition)) {
-                    return false;
+                if (action instanceof ActionEat actionEat){
+                    if (actionEat.getEatenPosition().equals(kingPosition)) {
+                        return false;
+                    }
                 }
             }
             return true;

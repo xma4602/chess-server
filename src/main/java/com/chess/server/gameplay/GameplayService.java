@@ -11,8 +11,6 @@ import com.chess.server.chat.GameChatService;
 import com.chess.server.gameconditions.GameConditions;
 import com.chess.server.gameconditions.GameConditionsRepository;
 import com.chess.server.gamehistory.GameHistoryService;
-import com.chess.server.gameplay.dto.GameActionDto;
-import com.chess.server.gameplay.dto.GamePlayDto;
 import com.chess.server.gameroom.GameRoom;
 import com.chess.server.gameroom.GameRoomService;
 import lombok.RequiredArgsConstructor;
@@ -116,8 +114,8 @@ public class GameplayService {
                         entry -> entry.getValue().getId()));
 
         List<String> madeActions = gameEngine.getMadeActions().stream()
-                .map(Action::toString)
-                .toList();
+                .map(Action::getAlgebraicNotation)
+                .collect(Collectors.toList());
 
         return GamePlayDto.builder()
                 .id(gamePlay.getId())
@@ -127,6 +125,8 @@ public class GameplayService {
                 .activeUserId(gamePlay.getActiveUser().getId())
                 .opponentId(gamePlay.getOpponent().getId())
                 .opponentLogin(gamePlay.getOpponent().getLogin())
+                .creatorRating(gamePlay.getCreator().getRating())
+                .opponentRating(gamePlay.getOpponent().getRating())
                 .gameState(gameEngine.getGameState())
                 .gameConditions(gamePlay.getGameConditions())
                 .madeActions(madeActions)
@@ -137,41 +137,45 @@ public class GameplayService {
     }
 
     private GameActionDto toGameActionDto(Action action) {
-        GameActionDto.GameActionDtoBuilder dtoBuilder = GameActionDto.builder()
-                .actionNotation(action.toString())
+        GameActionDto.GameActionDtoBuilder actionDtoBuilder = GameActionDto.builder()
+                .codeNotation(action.getCodeNotation())
+                .algebraicNotation(action.getAlgebraicNotation())
                 .actionType(action.getActionType().name());
         switch (action.getActionType()) {
             case MOVE -> {
                 ActionMove actionMove = (ActionMove) action;
-                dtoBuilder.startPosition(actionMove.getStartPosition().toString())
+                actionDtoBuilder
+                        .startPosition(actionMove.getStartPosition().toString())
                         .endPosition(actionMove.getEndPosition().toString());
             }
             case EAT -> {
                 ActionEat actionMove = (ActionEat) action;
-                dtoBuilder.startPosition(actionMove.getStartPosition().toString())
+                actionDtoBuilder
+                        .startPosition(actionMove.getStartPosition().toString())
                         .eatenPosition(actionMove.getEatenPosition().toString());
             }
             case SWAP -> {
                 ActionSwap actionSwap = (ActionSwap) action;
-                dtoBuilder.startPosition(actionSwap.getStartPosition().toString())
+                actionDtoBuilder
+                        .startPosition(actionSwap.getStartPosition().toString())
                         .endPosition(actionSwap.getEndPosition().toString())
                         .figureCode(actionSwap.getSwapType().name());
             }
             case CASTLING -> {
                 ActionCastling actionCastling = (ActionCastling) action;
-                dtoBuilder.kingStartPosition(actionCastling.getKingStartPosition().toString())
-                        .kingEndPosition(actionCastling.getKingEndPosition().toString())
-                        .rookStartPosition(actionCastling.getRookStartPosition().toString())
-                        .rookEndPosition(actionCastling.getRookEndPosition().toString());
+                actionDtoBuilder
+                        .startPosition(actionCastling.getKingStartPosition().toString())
+                        .endPosition(actionCastling.getKingEndPosition().toString());
             }
             case TAKING -> {
                 ActionTaking actionTaking = (ActionTaking) action;
-                dtoBuilder.startPosition(actionTaking.getStartPosition().toString())
+                actionDtoBuilder
+                        .startPosition(actionTaking.getStartPosition().toString())
                         .endPosition(actionTaking.getEndPosition().toString())
                         .eatenPosition(actionTaking.getEatenPosition().toString());
             }
         }
-        return dtoBuilder.build();
+        return actionDtoBuilder.build();
     }
 
     public GamePlay getGameplay(UUID gameId) {

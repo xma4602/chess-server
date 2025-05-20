@@ -95,13 +95,15 @@ public class UserController {
             @RequestParam(value = "login", required = false) String login,
             @RequestParam(value = "password", required = false) String password,
             @RequestParam(value = "rating", required = false) Integer rating,
+            @RequestParam(value = "roles", required = false) List<String> roles,
             @RequestParam(value = "avatar", required = false) MultipartFile avatar) throws IOException, AccountNotFoundException {
 
         UserDto userDto = UserDto.builder()
                 .id(userId)
                 .login(login)
-                .password(password)
+                .password(password == null ? null : password.isEmpty() ? null : password)
                 .rating(rating)
+                .roles(roles)
                 .avatar(avatar != null ? avatar.getBytes() : null)
                 .build();
 

@@ -4,7 +4,7 @@ import com.chess.engine.Board;
 import com.chess.engine.FigureColor;
 import com.chess.engine.FigureType;
 import com.chess.engine.Position;
-import com.chess.engine.actions.Action;
+import com.chess.engine.actions.*;
 
 import java.io.Serial;
 import java.util.ArrayList;
@@ -25,12 +25,7 @@ public class Pawn extends Figure {
 
     @Override
     public List<Action> getActions(Board board, Position position) {
-        List<Action> actions = getEatActions(board, position);
-
-        add(actions, moveForward(board, position, position.top(figureColor)));
-        add(actions, moveDoubleForward(board, position, position.top(figureColor), position.topTop(figureColor)));
-
-        return actions;
+        return getEatActions(board, position);
     }
 
     @Override
@@ -57,10 +52,10 @@ public class Pawn extends Figure {
         if (endPosition.isPresent()) {
             Position endPos = endPosition.get();
             if (board.hasOpponent(endPos, figureColor)) {
-                if (endPos.isLastLine()) {
-                    return Action.swap(startPosition, endPos, figureColor);
+                if (endPos.isLastLine() && board.getFigureType(endPos) != FigureType.KING) {
+                    return new ActionSwap(startPosition, endPos, figureColor);
                 } else {
-                    return Action.eat(startPosition, endPos);
+                    return new ActionEat(startPosition, endPos, figureType);
                 }
             }
         }
@@ -74,7 +69,7 @@ public class Pawn extends Figure {
                     && board.hasOpponent(opponentPosition, figureColor) //на позиции противник?
                     && board.wasSpecialMove(opponentPosition) //противник делал двойной ход?
             ) {
-                return Action.take(startPosition, opponentPosition.top(figureColor).get(), opponentPosition);
+                return new ActionTaking(startPosition, opponentPosition.top(figureColor).get(), opponentPosition);
             }
         }
 
@@ -86,8 +81,8 @@ public class Pawn extends Figure {
             var endPos = endPosition.get();
             if (board.isNone(endPos)) { //позиция корректна и на позиции пусто?
                 return endPos.isLastLine() ?  //это последняя линия поля?
-                        Action.swap(startPosition, endPos, figureColor) :
-                        Action.move(startPosition, endPos, figureType);
+                        new ActionSwap(startPosition, endPos, figureColor) :
+                        new ActionMove(startPosition, endPos, figureType);
             }
         }
         return null;
@@ -103,7 +98,7 @@ public class Pawn extends Figure {
             if (board.wasNotMoving(startPosition)  //пешка не двигалась?
                     && board.hasAllNone(midPos, endPos)) // на позиции пусто?)
             {
-                return Action.move(startPosition, endPos, figureType);
+                return new ActionMove(startPosition, endPos, figureType);
             }
         }
         return null;

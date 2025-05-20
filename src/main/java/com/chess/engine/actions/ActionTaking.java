@@ -44,9 +44,15 @@ public class ActionTaking extends Action {
     }
 
     @Override
-    public String toString() {
+    public String getCodeNotation() {
         return startPosition + ":" + endPosition;
     }
+
+    @Override
+    public String getAlgebraicNotation() {
+        return startPosition.getColumnString() + eatenPosition.getColumnString();
+    }
+
 
     @Override
     public boolean equals(Action action) {

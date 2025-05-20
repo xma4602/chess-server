@@ -17,7 +17,7 @@ public class ActionSwap extends Action {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    public static final Pattern swapPattern = Pattern.compile("^([a-h][1-8])-([a-h][1-8])([KQNBRP])$");
+    public static final Pattern swapPattern = Pattern.compile("^([a-h][1-8])-([a-h][1-8])([KQNBR]|[ФСЛК]|Кр)$");
 
     private final Position startPosition;
     private final Position endPosition;
@@ -46,7 +46,7 @@ public class ActionSwap extends Action {
         if (matcher.find()) {
             Position startPosition = Position.of(matcher.group(1));
             Position endPosition = Position.of(matcher.group(2));
-            FigureType figureType = FigureType.getTypeByNotationChar(matcher.group(3));
+            FigureType figureType = FigureType.fromNotationChar(matcher.group(3));
             return Optional.of(new ActionSwap(startPosition, figureType, endPosition));
         } else {
             return Optional.empty();
@@ -54,8 +54,13 @@ public class ActionSwap extends Action {
     }
 
     @Override
-    public String toString() {
-        return startPosition + "-" + endPosition + swapType.getNotationChar();
+    public String getCodeNotation() {
+        return startPosition + "-" + endPosition + swapType.getNotationCharRu();
+    }
+
+    @Override
+    public String getAlgebraicNotation() {
+        return endPosition + getSwapType().getNotationCharRu();
     }
 
     @Override

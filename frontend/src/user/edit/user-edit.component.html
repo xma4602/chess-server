@@ -20,12 +20,13 @@
     </div>
     <div>
       <label>Роли:</label>
-      <div *ngFor="let role of roles" class="role-checkbox">
+      <div *ngFor="let role of roles" class="role-radio">
         <input
-          type="checkbox"
+          type="radio"
           [value]="role"
-          [checked]="isRoleSelected(role)"
-          (change)="onRoleChange(role)"/>
+          name="role"
+        [checked]="isRoleSelected(role)"
+        (change)="onRoleChange(role)"/>
         <label>{{ role }}</label>
       </div>
     </div>

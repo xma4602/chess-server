@@ -23,7 +23,6 @@ h2 {
 /* Стили для меток */
 label {
   display: block;
-  margin-bottom: 8px;
   font-weight: bold;
   color: #555;
 }
@@ -47,15 +46,19 @@ input[type="number"]:focus {
   outline: none;
 }
 
-/* Стили для чекбоксов */
-.role-checkbox {
+.role-radio {
   display: flex;
   align-items: center; /* Выравнивание по вертикали */
-  margin-bottom: 10px; /* Отступ между чекбоксами */
+  margin-bottom: 10px; /* Отступ между радиокнопками */
 }
 
-input[type="checkbox"] {
-  margin-right: 10px; /* Отступ между чекбоксом и меткой */
+.role-radio input[type="radio"] {
+  vertical-align: middle; /* Выравнивание по центру */
+  margin-right: 5px; /* Отступ между радиокнопкой и текстом */
+}
+
+.role-radio label {
+  line-height: 20px; /* Установите значение, соответствующее высоте радиокнопки */
 }
 
 /* Стили для кнопок */

@@ -39,16 +39,27 @@ export class UserProfileComponent implements OnInit {
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       const userId = params.get('id')!; // Получаем userId из параметров маршрута
+
       this.gameHistoryService.getHistories(userId).subscribe(
         histories => {
-          histories.sort((a, b) => {
-            return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+          // Сортируем массив и присваиваем его свойству компонента
+          this.histories = histories.sort((a, b) => {
+            return this.parseDate(b.timestamp).getTime() - this.parseDate(a.timestamp).getTime();
           });
-          this.histories = histories
         }
       );
     });
   }
+
+  parseDate(dateString: string): Date {
+    const [datePart, timePart] = dateString.split(' ');
+    const [day, month, year] = datePart.split('.').map(Number);
+    const [hours, minutes] = timePart.split(':').map(Number);
+
+    // Создаем объект Date
+    return new Date(year, month - 1, day, hours, minutes); // Месяцы в JavaScript начинаются с 0
+  }
+
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -77,11 +88,11 @@ export class UserProfileComponent implements OnInit {
     this.userService.updateUser(this.coryUser.id, formData).subscribe(user => {
       this.isEditing = false; // Выход из режима редактирования
       this.userService.user = new User(
-        this.user.id,
-        this.user.login,
-        this.user.password,
-        this.user.rating,
-        this.user.roles,
+        this.coryUser.id,
+        this.coryUser.login,
+        this.coryUser.password,
+        this.coryUser.rating,
+        this.coryUser.roles,
       )
     });
   }

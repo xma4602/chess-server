@@ -186,4 +186,8 @@ public enum Position implements Serializable {
     public boolean equalsString(String springPosition) {
         return code.equals(springPosition.toLowerCase());
     }
+
+    public String getColumnString() {
+        return String.valueOf((char) (column + 'a'));
+    }
 }

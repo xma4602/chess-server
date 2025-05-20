@@ -6,6 +6,8 @@ import {FormsModule} from '@angular/forms';
 import {NgForOf, NgIf} from '@angular/common';
 
 import {UserAvatarComponent} from '../avatar/user-avatar.component';
+import {ConfirmDialogComponent} from '../../game_play/dialog/confirm-dialog.component';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-user-edit',
@@ -26,35 +28,45 @@ export class UserEditComponent implements OnInit {
   constructor(
     public userService: UserService,
     private route: ActivatedRoute,
+    public dialog: MatDialog,
     public router: Router
   ) {
   }
 
   ngOnInit(): void {
-    const userId = this.route.snapshot.paramMap.get('id');
-    this.userService.getRoles().subscribe(
-      (data) => {
-        this.roles = data; // Сохраняем полученные роли
-      },
-      (error) => {
-        console.error('Ошибка при получении ролей', error);
+    if (!this.userService.user!.roles.includes('admin')) {
+      this.dialog.open(ConfirmDialogComponent, {
+        data: {
+          title: 'У вас нет доступа к этой странице',
+          message: 'Вы будете перенаправлены на начальный экран'
+        }
+      }).afterClosed().subscribe(
+        () => this.router.navigate(['']), console.error
+      )
+    } else {
+      const userId = this.route.snapshot.paramMap.get('id');
+      this.userService.getRoles().subscribe(
+        (data) => {
+          this.roles = data; // Сохраняем полученные роли
+        },
+        (error) => {
+          console.error('Ошибка при получении ролей', error);
+        }
+      );
+      if (userId) {
+        this.userService.getUsers().subscribe(users => {
+          this.user = users.find(u => u.id === userId) || null;
+        });
       }
-    );
-    if (userId) {
-      this.userService.getUsers().subscribe(users => {
-        this.user = users.find(u => u.id === userId) || null;
-      });
     }
-
-
   }
 
   saveUser(): void {
     const formData = new FormData();
     formData.append('login', this.user!.login);
-    formData.append('password', this.user!.password || '');
+    formData.append('password', this.user!.password);
     formData.append('rating', this.user!.rating.toString());
-    formData.append('roles', this.user!.roles.join(','));
+    this.user!.roles.forEach(role => formData.append('roles', role))
 
     if (this.selectedFile) {
       formData.append('avatar', this.selectedFile, this.selectedFile.name); // Добавляем файл
@@ -69,15 +81,11 @@ export class UserEditComponent implements OnInit {
   }
 
   onRoleChange(role: string) {
-    const index = this.user!.roles.indexOf(role);
-    if (index === -1) {
-      this.user!.roles.push(role); // Добавить роль, если она не выбрана
-    } else {
-      this.user!.roles.splice(index, 1); // Удалить роль, если она уже выбрана
-    }
+    this.user!.roles = [role]; // Устанавливаем выбранную роль
   }
+
   isRoleSelected(role: string): boolean {
-    return this.user?.roles.includes(role) || false; // Проверяем, выбрана ли роль
+    return this.user?.roles[0] === role; // Проверяем, является ли роль выбранной
   }
 
   onFileSelected(event: Event): void {

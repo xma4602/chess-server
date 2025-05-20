@@ -10,33 +10,65 @@ import {NgIf} from '@angular/common';
   styleUrls: ['./countdown-timer.component.css']
 })
 export class CountdownTimerComponent implements OnDestroy {
-  @Input() userLogin: string | null = null
-  userId: string | null = null
+  @Input() userLogin: string | null = null;
+  userId: string | null = null;
+  gameId: string | null = null;
+
   countdown: number = 0; // Время в секундах
   interval: any;
-  minus: number = 1
+  minus: number = 1;
   visible: boolean = true;
+  timeout = 1000;
 
-  startTimer(login: string, userId: string, timeSeconds: number, endCallback: () => void): void {
-    this.countdown = timeSeconds
-    this.userLogin = login
-    this.userId = userId
+  startTimer(gameId: string, userId: string, timeSeconds: number, endCallback: () => void): void {
+    this.userId = userId;
+    this.gameId = gameId;
+
+    const savedCountdown = localStorage.getItem(this.getCountKey());
+    const savedStopTime = localStorage.getItem(this.getTimeKey());
+
+    if (savedCountdown && savedStopTime) {
+      this.countdown = parseInt(savedCountdown, 10);
+      const stopTime = parseInt(savedStopTime, 10);
+      const elapsedTime = Math.floor((Date.now() - stopTime) / this.timeout); // Прошедшее время в секундах
+      this.countdown = Math.max(0, this.countdown - elapsedTime); // Убедитесь, что countdown не отрицательный
+    } else {
+      this.countdown = timeSeconds;      // Сохраняем начальное значение в localStorage
+      localStorage.setItem(this.getCountKey(), this.countdown.toString());
+    }
+
     this.interval = setInterval(() => {
       if (this.countdown! > 0) {
         this.countdown! -= this.minus;
+        // Обновляем значение в localStorage
+        localStorage.setItem(this.getCountKey(), this.countdown.toString());
+        localStorage.setItem(this.getTimeKey(), Date.now().toString());
       } else {
         endCallback();
         clearInterval(this.interval);
+        localStorage.removeItem(this.getCountKey()); // Удаляем значение из localStorage
+        localStorage.removeItem(this.getTimeKey()); // Удаляем время остановки
       }
-    }, 1000); // Обновление каждую секунду
+    }, this.timeout); // Обновление каждую секунду
   }
 
+  getCountKey() {
+    return `${this.gameId}.${this.userId}.countdown`;
+  }
+
+  getTimeKey() {
+    return `${this.gameId}.${this.userId}.time`;
+  }
+
+
   stopTimer(): void {
-    this.minus = 0
+    this.minus = 0;
+    // Сохраняем текущее время остановки
+    localStorage.setItem(this.getTimeKey(), Date.now().toString());
   }
 
   resumeTimer() {
-    this.minus = 1
+    this.minus = 1;
   }
 
   getTimeString() {
@@ -51,5 +83,7 @@ export class CountdownTimerComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     clearInterval(this.interval);
+    localStorage.removeItem(this.getCountKey()); // Удаляем значение из localStorage при уничтожении компонента
+    localStorage.removeItem(this.getTimeKey()); // Удаляем время остановки
   }
 }

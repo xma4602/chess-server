@@ -5,7 +5,9 @@ import com.chess.engine.FigureColor;
 import com.chess.engine.FigureType;
 import com.chess.engine.Position;
 import com.chess.engine.actions.Action;
+import com.chess.engine.actions.ActionCastling;
 import com.chess.engine.actions.ActionEat;
+import com.chess.engine.actions.ActionMove;
 
 import java.io.Serial;
 import java.util.LinkedList;
@@ -14,6 +16,7 @@ import java.util.List;
 public class King extends Figure {
     @Serial
     private static final long serialVersionUID = 1L;
+
     public King(FigureColor figureColor) {
         super(FigureType.KING, figureColor);
     }
@@ -68,7 +71,7 @@ public class King extends Figure {
                     && board.hasAllNone(getCastlingPathPositions(kingPosition, isRight))
                     && hasNotEatKingActions(board, kingPosition, figureColor.reverseColor())
             ) {
-                return Action.castling(kingPosition, rookPosition);
+                return new ActionCastling(kingPosition, rookPosition);
             }
         }
 
@@ -76,11 +79,16 @@ public class King extends Figure {
     }
 
     public static boolean hasNotEatKingActions(Board board, Position kingPosition, FigureColor opponentFigureColor) {
-        for (Position position : board.getFigurePositionsByColor(opponentFigureColor)) {
+        List<Position> positions = board.getFigurePositionsByColor(opponentFigureColor);
+        for (Position position : positions) {
             Figure figure = board.getFigureByPosition(position);
             List<Action> actions = figure.getEatActions(board, position);
             for (Action action : actions) {
-                if (action instanceof ActionEat actionEat) {
+                if (action instanceof ActionMove actionMove) {
+                    if (actionMove.getEndPosition().equals(kingPosition)) {
+                        return false;
+                    }
+                } else if (action instanceof ActionEat actionEat) {
                     if (actionEat.getEatenPosition().equals(kingPosition)) {
                         return false;
                     }
