@@ -46,7 +46,9 @@ public class ActionEat extends Action {
 
     @Override
     public String getAlgebraicNotation() {
-        return figureType.getNotationCharRu() + "x" + eatenPosition;
+        return figureType == FigureType.PAWN ?
+                startPosition.getColumnString() + eatenPosition.getColumnString() :
+                figureType.getNotationCharRu() + "x" + eatenPosition;
     }
 
     @Override

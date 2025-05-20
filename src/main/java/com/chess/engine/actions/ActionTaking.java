@@ -50,7 +50,7 @@ public class ActionTaking extends Action {
 
     @Override
     public String getAlgebraicNotation() {
-        return startPosition.getColumnString() + "x" + eatenPosition;
+        return startPosition.getColumnString() + eatenPosition.getColumnString();
     }
 
 
