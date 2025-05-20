@@ -12,8 +12,15 @@ set -a; source .env; set +a; java -jar target/server-0.0.1.jar
 ```bash
 cd frontend/ && npm start
 ```
-- Приложение доступно на [http://194.87.102.76/](http://194.87.102.76/)
+
+3. Запуск бота
+```bash
+set -a; source .env; set +a; mvn compile exec:java
+```
+
+- Приложение доступно на [https://chessbratchikov.ru](https://chessbratchikov.ru)
 
 Должен быть .env файл, в котором:
 - DB_USERNAME=
 - DB_PASSWORD=
+- BOT_TOKEN=
