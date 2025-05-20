@@ -1,6 +1,6 @@
 const http = 'https://';
 const ws = 'wss://';
-const serverHost = 'chessbratchikov.ru:8080';
+const serverHost = 'chessbratchikov.ru';
 const frontHost = 'chessbratchikov.ru';
 const restPrefix = '/chess';
 const topicPrefix = '/topic';

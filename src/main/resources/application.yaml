@@ -18,5 +18,5 @@ logging:
     org.springframework.web: DEBUG
 server:
   cors:
-    origins: http://localhost:4200
+    origins: "http://localhost:4200,https://chessbratchikov.ru"
 
