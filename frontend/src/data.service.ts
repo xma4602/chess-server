@@ -1,10 +1,11 @@
 const http = 'https://';
 const ws = 'wss://';
-const serverHost = 'chessbratchikov.ru/api';
+const serverHost = 'chessbratchikov.ru';
 const frontHost = 'chessbratchikov.ru';
 const restPrefix = '/chess';
 const topicPrefix = '/topic';
-export const restUrl = http + serverHost + restPrefix
+const api = '/api'
+export const restUrl = http + serverHost + api + restPrefix
 export const restRooms = restUrl + '/rooms'
 export const restUsers = restUrl + '/users'
 export const restRoomsLink = http + frontHost + restPrefix + '/rooms'
