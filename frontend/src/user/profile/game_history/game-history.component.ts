@@ -42,7 +42,7 @@ export class GameHistoryComponent {
     const gameState = this.gameHistory.gameState;
 
     if (gameState === GameState.DRAW) {
-      return 'Ничтья'
+      return 'Ничья'
     } else if (
       (userFigureColor.code === FigureColor.WHITE.code && gameState === GameState.WHITE_WIN) ||
       (userFigureColor.code === FigureColor.BLACK.code && gameState === GameState.BLACK_WIN)
