@@ -15,7 +15,7 @@ import java.util.List;
 
 public class ChessBot extends TelegramLongPollingBot {
 
-    private final static String WEB_APP_URL = "https://chess-frontend-wpc3.onrender.com/";
+    private final static String WEB_APP_URL = "https://chessbratchikov.ru/";
     private final static WebAppInfo WEB_APP_INFO = new WebAppInfo(WEB_APP_URL);
 
     public ChessBot() {
