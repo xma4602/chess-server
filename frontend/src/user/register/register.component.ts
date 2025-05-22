@@ -28,18 +28,24 @@ export class RegisterComponent {
   }
 
   register() {
-    this.userService.register(this.login!, this.password!).subscribe((response: {
-      id: string,
-      rating: number,
-      roles: string[]
-    }) => {
-      this.userService.user = new User(response.id, this.login!, this.password!, response.rating, response.roles)
-      console.log('User registered successfully', response);
-      this.router.navigateByUrl(this.returnUrl); // Перенаправление на нужную страницу
-    }, error => {
-      console.error('Registration failed', error);
-      this.openSnackBar('Login failed: ' + error.error, 'Close');
-    });
+    if (!this.login) {
+      this.openSnackBar('Некорректный логин пользователя', 'Close');
+    } else if (!this.password) {
+      this.openSnackBar('Некорректный пароль пользователя', 'Close');
+    } else {
+      this.userService.register(this.login!, this.password!).subscribe((response: {
+        id: string,
+        rating: number,
+        roles: string[]
+      }) => {
+        this.userService.user = new User(response.id, this.login!, this.password!, response.rating, response.roles)
+        console.log('User registered successfully', response);
+        this.router.navigateByUrl(this.returnUrl); // Перенаправление на нужную страницу
+      }, error => {
+        console.error('Registration failed', error);
+        this.openSnackBar('Ошибка регистрации: ' + error.error, 'Close');
+      });
+    }
   }
 
   openSnackBar(message: string, action: string) {

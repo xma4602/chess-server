@@ -1,7 +1,7 @@
 <h2>Регистрация</h2>
 <form (ngSubmit)="register()" class="registration-form">
-  <input type="text" [(ngModel)]="login" name="login" placeholder="Login" required>
-  <input type="password" [(ngModel)]="password" name="password" placeholder="Password" required>
-  <button type="submit">Register</button>
+  <input type="text" [(ngModel)]="login" name="login" placeholder="Логин" required>
+  <input type="password" [(ngModel)]="password" name="password" placeholder="Пароль" required>
+  <button type="submit">Зарегистрироваться</button>
 </form>
 <p>Уже есть аккаунт? <a routerLink="/login">Войти</a></p>
