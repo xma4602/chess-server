@@ -67,12 +67,19 @@ public class GameHistoryService {
         Integer oldCreatorRating = creator.getRating();
         Integer oldOpponentRating = opponent.getRating();
 
-        boolean creatorWin = (gameConditions.getCreatorFigureColor() == FigureColor.WHITE && gameEngine.getGameState() == GameState.WHITE_WIN)
-                || (gameConditions.getCreatorFigureColor() == FigureColor.BLACK && gameEngine.getGameState() == GameState.BLACK_WIN);
+        boolean isWhiteWin = gameEngine.getGameState() == GameState.WHITE_WIN_CHECKMATE ||
+                gameEngine.getGameState() == GameState.WHITE_WIN_RESIGN ||
+                gameEngine.getGameState() == GameState.WHITE_WIN_TIME_OUT;
 
-        boolean opponentWin = (gameConditions.getOpponentFigureColor() == FigureColor.WHITE && gameEngine.getGameState() == GameState.WHITE_WIN)
-                || (gameConditions.getOpponentFigureColor() == FigureColor.BLACK && gameEngine.getGameState() == GameState.BLACK_WIN);
+        boolean isBlackWin = gameEngine.getGameState() == GameState.BLACK_WIN_CHECKMATE ||
+                gameEngine.getGameState() == GameState.BLACK_WIN_RESIGN ||
+                gameEngine.getGameState() == GameState.BLACK_WIN_TIME_OUT;
 
+        boolean creatorWin = (gameConditions.getCreatorFigureColor() == FigureColor.WHITE && isWhiteWin) ||
+                (gameConditions.getCreatorFigureColor() == FigureColor.BLACK && isBlackWin);
+
+        boolean opponentWin = (gameConditions.getOpponentFigureColor() == FigureColor.WHITE && isWhiteWin) ||
+                (gameConditions.getOpponentFigureColor() == FigureColor.BLACK && isBlackWin);
 
         // Вычисление ожидаемого результата для игрока Creator
         double expectedScoreCreator = 1 / (1 + Math.pow(10, (oldOpponentRating - oldCreatorRating) / 400.0));
