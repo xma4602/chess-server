@@ -1,49 +1,10 @@
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 колонки */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Адаптивные колонки */
   grid-template-rows: repeat(4, 1fr); /* 4 строки */
   gap: 16px; /* Промежуток между плитками */
-  width: 40%; /* Ширина сетки 40% */
+  width: 100%; /* Ширина сетки 100% */
+  max-width: 50%; /* Максимальная ширина сетки */
   margin: 0 auto; /* Центрирование сетки на странице */
+  padding: 0 16px; /* Отступы по бокам */
 }
-.profile-container {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  display: flex;
-  flex-direction: column; /* Вертикальное выравнивание */
-  align-items: center; /* Центрирование содержимого */
-  cursor: pointer;
-  z-index: 1000; /* Убедитесь, что профиль отображается поверх других элементов */
-}
-
-.profile-info {
-  display: flex; /* Горизонтальное выравнивание */
-  align-items: center; /* Центрирование по вертикали */
-}
-
-.avatar {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-}
-
-.username {
-  margin-right: 8px; /* Изменено на margin-right для правильного отступа */
-  font-size: 24px;
-  font-weight: bold;
-}
-
-.logout-button {
-  color: black; /* Белый текст */
-  border: none; /* Без границы */
-  padding: 10px 15px; /* Отступы */
-  cursor: pointer; /* Указатель при наведении */
-  border-radius: 5px; /* Закругленные углы */
-  margin-top: 8px; /* Отступ сверху для кнопки */
-}
-
-.logout-button:hover {
-  background-color: #d32f2f; /* Темнее при наведении */
-}
-

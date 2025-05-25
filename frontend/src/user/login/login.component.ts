@@ -6,6 +6,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {User} from '../user';
 
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+import {NgIf} from '@angular/common';
 
 
 @Component({
@@ -13,7 +14,8 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
   standalone: true,
   imports: [
     RouterLink,
-    FormsModule
+    FormsModule,
+    NgIf
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
@@ -22,6 +24,7 @@ export class LoginComponent {
   @Input() login?: string;
   @Input() password?: string;
   public returnUrl: string = '/';
+  dev: boolean = false;
 
   constructor(private router: Router,
               private route: ActivatedRoute,

@@ -49,7 +49,7 @@ export class GamePlayService {
       .set('userId', userId);
     return this.requestService.put<void>(`${restGamePlay}/${gameId}/draw/response`, result, params)
   }
-  surrender(gameId: string, userId: string) {
+  resign(gameId: string, userId: string) {
     const params = new HttpParams()
       .set('userId', userId);
     return this.requestService.put<void>(`${restGamePlay}/${gameId}/surrender`, {}, params)

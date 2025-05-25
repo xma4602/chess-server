@@ -45,7 +45,7 @@
 
     <div class="button-container">
       <button class="action-button" (click)="offerDraw()">Предложить ничью</button>
-      <button class="action-button" (click)="surrender()">Сдаться</button>
+      <button class="action-button" (click)="resign()">Сдаться</button>
     </div>
     <div class="moves-table">
       <table *ngIf="gamePlay && gamePlay!.madeActions">
@@ -67,11 +67,5 @@
     </div>
   </div>
 
-</div>
-<div class="profile-container">
-  <div class="profile-info">
-    <span class="username">{{ userService.user!.login }}</span>
-    <app-user-avatar [user]="userService.user"/>
-  </div>
 </div>
 

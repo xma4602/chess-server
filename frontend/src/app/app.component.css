@@ -1,11 +1,73 @@
+.header-container {
+  display: flex;
+  justify-content: space-between; /* Распределение пространства между логотипом и профилем */
+  align-items: center; /* Центрирование по вертикали */
+  position: relative; /* Для абсолютного позиционирования профиля */
+  padding: 10px; /* Отступы вокруг контейнера */
+}
+
 .logo-container {
   display: flex; /* Используем flexbox для расположения элементов */
   flex-direction: column; /* Располагаем элементы в колонку */
   align-items: center; /* Центрируем элементы по горизонтали */
   justify-content: center; /* Центрируем элементы по вертикали (если нужно) */
+  margin: auto; /* Центрирование логотипа */
+  padding-left: 150px;
 }
 
 .logo {
   height: 4em; /* Установите высоту логотипа */
   margin-bottom: 20px; /* Отступ между логотипом и содержимым */
+}
+
+.profile-container {
+  display: flex;
+  flex-direction: column; /* Вертикальное выравнивание */
+  align-items: center; /* Центрирование содержимого */
+  cursor: pointer;
+  z-index: 1000; /* Убедитесь, что профиль отображается поверх других элементов */
+}
+
+.profile-info {
+  display: flex; /* Горизонтальное выравнивание */
+  align-items: center; /* Центрирование по вертикали */
+}
+
+.logout-button {
+  color: black; /* Черный текст */
+  border: none; /* Без границы */
+  padding: 10px 15px; /* Отступы */
+  cursor: pointer; /* Указатель при наведении */
+  border-radius: 5px; /* Закругленные углы */
+  margin-top: 8px; /* Отступ сверху для кнопки */
+}
+
+.logout-button:hover {
+  background-color: #d32f2f; /* Темнее при наведении */
+}
+
+.users-button {
+  color: black; /* Черный текст */
+  border: none; /* Без границы */
+  padding: 10px 15px; /* Отступы */
+  cursor: pointer; /* Указатель при наведении */
+  border-radius: 5px; /* Закругленные углы */
+  margin-top: 8px; /* Отступ сверху для кнопки */
+}
+
+.users-button:hover {
+  background-color: #3a70fa; /* Темнее при наведении */
+}
+
+
+.avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+}
+
+.username {
+  margin-right: 8px; /* Изменено на margin-right для правильного отступа */
+  font-size: 24px;
+  font-weight: bold;
 }

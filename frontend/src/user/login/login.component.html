@@ -5,7 +5,7 @@
   <button type="submit">Login</button>
 </form>
 <p>У вас нет аккаунта? <a [routerLink]="['/register']" [queryParams]="{ returnUrl: returnUrl }">Зарегистрироваться</a></p>
-<div class="span-container">
+<div *ngIf="this.dev" class="span-container">
   <span class="transparent-square" (click)="crackLogin1()">1</span>
   <span class="transparent-square" (click)="crackLogin2()">2</span>
   <span class="transparent-square" (click)="crackLoginAdmin()">A</span>

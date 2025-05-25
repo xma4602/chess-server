@@ -3,7 +3,7 @@
   <tr>
     <th>Логин</th>
     <th>Рейтинг</th>
-    <th>Роли</th>
+    <th>Роль</th>
     <th>Действия</th>
   </tr>
   </thead>
@@ -13,8 +13,8 @@
     <td>{{ user.rating }}</td>
     <td>{{ user.roles.join(', ') }}</td>
     <td>
-      <button *ngIf="user.id !== currentUser.id" class="edit" (click)="editUser(user)">Edit</button>
-      <button *ngIf="user.id !== currentUser.id" class="delete" (click)="deleteUser(user.id)">Delete</button>
+      <button *ngIf="user.id !== currentUser.id" class="edit" (click)="editUser(user)">Редактировать</button>
+      <button *ngIf="user.id !== currentUser.id" class="delete" (click)="deleteUser(user.id)">Удалить</button>
     </td>
   </tr>
   </tbody>

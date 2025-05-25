@@ -1,6 +1,16 @@
-<div class="logo-container">
-  <a routerLink="/">
-    <img src="assets/logo_long.png" alt="Logo" class="logo"/>
-  </a>
+<div class="header-container">
+  <div class="logo-container">
+    <a routerLink="/">
+      <img src="assets/logo_long.png" alt="Logo" class="logo"/>
+    </a>
+  </div>
+  <div *ngIf="profileVisible()" class="profile-container">
+    <div class="profile-info" (click)="openProfile()">
+      <span class="username">{{ getUser().login }}</span>
+      <app-user-avatar [user]="getUser()"/>
+    </div>
+    <button *ngIf="isMain()" (click)="logout()" class="logout-button">Выйти</button>
+    <button *ngIf="isAdmin()" (click)="navigateToUserList()" class="users-button">Пользователи</button>
+  </div>
 </div>
 <router-outlet></router-outlet>

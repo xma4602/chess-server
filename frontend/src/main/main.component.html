@@ -2,20 +2,7 @@
   <app-tile *ngFor="let game of gameConditionsList"
             [title]="game.getTileTitle()"
             [subtitle]="game.getTileSubtitle()"
-            [gameConditions]="game"
-  />
+            [gameConditions]="game"/>
   <app-tile [title]="'Своя игра'"
             [gameConditions]="myGame"/>
 </div>
-
-
-
-<div class="profile-container">
-  <div class="profile-info" (click)="openProfile()">
-    <span class="username">{{ currentUser.login }}</span>
-    <app-user-avatar [user]="currentUser"/>
-  </div>
-  <button (click)="logout()" class="logout-button">Выйти</button>
-  <button *ngIf="isAdmin()" (click)="navigateToUserList()">Пользователи</button>
-</div>
-
