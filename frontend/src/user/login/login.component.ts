@@ -24,7 +24,7 @@ export class LoginComponent {
   @Input() login?: string;
   @Input() password?: string;
   public returnUrl: string = '/';
-  dev: boolean = true;
+  dev: boolean = false;
 
   constructor(private router: Router,
               private route: ActivatedRoute,
