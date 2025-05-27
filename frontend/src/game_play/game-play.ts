@@ -2,17 +2,12 @@ import {GameConditions} from '../game_conditions/game-conditions'
 import {GameAction} from './game-action';
 
 export class GameState {
-  private constructor(public readonly code: string,
-                      public readonly whiteWin: boolean,
-                      public readonly title: string) {}
-
-  getWhiteWin() {
-    return this.whiteWin;
-  }
-
-  getBlackWin() {
-    return !this.whiteWin; // Если белые не выиграли, значит выиграли черные
-  }
+  private constructor(
+    public readonly code: string,
+    public readonly whiteWin: boolean,
+    public readonly blackWin: boolean,
+    public readonly title: string
+  ) {}
 
   static fromCode(code: string) {
     for (const state of [
@@ -32,16 +27,16 @@ export class GameState {
     return null;
   }
 
-  static readonly DRAW = new GameState('DRAW', false, 'Ничья');
-  static readonly CONTINUES = new GameState('CONTINUES', false, 'Игра продолжается');
-  static readonly BLACK_WIN_CHECKMATE = new GameState('BLACK_WIN_CHECKMATE', false, 'Черные выиграли матом');
-  static readonly WHITE_WIN_CHECKMATE = new GameState('WHITE_WIN_CHECKMATE', true, 'Белые выиграли матом');
-  static readonly BLACK_WIN_STALEMATE = new GameState('BLACK_WIN_STALEMATE', false, 'Черные выиграли патом');
-  static readonly WHITE_WIN_STALEMATE = new GameState('WHITE_WIN_STALEMATE', true, 'Белые выиграли патом');
-  static readonly BLACK_WIN_RESIGN = new GameState('BLACK_WIN_RESIGN', false, 'Черные выиграли по сдаче');
-  static readonly WHITE_WIN_RESIGN = new GameState('WHITE_WIN_RESIGN', true, 'Белые выиграли по сдаче');
-  static readonly WHITE_WIN_TIME_OUT = new GameState('WHITE_WIN_TIME_OUT', true, 'Белые выиграли по истечению времени');
-  static readonly BLACK_WIN_TIME_OUT = new GameState('BLACK_WIN_TIME_OUT', false, 'Черные выиграли по истечению времени');
+  static readonly DRAW = new GameState('DRAW', false, false, 'Ничья');
+  static readonly CONTINUES = new GameState('CONTINUES', false, false, 'Игра продолжается');
+  static readonly BLACK_WIN_CHECKMATE = new GameState('BLACK_WIN_CHECKMATE', false, true, 'Черные поставили мат');
+  static readonly WHITE_WIN_CHECKMATE = new GameState('WHITE_WIN_CHECKMATE', true, false, 'Белые поставили мат');
+  static readonly BLACK_WIN_STALEMATE = new GameState('BLACK_WIN_STALEMATE', false, false, 'Черные поставили пат');
+  static readonly WHITE_WIN_STALEMATE = new GameState('WHITE_WIN_STALEMATE', false, false, 'Белые поставили пат');
+  static readonly BLACK_WIN_RESIGN = new GameState('BLACK_WIN_RESIGN', false, true, 'Черные сдались');
+  static readonly WHITE_WIN_RESIGN = new GameState('WHITE_WIN_RESIGN', true, false, 'Белые сдались');
+  static readonly WHITE_WIN_TIME_OUT = new GameState('WHITE_WIN_TIME_OUT', true, false, 'Белые просрочили время');
+  static readonly BLACK_WIN_TIME_OUT = new GameState('BLACK_WIN_TIME_OUT', false, true, 'Черные просрочили время');
 }
 
 

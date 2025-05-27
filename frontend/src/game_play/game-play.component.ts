@@ -156,7 +156,7 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
 
   private startTimers() {
     // Убедитесь, что таймеры инициализированы
-    if (this.creatorTimer && this.opponentTimer && this.gamePlay) {
+    if (this.creatorTimer && this.opponentTimer && this.gamePlay && this.gamePlay.gameState.code === GameState.CONTINUES.code) {
       if (this.gamePlay.gameConditions.timeControl.code === TimeControl.WATCH.code) {
         const partyTime = this.gamePlay.gameConditions.partyTime * 60;
         this.creatorTimer.startTimer(this.gamePlay.id, this.gamePlay.creatorId, partyTime,
@@ -326,15 +326,16 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
 
       const figureColor = this.getFigureColorForCurrentUser();
       const isWhite = figureColor.code === FigureColor.WHITE.code;
-      const isWin = (isWhite && gameState.getWhiteWin()) || (!isWhite && gameState.getBlackWin());
+      const isWin = (isWhite && gameState.whiteWin) || (!isWhite && gameState.blackWin);
 
       const isDraw = gameState === GameState.DRAW;
-
       const title = `Игра окончена! ${isDraw ? '' : isWin ? 'Вы победили!' : 'Вы проиграли!'}`;
+      const message = isDraw ? 'Вы согласились на ничью' : gameState.title;
+
       this.dialog.open(ConfirmDialogComponent, {
         data: {
           title: title,
-          message: gameState.title
+          message: message
         }
       });
     }
@@ -384,4 +385,5 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
   protected readonly FigureColor = FigureColor;
 
   protected readonly Math = Math;
+  protected readonly GameState = GameState;
 }

@@ -18,7 +18,7 @@ input[type="range"] {
 
 .button-active {
   transform: scale(1.1); /* Уменьшено увеличение размера */
-  background-color: green; /* Цвет активной кнопки */
+  background-color: #887259; /* Цвет активной кнопки */
   color: white; /* Цвет текста активной кнопки */
 }
 

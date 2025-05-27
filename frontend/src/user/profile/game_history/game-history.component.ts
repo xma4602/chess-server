@@ -41,31 +41,14 @@ export class GameHistoryComponent {
       this.gameHistory.gameConditions.creatorFigureColor :
       this.gameHistory.gameConditions.creatorFigureColor.reverseValue();
 
-    switch (this.gameHistory.gameState) {
-      case GameState.DRAW:
-        return 'Ничья'
-      case GameState.WHITE_WIN_CHECKMATE:
-        return userFigureColor.code === FigureColor.WHITE.code ?
-          'Мат черным' :
-          'Мат белым'
-      case GameState.BLACK_WIN_CHECKMATE:
-        return userFigureColor.code === FigureColor.BLACK.code ?
-          'Мат белым' :
-          'Мат черным'
-      case GameState.WHITE_WIN_RESIGN:
-        return 'Черные сдались'
-      case GameState.BLACK_WIN_RESIGN:
-        return 'Белые сдались'
-      case GameState.WHITE_WIN_TIME_OUT:
-        return 'Черные проиграли по времени'
-      case GameState.BLACK_WIN_TIME_OUT:
-        return 'Белые проиграли по времени'
-      case GameState.WHITE_WIN_STALEMATE:
-        return 'Пат черным'
-      case GameState.BLACK_WIN_STALEMATE:
-        return 'Пат белым'
-      default:
-        return 'Игра продолжается'
+    const gameState = this.gameHistory.gameState; // Предполагается, что stateCode хранит код состояния игры
+
+    if (gameState.whiteWin) {
+      return userFigureColor.code === FigureColor.WHITE.code ? "Вы выиграли" : "Вы проиграли";
+    } else if (gameState.blackWin) {
+      return userFigureColor.code === FigureColor.BLACK.code ? "Вы выиграли" : "Вы проиграли";
+    } else {
+      return "Ничья";
     }
   }
 

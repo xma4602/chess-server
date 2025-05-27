@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, Output} from '@angular/core';
 import {UserService} from '../user-service';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {FormsModule} from '@angular/forms';
@@ -24,7 +24,7 @@ export class LoginComponent {
   @Input() login?: string;
   @Input() password?: string;
   public returnUrl: string = '/';
-  dev: boolean = false;
+  dev: boolean = true;
 
   constructor(private router: Router,
               private route: ActivatedRoute,
