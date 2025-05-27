@@ -70,12 +70,33 @@ public class King extends Figure {
                     && figure.isNotMoved()
                     && board.hasAllNone(getCastlingPathPositions(kingPosition, isRight))
                     && hasNotEatKingActions(board, kingPosition, figureColor.reverseColor())
+                    && hasNotEatKingPath(board, List.of(getCastlingPathPositions(kingPosition, isRight)), figureColor.reverseColor())
             ) {
                 return new ActionCastling(kingPosition, rookPosition);
             }
         }
 
         return null;
+    }
+
+    private boolean hasNotEatKingPath(Board board, List<Position> castlingPathPositions, FigureColor opponentFigureColor) {
+        List<Position> positions = board.getFigurePositionsByColor(opponentFigureColor);
+        for (Position position : positions) {
+            Figure figure = board.getFigureByPosition(position);
+            List<Action> actions = figure.getEatActions(board, position);
+            for (Action action : actions) {
+                if (action instanceof ActionMove actionMove) {
+                    if (castlingPathPositions.contains(actionMove.getEndPosition())) {
+                        return false;
+                    }
+                } else if (action instanceof ActionEat actionEat) {
+                    if (castlingPathPositions.contains(actionEat.getEatenPosition())) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     public static boolean hasNotEatKingActions(Board board, Position kingPosition, FigureColor opponentFigureColor) {
