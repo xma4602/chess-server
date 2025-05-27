@@ -1,5 +1,5 @@
 .game-conditions {
-  max-width: 40%;
+  max-width: 50%;
   margin: auto;
   text-align: center;
   display: flex;
@@ -46,3 +46,16 @@ h3 {
 label {
   font-size: 0.9em; /* Уменьшен размер шрифта для меток */
 }
+.create-button {
+  color: black; /* Черный текст */
+  border: 1px black solid; /* Без границы */
+  padding: 10px 15px; /* Отступы */
+  cursor: pointer; /* Указатель при наведении */
+  border-radius: 5px; /* Закругленные углы */
+  margin-top: 8px; /* Отступ сверху для кнопки */
+}
+
+.create-button:hover {
+  background-color: #3a70fa; /* Темнее при наведении */
+}
+

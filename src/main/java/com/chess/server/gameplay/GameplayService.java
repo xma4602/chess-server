@@ -190,8 +190,7 @@ public class GameplayService {
         FigureColor playerColor = getPlayerColor(userId, gameplay);
 
         if (gameplay.getGameEngine().getGameState() == GameState.CONTINUES) {
-            gameplay.getGameEngine().setGameState(playerColor == FigureColor.WHITE ?
-                    GameState.BLACK_WIN : GameState.WHITE_WIN);
+            gameplay.getGameEngine().makeTimeOut(playerColor);
             checkGameOver(gameplay);
             return Optional.of(toGamePlayDto(gameplay));
         } else {
@@ -215,7 +214,7 @@ public class GameplayService {
         GamePlay gameplay = getGameplay(gameId);
 
         if (result) {
-            gameplay.getGameEngine().setGameState(GameState.DRAW);
+            gameplay.getGameEngine().makeDraw();
             checkGameOver(gameplay);
 
             return toGamePlayDto(gameplay);
@@ -225,13 +224,10 @@ public class GameplayService {
         }
     }
 
-    public GamePlayDto surrender(UUID gameId, UUID userId) {
+    public GamePlayDto resign(UUID gameId, UUID userId) {
         GamePlay gameplay = getGameplay(gameId);
-
         FigureColor playerColor = getPlayerColor(userId, gameplay);
-
-        gameplay.getGameEngine().setGameState(playerColor == FigureColor.WHITE ?
-                GameState.BLACK_WIN : GameState.WHITE_WIN);
+        gameplay.getGameEngine().makeResign(playerColor);
 
         gameplay = gameplayRepository.save(gameplay);
 

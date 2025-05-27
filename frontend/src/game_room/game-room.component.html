@@ -24,7 +24,10 @@
 
   <div class="invite-link">
     <h3>Чтобы пригласить друга, отправьте ему эту ссылку:</h3>
-    <a [href]="gameRoom.getLink()" target="_blank">{{ gameRoom.getLink() }}</a>
+    <div class="link-container">
+      <a [href]="gameRoom.getLink()" target="_blank" class="invite-link-text" #linkElement>{{ gameRoom.getLink() }}</a>
+      <button (click)="copyLink()">Скопировать ссылку</button>
+    </div>
   </div>
 
   <div class="buttons" *ngIf="gameRoom!.creatorId === userService.user!.id">

@@ -17,11 +17,12 @@
     </div>
   </ng-template>
 
-  <div>
+  <div class="history-container">
     <h3>История игр:</h3>
     <div class="game-histories" *ngIf="this.histories && this.histories.length > 0">
       <app-game-history *ngFor="let history of histories" [gameHistory]="history"></app-game-history>
     </div>
   </div>
+
 
 </div>

@@ -70,7 +70,7 @@ export class GameRoomComponent implements OnInit {
     }).afterClosed().subscribe(
       () => {
         console.log('Игровая комната закрыта'); // Логируем закрытие комнаты
-        this.router.navigate(['']); // Перенаправляем на главную страницу
+        this.router.navigate(['main']); // Перенаправляем на главную страницу
       },
       (error) => {
         console.error('Ошибка при закрытии диалога:', error); // Логируем ошибку при закрытии диалога
@@ -133,6 +133,15 @@ export class GameRoomComponent implements OnInit {
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
       duration: 3000, // Время отображения в миллисекундах
+    });
+  }
+
+  copyLink() {
+    const link = this.gameRoom.getLink();
+    navigator.clipboard.writeText(link).then(() => {
+      this.openSnackBar('Ссылка скопирована в буфер обмена!', 'Close');
+    }).catch(err => {
+      console.error('Ошибка при копировании ссылки: ', err);
     });
   }
 }

@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {NgForOf, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {GamePlay, GameState} from './game-play';
 import {IMessage} from '@stomp/stompjs';
 import {ChessCellComponent} from './chess-cell/chess-cell.component';
@@ -19,14 +19,12 @@ import {ChessPieceDialogComponent} from './chess-select/ chess-piece-dialog.comp
 import {CountdownTimerComponent} from './timer/countdown-timer.component';
 import {ChoiceDialogComponent} from './dialog-choice/choice-dialog.component';
 
-import {UserAvatarComponent} from '../user/avatar/user-avatar.component';
-
 @Component({
   selector: 'app-game-play',
   standalone: true,
   templateUrl: './game-play.component.html',
   styleUrls: ['./game-play.component.css'],
-  imports: [FormsModule, NgForOf, ChessCellComponent, NgIf, ChatComponent, CountdownTimerComponent, UserAvatarComponent],
+  imports: [FormsModule, NgForOf, ChessCellComponent, NgIf, ChatComponent, CountdownTimerComponent],
 })
 export class GamePlayComponent implements OnInit, AfterViewInit {
   @ViewChildren(ChessCellComponent) cells!: QueryList<ChessCellComponent>;
@@ -36,8 +34,7 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
   public gamePlay: GamePlay | null = null
   private selectedCell: ChessCellComponent | null = null;
 
-  constructor(private router: Router,
-              private route: ActivatedRoute,
+  constructor(private route: ActivatedRoute,
               public userService: UserService,
               private gamePlayService: GamePlayService,
               private stompService: StompService,
@@ -142,7 +139,7 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
   }
 
   // Логика для сдачи
-  surrender() {
+  resign() {
     console.log('Сдаться');
 
     this.dialog.open(ChoiceDialogComponent, {
@@ -151,7 +148,7 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
     }).afterClosed().subscribe((result: boolean) => {
       console.log('Диалог закрыт, результат:', result);
       if (result) {
-        this.gamePlayService.surrender(this.gamePlay!.id, this.userService.user!.id)
+        this.gamePlayService.resign(this.gamePlay!.id, this.userService.user!.id)
           .subscribe(console.log, console.error)
       }
     });
@@ -259,17 +256,18 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
 
   private getActionsForCurrentUser() {
     if (this.gamePlay!.activeUserId !== this.userService.user?.id) {
-      return []
-    } else {
-      const figureColor = this.getFigureColorForActiveUser();
-      return figureColor.code === FigureColor.WHITE.code ?
-        this.gamePlay!.whiteActions : this.gamePlay!.blackActions
+      return [];
     }
+
+    const figureColor = this.getFigureColorForActiveUser();
+    return figureColor.code === FigureColor.WHITE.code ? this.gamePlay!.whiteActions : this.gamePlay!.blackActions;
   }
+
 
   private findActionsForCurrentUser(selectedCell: ChessCellComponent) {
     const actions: GameAction[] = []
-    for (let action of this.getActionsForCurrentUser()) {
+    const actionsForCurrentUser = this.getActionsForCurrentUser();
+    for (let action of actionsForCurrentUser) {
       if (action.startPosition === selectedCell.id) {
         actions.push(action)
       }
@@ -286,32 +284,29 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
   }
 
   private viewAction(action: GameAction) {
+    const moveCell = this.cells.find(cell => cell.id === action.endPosition);
+    const eatenCell = action.eatenPosition ? this.cells.find(cell => cell.id === action.eatenPosition) : null;
+
     switch (action.actionType) {
-      case ActionType.MOVE: {
-        const moveCell = this.cells.find(cell => cell.id === action.endPosition);
-        moveCell!.isMove = true;
-      }
-        break;
-      case ActionType.EAT: {
-        const eatenCell = this.cells.find(cell => cell.id === action.eatenPosition);
-        eatenCell!.isEat = true;
-      }
-        break;
-      case ActionType.TAKING: {
-        const eatenCell = this.cells.find(cell => cell.id === action.eatenPosition);
-        const moveCell = this.cells.find(cell => cell.id === action.endPosition);
-        moveCell!.isMove = true;
-        eatenCell!.isEat = true;
-      }
-        break;
+      case ActionType.MOVE:
       case ActionType.CASTLING: {
-          const moveCell = this.cells.find(cell => cell.id === action.endPosition);
-          moveCell!.isMove = true;
-      }
+        moveCell!.isMove = true;
         break;
+      }
+      case ActionType.EAT: {
+        if (eatenCell) {
+          eatenCell!.isEat = true;
+        }
+        break;
+      }
+      case ActionType.TAKING: {
+        if (moveCell) moveCell!.isMove = true;
+        if (eatenCell) eatenCell!.isEat = true;
+        break;
+      }
       case ActionType.SWAP: {
-        const moveCell = this.cells.find(cell => cell.id === action.endPosition);
-        moveCell!.isSwap = true;
+        if (moveCell) moveCell!.isSwap = true;
+        break;
       }
     }
   }
@@ -324,49 +319,27 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
 
   private checkGameEnd() {
     const gameState = this.gamePlay!.gameState;
-    if (gameState !== GameState.CONTINUES) {
-      this.opponentTimer.stopTimer()
-      this.creatorTimer.stopTimer()
-      const figureColor = this.getFigureColorForCurrentUser()
 
-      switch (gameState) {
-        case GameState.BLACK_WIN:
-        case GameState.WHITE_WIN: {
-          if ((figureColor.code === FigureColor.WHITE.code && gameState === GameState.WHITE_WIN)
-            || (figureColor.code === FigureColor.BLACK.code && gameState === GameState.BLACK_WIN)) {
-            this.dialog.open(ConfirmDialogComponent, {
-              data: {
-                title: 'Игра окончена!',
-                message: 'Вы победили!'
-              }
-            }).afterClosed().subscribe(
-              () => this.router.navigate(['']), console.error
-            )
-          } else {
-            this.dialog.open(ConfirmDialogComponent, {
-              data: {
-                title: 'Игра окончена!',
-                message: 'Вы проиграли!'
-              }
-            }).afterClosed().subscribe(
-              () => this.router.navigate(['']), console.error
-            )
-          }
+    if (gameState !== GameState.CONTINUES) {
+      this.opponentTimer.stopTimer();
+      this.creatorTimer.stopTimer();
+
+      const figureColor = this.getFigureColorForCurrentUser();
+      const isWhite = figureColor.code === FigureColor.WHITE.code;
+      const isWin = (isWhite && gameState.getWhiteWin()) || (!isWhite && gameState.getBlackWin());
+
+      const isDraw = gameState === GameState.DRAW;
+
+      const title = `Игра окончена! ${isDraw ? '' : isWin ? 'Вы победили!' : 'Вы проиграли!'}`;
+      this.dialog.open(ConfirmDialogComponent, {
+        data: {
+          title: title,
+          message: gameState.title
         }
-          break;
-        case GameState.DRAW: {
-          this.dialog.open(ConfirmDialogComponent, {
-            data: {
-              title: 'Игра окончена!',
-              message: 'Ничья!'
-            }
-          }).afterClosed().subscribe(
-            () => this.router.navigate(['']), console.error
-          )
-        }
-      }
+      });
     }
   }
+
 
   private getFigureColorForActiveUser() {
     return this.gamePlay!.creatorId === this.gamePlay!.activeUserId ?

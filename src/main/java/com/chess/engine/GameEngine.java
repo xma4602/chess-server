@@ -33,10 +33,6 @@ public class GameEngine implements Serializable {
 
     // Game State -------------------------------------------------------------------------------
 
-    public void setGameState(GameState gameState) {
-        this.gameState = gameState;
-    }
-
     public GameState getGameState() {
         return gameState;
     }
@@ -127,12 +123,19 @@ public class GameEngine implements Serializable {
         throw new ChessEngineIllegalArgumentException("Игрок не может сделать такой ход");
     }
 
-    public void makeDefeat(boolean playerColor) {
-        gameState = playerColor ? GameState.BLACK_WIN : GameState.WHITE_WIN;
+    public void makeResign(FigureColor figureColor) {
+        gameState = figureColor.isWhite() ? GameState.BLACK_WIN_RESIGN : GameState.WHITE_WIN_RESIGN;
+        whiteActions = blackActions = Collections.emptyList();
+    }
+
+    public void makeTimeOut(FigureColor figureColor) {
+        gameState = figureColor.isWhite() ? GameState.BLACK_WIN_TIME_OUT : GameState.WHITE_WIN_TIME_OUT;
+        whiteActions = blackActions = Collections.emptyList();
     }
 
     public void makeDraw() {
         gameState = GameState.DRAW;
+        whiteActions = blackActions = Collections.emptyList();
     }
 
     // game inner operations ---------------------------------------------------------------------------------
@@ -162,10 +165,11 @@ public class GameEngine implements Serializable {
 
         if (currentActions.isEmpty()) {
             if (CheckmateResolver.notContainsAttackOnKing(opponentActions, kingPosition)) {
-                gameState = GameState.DRAW;
+                gameState = (activePlayerColor == FigureColor.WHITE) ? GameState.BLACK_WIN_STALEMATE : GameState.WHITE_WIN_STALEMATE;
             } else {
-                gameState = (activePlayerColor == FigureColor.WHITE) ? GameState.BLACK_WIN : GameState.WHITE_WIN;
+                gameState = (activePlayerColor == FigureColor.WHITE) ? GameState.BLACK_WIN_CHECKMATE : GameState.WHITE_WIN_CHECKMATE;
             }
+            whiteActions = blackActions = Collections.emptyList();
         } else {
             gameState = GameState.CONTINUES;
         }

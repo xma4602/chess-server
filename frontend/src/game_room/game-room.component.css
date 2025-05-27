@@ -17,6 +17,18 @@
 .invite-link {
   margin: 20px 0;
 }
+.link-container {
+  display: flex; /* Используем Flexbox для выравнивания элементов */
+  align-items: center; /* Выравниваем по центру по вертикали */
+}
+
+.invite-link-text {
+  flex: 1; /* Ссылка занимает оставшееся пространство */
+  overflow: hidden; /* Обрезаем текст, если он выходит за пределы */
+  white-space: nowrap; /* Запрещаем перенос строк */
+  text-overflow: fade; /* Добавляем многоточие в конце обрезанного текста */
+  margin-right: 10px; /* Отступ между ссылкой и кнопкой */
+}
 
 input {
   width: 100%;

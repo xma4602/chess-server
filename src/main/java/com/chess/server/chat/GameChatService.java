@@ -18,7 +18,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class GameChatService {
 
-    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy mm:HH");
+    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
     private final GameChatRepository gameChatRepository;
     private final UserRepository userRepository;

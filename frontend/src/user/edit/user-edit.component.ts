@@ -41,7 +41,7 @@ export class UserEditComponent implements OnInit {
           message: 'Вы будете перенаправлены на начальный экран'
         }
       }).afterClosed().subscribe(
-        () => this.router.navigate(['']), console.error
+        () => this.router.navigate(['main']), console.error
       )
     } else {
       const userId = this.route.snapshot.paramMap.get('id');

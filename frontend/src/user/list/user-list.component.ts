@@ -38,7 +38,7 @@ export class UserListComponent implements OnInit {
           message: 'Вы будете перенаправлены на начальный экран'
         }
       }).afterClosed().subscribe(
-        () => this.router.navigate(['']), console.error
+        () => this.router.navigate(['main']), console.error
       )
     }
   }
@@ -57,7 +57,7 @@ export class UserListComponent implements OnInit {
   }
 
   deleteUser(userId: string): void {
-    if (confirm('Are you sure you want to delete this user?')) {
+    if (confirm('Вы уверены что хотите удалить пользователя?')) {
       this.userService.deleteUser(userId).subscribe(() => {
         this.loadUsers(); // Обновляем список пользователей после удаления
       });

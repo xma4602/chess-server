@@ -37,21 +37,38 @@ export class GameHistoryComponent {
 
   getGameState() {
     const userLogin = this.userService.user!.login!;
-    const userFigureColor = this.gameHistory.creatorLogin == userLogin ?
-      this.gameHistory.gameConditions.creatorFigureColor : this.gameHistory.gameConditions.creatorFigureColor.reverseValue()
-    const gameState = this.gameHistory.gameState;
+    const userFigureColor = this.gameHistory.creatorLogin === userLogin ?
+      this.gameHistory.gameConditions.creatorFigureColor :
+      this.gameHistory.gameConditions.creatorFigureColor.reverseValue();
 
-    if (gameState === GameState.DRAW) {
-      return 'Ничья'
-    } else if (
-      (userFigureColor.code === FigureColor.WHITE.code && gameState === GameState.WHITE_WIN) ||
-      (userFigureColor.code === FigureColor.BLACK.code && gameState === GameState.BLACK_WIN)
-    ) {
-      return 'Вы победили'
-    } else {
-      return 'Вы проиграли'
+    switch (this.gameHistory.gameState) {
+      case GameState.DRAW:
+        return 'Ничья'
+      case GameState.WHITE_WIN_CHECKMATE:
+        return userFigureColor.code === FigureColor.WHITE.code ?
+          'Мат черным' :
+          'Мат белым'
+      case GameState.BLACK_WIN_CHECKMATE:
+        return userFigureColor.code === FigureColor.BLACK.code ?
+          'Мат белым' :
+          'Мат черным'
+      case GameState.WHITE_WIN_RESIGN:
+        return 'Черные сдались'
+      case GameState.BLACK_WIN_RESIGN:
+        return 'Белые сдались'
+      case GameState.WHITE_WIN_TIME_OUT:
+        return 'Черные проиграли по времени'
+      case GameState.BLACK_WIN_TIME_OUT:
+        return 'Белые проиграли по времени'
+      case GameState.WHITE_WIN_STALEMATE:
+        return 'Пат черным'
+      case GameState.BLACK_WIN_STALEMATE:
+        return 'Пат белым'
+      default:
+        return 'Игра продолжается'
     }
   }
+
 
   protected readonly FigureColor = FigureColor;
 

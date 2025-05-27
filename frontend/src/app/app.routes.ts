@@ -11,9 +11,9 @@ import {UserEditComponent} from '../user/edit/user-edit.component';
 import {UserProfileComponent} from '../user/profile/user-profile.component';
 
 export const routes: Routes = [
+  {path: "", redirectTo: "main", pathMatch: "full" },
   {path: "login", component: LoginComponent},
   {path: "register", component: RegisterComponent},
-  {path: "", component: MainComponent, canActivate: [AuthGuard]},
   {path: "main", component: MainComponent, canActivate: [AuthGuard]},
   {path: "users", component: UserListComponent, canActivate: [AuthGuard]},
   {path: "users/:id", component: UserEditComponent, canActivate: [AuthGuard]},

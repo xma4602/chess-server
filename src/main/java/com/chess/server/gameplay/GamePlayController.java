@@ -93,8 +93,8 @@ public class GamePlayController {
     }
 
     @PutMapping("/{gameId}/surrender")
-    ResponseEntity<?> surrender(@PathVariable UUID gameId, @RequestParam UUID userId) {
-        GamePlayDto gamePlayDto = gameplayService.surrender(gameId, userId);
+    ResponseEntity<?> resign(@PathVariable UUID gameId, @RequestParam UUID userId) {
+        GamePlayDto gamePlayDto = gameplayService.resign(gameId, userId);
 
         log.info("Game over by surrender: userId={}, gameId={}", userId, gameId);
         String destination = String.format("/topic/games/%s/action", gameId);
