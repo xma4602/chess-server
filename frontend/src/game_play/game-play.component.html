@@ -44,8 +44,8 @@
     </div>
 
     <div class="button-container">
-      <button class="action-button" (click)="offerDraw()">Предложить ничью</button>
-      <button class="action-button" (click)="resign()">Сдаться</button>
+      <button *ngIf="gamePlay!.gameState!.code === GameState.CONTINUES.code" class="action-button" (click)="offerDraw()">Предложить ничью</button>
+      <button *ngIf="gamePlay!.gameState!.code === GameState.CONTINUES.code" class="action-button" (click)="resign()">Сдаться</button>
     </div>
     <div class="moves-table">
       <table *ngIf="gamePlay && gamePlay!.madeActions">

@@ -35,7 +35,7 @@
       class="button"
       [ngClass]="{'button-active': gameConditions.creatorFigureColor === figureColors[0], 'button-inactive': gameConditions.creatorFigureColor !== figureColors[0]}"
       (click)="gameConditions.creatorFigureColor = figureColors[0]">
-      <img src="assets/chess/w_king.png" alt="Белые фигуры" height="80" width="80"/>
+      <img src="assets/white_king.png" alt="Белые фигуры" height="80" width="80"/>
     </button>
     <button
       class="button"
@@ -47,7 +47,7 @@
       class="button"
       [ngClass]="{'button-active': gameConditions.creatorFigureColor === figureColors[1], 'button-inactive': gameConditions.creatorFigureColor !== figureColors[1]}"
       (click)="gameConditions.creatorFigureColor = figureColors[1]">
-      <img src="assets/chess/b_king.png" alt="Черные фигуры" height="80" width="80"/>
+      <img src="assets/black_king.png" alt="Черные фигуры" height="80" width="80"/>
     </button>
   </div>
 

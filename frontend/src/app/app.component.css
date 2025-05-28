@@ -1,31 +1,41 @@
 .header-container {
   display: flex;
+  flex-direction: column; /* Вертикальное расположение элементов */
+  width: 100%; /* Занять всю ширину */
+  padding: 10px; /* Отступы вокруг контейнера */
+  box-sizing: border-box; /* Учитывать отступы и границы в ширине */
+}
+
+.main-container {
+  display: flex;
   justify-content: space-between; /* Распределение пространства между логотипом и профилем */
   align-items: center; /* Центрирование по вертикали */
-  position: relative; /* Для абсолютного позиционирования профиля */
-  padding: 10px; /* Отступы вокруг контейнера */
+  width: 100%; /* Занять всю ширину */
 }
 
 .logo-container {
   display: flex; /* Используем flexbox для расположения элементов */
-  flex-direction: column; /* Располагаем элементы в колонку */
-  align-items: center; /* Центрируем элементы по горизонтали */
-  justify-content: center; /* Центрируем элементы по вертикали (если нужно) */
-  margin: auto; /* Центрирование логотипа */
-  padding-left: 150px;
+  align-items: center; /* Центрируем элементы по вертикали */
+  justify-content: flex-start; /* Левое выравнивание */
 }
 
 .logo {
   height: 4em; /* Установите высоту логотипа */
-  margin-bottom: 20px; /* Отступ между логотипом и содержимым */
+  margin: 0; /* Удалите отступы, если они вызывают переполнение */
 }
 
 .profile-container {
   display: flex;
-  flex-direction: column; /* Вертикальное выравнивание */
   align-items: center; /* Центрирование содержимого */
   cursor: pointer;
-  z-index: 1000; /* Убедитесь, что профиль отображается поверх других элементов */
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end; /* Правое выравнивание кнопок */
+  width: 100%; /* Занять всю ширину */
+  box-sizing: border-box; /* Учитывать отступы в ширине */
+  gap: 10px;
 }
 
 .profile-info {
