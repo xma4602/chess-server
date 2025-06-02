@@ -12,11 +12,14 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ChessBot extends TelegramLongPollingBot {
 
-    private final static String WEB_APP_URL = "https://chess-frontend-wpc3.onrender.com/";
+    private final static String WEB_APP_URL = "https://chessbratchikov.ru/";
     private final static WebAppInfo WEB_APP_INFO = new WebAppInfo(WEB_APP_URL);
+    private final Set<Long> awaitingLinkUsers = new HashSet<>();
 
     public ChessBot() {
     }
@@ -44,9 +47,20 @@ public class ChessBot extends TelegramLongPollingBot {
                                 "Добро пожаловать, нажми на кнопку ниже, чтобы открыть приложение",
                                 "Открыть приложение");
                     }
+                    case "/game" -> {
+                        awaitingLinkUsers.add(userId);
+                        sendText(userId, "Пожалуйста, пришлите ссылку на игру для подключения");
+                    }
                 }
+            } else if (awaitingLinkUsers.contains(userId)) {
+                String url = msg.getText();
+                if (url.startsWith("https://")) {
+                    sendWebAppButton(userId, "Открыть игру", url);
+                } else {
+                    sendText(userId, "Пожалуйста, отправь корректную ссылку, начинающуюся с https://");
+                }
+                awaitingLinkUsers.remove(userId);
             }
-            return;
         }
     }
 
@@ -61,6 +75,36 @@ public class ChessBot extends TelegramLongPollingBot {
             throw new RuntimeException(e);
         }
     }
+
+    public void sendWebAppButton(Long who, String textForButton, String url) {
+        WebAppInfo customWebApp = new WebAppInfo(url);
+        KeyboardButton button = KeyboardButton.builder()
+                .text(textForButton)
+                .webApp(customWebApp)
+                .build();
+
+        KeyboardRow row = new KeyboardRow();
+        row.add(button);
+
+        ReplyKeyboardMarkup keyboard = ReplyKeyboardMarkup.builder()
+                .keyboard(List.of(row))
+                .resizeKeyboard(true)
+                .oneTimeKeyboard(true)
+                .build();
+
+        SendMessage sm = SendMessage.builder()
+                .chatId(who.toString())
+                .text("Нажми на кнопку ниже, чтобы открыть игру")
+                .replyMarkup(keyboard)
+                .build();
+
+        try {
+            execute(sm);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     public void sendStartMessage(Long who, String what, String textForButton) {
         KeyboardButton button = KeyboardButton.builder()
@@ -94,8 +138,5 @@ public class ChessBot extends TelegramLongPollingBot {
         TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
         ChessBot bot = new ChessBot();
         botsApi.registerBot(bot);
-        bot.sendText(837823253L, "Я проснулся!");
     }
 }
-
-
