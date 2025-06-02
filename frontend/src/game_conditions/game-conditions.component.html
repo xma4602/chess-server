@@ -39,14 +39,14 @@
     </button>
     <button
       class="button"
-      [ngClass]="{'button-active': gameConditions.creatorFigureColor === figureColors[2], 'button-inactive': gameConditions.creatorFigureColor !== figureColors[2]}"
-      (click)="gameConditions.creatorFigureColor = figureColors[2]">
+      [ngClass]="{'button-active': gameConditions.creatorFigureColor === figureColors[1], 'button-inactive': gameConditions.creatorFigureColor !== figureColors[1]}"
+      (click)="gameConditions.creatorFigureColor = figureColors[1]">
       <img src="assets/question.png" alt="Случайный цвет" height="80" width="80"/>
     </button>
     <button
       class="button"
-      [ngClass]="{'button-active': gameConditions.creatorFigureColor === figureColors[1], 'button-inactive': gameConditions.creatorFigureColor !== figureColors[1]}"
-      (click)="gameConditions.creatorFigureColor = figureColors[1]">
+      [ngClass]="{'button-active': gameConditions.creatorFigureColor === figureColors[2], 'button-inactive': gameConditions.creatorFigureColor !== figureColors[2]}"
+      (click)="gameConditions.creatorFigureColor = figureColors[2]">
       <img src="assets/black_king.png" alt="Черные фигуры" height="80" width="80"/>
     </button>
   </div>
