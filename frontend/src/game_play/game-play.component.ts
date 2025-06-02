@@ -28,8 +28,8 @@ import {ChoiceDialogComponent} from './dialog-choice/choice-dialog.component';
 })
 export class GamePlayComponent implements OnInit, AfterViewInit {
   @ViewChildren(ChessCellComponent) cells!: QueryList<ChessCellComponent>;
-  @ViewChild('whiteTimer') creatorTimer!: CountdownTimerComponent; // Получаем доступ к таймеру создателя
-  @ViewChild('blackTimer') opponentTimer!: CountdownTimerComponent; // Получаем доступ к таймеру противника
+  @ViewChild('whiteTimer') whiteTimer!: CountdownTimerComponent; // Получаем доступ к таймеру создателя
+  @ViewChild('blackTimer') blackTimer!: CountdownTimerComponent; // Получаем доступ к таймеру противника
 
   public gamePlay: GamePlay | null = null
   private selectedCell: ChessCellComponent | null = null;
@@ -156,24 +156,27 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
 
   private startTimers() {
     // Убедитесь, что таймеры инициализированы
-    if (this.creatorTimer && this.opponentTimer && this.gamePlay && this.gamePlay.gameState.code === GameState.CONTINUES.code) {
+    if (this.whiteTimer && this.blackTimer && this.gamePlay && this.gamePlay.gameState.code === GameState.CONTINUES.code) {
       if (this.gamePlay.gameConditions.timeControl.code === TimeControl.WATCH.code) {
         const partyTime = this.gamePlay.gameConditions.partyTime * 60;
-        this.creatorTimer.startTimer(this.gamePlay.id, this.gamePlay.creatorId, partyTime,
-          () => this.timeout(this.gamePlay!.creatorId));
-        this.opponentTimer.startTimer(this.gamePlay.id, this.gamePlay.opponentId, partyTime,
-          () => this.timeout(this.gamePlay!.opponentId));
 
-        if (this.creatorTimer.userId === this.gamePlay!.activeUserId) {
-          this.creatorTimer.resumeTimer()
-          this.opponentTimer.stopTimer()
+        const creatorFigureColor = this.gamePlay.gameConditions.creatorFigureColor;
+        const whiteUserId = creatorFigureColor.code == FigureColor.WHITE.code ? this.gamePlay.creatorId : this.gamePlay.opponentId;
+        const blackUserId = creatorFigureColor.code == FigureColor.BLACK.code ? this.gamePlay.creatorId : this.gamePlay.opponentId;
+
+        this.whiteTimer.startTimer(this.gamePlay.id, whiteUserId, partyTime, () => this.timeout(whiteUserId));
+        this.blackTimer.startTimer(this.gamePlay.id, blackUserId, partyTime, () => this.timeout(blackUserId));
+
+        if (this.whiteTimer.userId === this.gamePlay!.activeUserId) {
+          this.whiteTimer.resumeTimer()
+          this.blackTimer.stopTimer()
         } else {
-          this.opponentTimer.resumeTimer()
-          this.creatorTimer.stopTimer()
+          this.blackTimer.resumeTimer()
+          this.whiteTimer.stopTimer()
         }
       } else {
-        this.creatorTimer.visible = false
-        this.opponentTimer.visible = false
+        this.whiteTimer.visible = false
+        this.blackTimer.visible = false
 
       }
     } else {
@@ -202,14 +205,14 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
 
   private updateTimers() {
     if (this.gamePlay!.gameConditions.timeControl.code === TimeControl.WATCH.code) {
-      if (this.creatorTimer.userId == this.gamePlay!.activeUserId) {
-        this.creatorTimer.resumeTimer()
-        this.opponentTimer.countdown! += this.gamePlay!.gameConditions.moveTime
-        this.opponentTimer.stopTimer()
+      if (this.whiteTimer.userId == this.gamePlay!.activeUserId) {
+        this.whiteTimer.resumeTimer()
+        this.blackTimer.countdown! += this.gamePlay!.gameConditions.moveTime
+        this.blackTimer.stopTimer()
       } else {
-        this.opponentTimer.resumeTimer()
-        this.creatorTimer.countdown! += this.gamePlay!.gameConditions.moveTime
-        this.creatorTimer.stopTimer()
+        this.blackTimer.resumeTimer()
+        this.whiteTimer.countdown! += this.gamePlay!.gameConditions.moveTime
+        this.whiteTimer.stopTimer()
       }
     }
   }
@@ -321,8 +324,8 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
     const gameState = this.gamePlay!.gameState;
 
     if (gameState !== GameState.CONTINUES) {
-      this.opponentTimer.stopTimer();
-      this.creatorTimer.stopTimer();
+      this.blackTimer.stopTimer();
+      this.whiteTimer.stopTimer();
 
       const figureColor = this.getFigureColorForCurrentUser();
       const isWhite = figureColor.code === FigureColor.WHITE.code;

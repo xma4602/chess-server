@@ -140,5 +140,3 @@ public class ChessBot extends TelegramLongPollingBot {
         botsApi.registerBot(bot);
     }
 }
-
-
