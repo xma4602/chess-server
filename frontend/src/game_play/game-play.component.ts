@@ -205,13 +205,18 @@ export class GamePlayComponent implements OnInit, AfterViewInit {
 
   private updateTimers() {
     if (this.gamePlay!.gameConditions.timeControl.code === TimeControl.WATCH.code) {
-      if (this.whiteTimer.userId == this.gamePlay!.activeUserId) {
-        this.whiteTimer.resumeTimer()
-        this.blackTimer.countdown! += this.gamePlay!.gameConditions.moveTime
-        this.blackTimer.stopTimer()
+      if (this.gamePlay?.gameState!.code === GameState.CONTINUES.code) {
+        if (this.whiteTimer.userId == this.gamePlay!.activeUserId) {
+          this.whiteTimer.resumeTimer()
+          this.blackTimer.countdown! += this.gamePlay!.gameConditions.moveTime
+          this.blackTimer.stopTimer()
+        } else {
+          this.blackTimer.resumeTimer()
+          this.whiteTimer.countdown! += this.gamePlay!.gameConditions.moveTime
+          this.whiteTimer.stopTimer()
+        }
       } else {
-        this.blackTimer.resumeTimer()
-        this.whiteTimer.countdown! += this.gamePlay!.gameConditions.moveTime
+        this.blackTimer.stopTimer()
         this.whiteTimer.stopTimer()
       }
     }
