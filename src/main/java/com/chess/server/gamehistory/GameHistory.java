@@ -21,11 +21,11 @@ public class GameHistory {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
     @JoinColumn(name = "creator_id", nullable = false)
     private User creator;
 
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
     @JoinColumn(name = "opponent_id", nullable = false)
     private User opponent;
 
@@ -41,7 +41,7 @@ public class GameHistory {
     @Column(name = "opponent_rating_difference", nullable = false)
     private Integer opponentRatingDifference;
 
-    @OneToOne(cascade = CascadeType.ALL, optional = false, orphanRemoval = true)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
     @JoinColumn(name = "game_conditions_id", nullable = false)
     private GameConditions gameConditions;
 

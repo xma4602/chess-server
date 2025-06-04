@@ -28,7 +28,7 @@ public class GameChat {
     private GamePlay gamePlay;
 
     @Builder.Default
-    @OneToMany(mappedBy = "gameChat", orphanRemoval = true)
+    @OneToMany(mappedBy = "gameChat", cascade = CascadeType.ALL)
     private List<GameChatMessage> gameChatMessages = new ArrayList<>();
 
 }

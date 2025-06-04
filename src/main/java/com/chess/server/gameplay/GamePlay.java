@@ -39,8 +39,8 @@ public class GamePlay implements Serializable {
     @Builder.Default
     private LocalDateTime startDateTime = LocalDateTime.now();
 
-    @OneToOne(cascade = {CascadeType.MERGE})
-    @JoinColumn(name = "game_conditions_id")
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
+    @JoinColumn(name = "game_conditions_id", nullable = false)
     private GameConditions gameConditions;
 
     @Convert(converter = GameEngineConverter.class)

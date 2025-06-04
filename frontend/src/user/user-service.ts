@@ -57,6 +57,13 @@ export class UserService {
 
   private getHeaders(login = this.user?.login, password = this.user?.password) {
     return new HttpHeaders()
-      .set('Authorization', 'Basic ' + btoa(`${login}:${password}`));
+      .set('Authorization', 'Basic ' + this.encodeToBase64(`${login}:${password}`));
+  }
+
+  private encodeToBase64(str: string): string {
+    // Преобразуем строку в массив байтов
+    const bytes = new TextEncoder().encode(str);
+    // Преобразуем массив байтов в base64
+    return btoa(String.fromCharCode(...bytes));
   }
 }

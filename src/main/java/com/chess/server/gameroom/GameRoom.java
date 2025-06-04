@@ -29,7 +29,8 @@ public class GameRoom {
     @JoinColumn(name = "opponent_id")
     private User opponent;
 
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinColumn
     private GameConditions gameConditions;
 
     public GameRoom(User creator, GameConditions gameConditions) {

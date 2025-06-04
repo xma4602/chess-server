@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column; /* Вертикальное расположение элементов */
   width: 100%; /* Занять всю ширину */
-  padding: 10px; /* Отступы вокруг контейнера */
+  padding: 1em 2em 1em 2em; /* Отступы вокруг контейнера */
   box-sizing: border-box; /* Учитывать отступы и границы в ширине */
 }
 
@@ -20,7 +20,7 @@
 }
 
 .logo {
-  height: 4em; /* Установите высоту логотипа */
+  height: 3em; /* Установите высоту логотипа */
   margin: 0; /* Удалите отступы, если они вызывают переполнение */
 }
 
@@ -28,6 +28,7 @@
   display: flex;
   align-items: center; /* Центрирование содержимого */
   cursor: pointer;
+  padding-left: 1em;
 }
 
 .button-container {

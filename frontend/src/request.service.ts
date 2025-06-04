@@ -29,7 +29,14 @@ export class RequestService {
 
   private getHeaders() {
     return new HttpHeaders()
-      .set('Authorization', 'Basic ' + btoa(`${this.userService.user?.login}:${this.userService.user?.password}`));
+      .set('Authorization', 'Basic ' + this.encodeToBase64(`${this.userService.user?.login}:${this.userService.user?.password}`));
+  }
+
+  private encodeToBase64(str: string): string {
+    // Преобразуем строку в массив байтов
+    const bytes = new TextEncoder().encode(str);
+    // Преобразуем массив байтов в base64
+    return btoa(String.fromCharCode(...bytes));
   }
 }
 
